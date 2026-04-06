@@ -139,15 +139,22 @@ export default function PreFlightCheck({ onReady, onCancel }) {
                                 </div>
                             )}
 
-                            <div className="w-full flex space-x-3 mt-auto">
-                                <button onClick={onCancel} className="flex-1 py-3 px-2 bg-gray-200 text-gray-700 rounded-xl font-bold text-xs uppercase hover:bg-gray-300">Cancel</button>
-                                <button
-                                    onClick={handleProceed}
-                                    disabled={!stream}
-                                    className="flex-1 py-3 px-2 bg-brand-primary text-white rounded-xl font-bold text-xs uppercase shadow-lg hover:bg-emerald-600 disabled:opacity-50"
-                                >
-                                    Feed Looks Good <i className="fa-solid fa-arrow-right ml-1"></i>
-                                </button>
+                            <div className="w-full flex flex-col space-y-3 mt-auto">
+                                <div className="flex space-x-3 w-full">
+                                    <button onClick={onCancel} className="flex-1 py-3 px-2 bg-gray-200 text-gray-700 rounded-xl font-bold text-xs uppercase hover:bg-gray-300">Cancel</button>
+                                    <button
+                                        onClick={handleProceed}
+                                        disabled={!stream}
+                                        className="flex-1 py-3 px-2 bg-brand-primary text-white rounded-xl font-bold text-xs uppercase shadow-lg hover:bg-emerald-600 disabled:opacity-50"
+                                    >
+                                        Feed Looks Good <i className="fa-solid fa-arrow-right ml-1"></i>
+                                    </button>
+                                </div>
+                                {import.meta.env.DEV && (
+                                    <button onClick={() => onReady('developer-bypass')} className="w-full py-2 bg-purple-100 text-purple-700 border-2 border-purple-200 rounded-xl font-bold text-[10px] uppercase hover:bg-purple-200 transition-colors">
+                                        <i className="fa-solid fa-code mr-2"></i> [DEV MODE] Skip Hardware Verification
+                                    </button>
+                                )}
                             </div>
                         </>
                     )}

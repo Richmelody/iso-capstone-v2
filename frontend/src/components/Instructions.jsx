@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Instructions({ onStartExam }) {
+export default function Instructions({ onStartExam, onLogout }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showConsentModal, setShowConsentModal] = useState(false);
 
@@ -11,7 +11,15 @@ export default function Instructions({ onStartExam }) {
 
   return (
     <div className="page-container bg-white rounded-2xl shadow-xl overflow-hidden border relative">
-      <div className="iso-header-bg p-12 text-white text-center">
+      {onLogout && (
+        <button 
+          onClick={onLogout} 
+          className="absolute top-4 left-4 md:top-6 md:left-6 text-emerald-100 hover:text-white transition font-bold text-[10px] uppercase tracking-widest z-10 flex items-center"
+        >
+          <i className="fa-solid fa-angle-left mr-2 text-sm"></i> Return to login page
+        </button>
+      )}
+      <div className="iso-header-bg pt-16 pb-12 px-12 text-white text-center">
         <h2 className="text-3xl font-black mb-2 uppercase tracking-tighter">Engagement Protocols</h2>
         <p className="text-emerald-100 italic">Operational briefing for Final EMS Validation.</p>
       </div>

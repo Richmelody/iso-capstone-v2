@@ -1,48 +1,43 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useParams, Navigate, useLocation } from 'react-router-dom';
 import LoginScreen from './components/LoginScreen';
 import Instructions from './components/Instructions';
 import QuizEngine from './components/QuizEngine';
 import ResultsScreen from './components/ResultsScreen';
 import ProctorCamera from './components/ProctorCamera';
-import PreFlightCheck from './components/PreFlightCheck'; // ADD THIS IMPORT
+import PreFlightCheck from './components/PreFlightCheck';
+import { examLibrary } from './data/exams';
 
-function App() {
-  const [currentPage, setCurrentPage] = useState('login');
-  const [studentName, setStudentName] = useState('');
-  const [studentEmail, setStudentEmail] = useState('');
-
-  const [isProctoringActive, setIsProctoringActive] = useState(false);
-  const [selectedCameraId, setSelectedCameraId] = useState(null); // NEW STATE
+function ExamLayout({ 
+  studentName, 
+  studentEmail, 
+  accessCode,
+  isProctoringActive, 
+  selectedCameraId, 
+  setIsProctoringActive, 
+  setSelectedCameraId 
+}) {
+  const { examId } = useParams();
+  const navigate = useNavigate();
+  const examData = examLibrary[examId] || examLibrary["14001"];
 
   const [finalScore, setFinalScore] = useState(0);
   const [failedCats, setFailedCats] = useState(new Set());
 
-  useEffect(() => {
-    const handleContextMenu = (e) => e.preventDefault();
-    document.addEventListener('contextmenu', handleContextMenu);
-    return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
-    };
-  }, []);
+  // Prevent accessing exam routes without logging in
+  if (!studentName || !studentEmail || !accessCode) {
+    return <Navigate to="/" replace />;
+  }
 
-  const handleLogin = (name, email) => {
-    setStudentName(name);
-    setStudentEmail(email);
-    setCurrentPage('instructions');
-  };
-
-  // User clicked "I Agree" on Instructions - go to Pre-Flight
   const handleStartPreFlight = () => {
-    setCurrentPage('preflight');
+    navigate(`/exam/${examId}/preflight`);
   };
 
-  // User verified their camera - NOW start the exam
   const handleStartExam = async (cameraId) => {
-    setSelectedCameraId(cameraId); // Save the camera they picked
+    setSelectedCameraId(cameraId);
     setIsProctoringActive(true);
-    setCurrentPage('assessment');
+    navigate(`/exam/${examId}/assessment`);
 
-    // Force Fullscreen here, right as the exam starts
     try {
       if (document.documentElement.requestFullscreen) {
         await document.documentElement.requestFullscreen().catch((e) => console.log("Fullscreen blocked"));
@@ -52,62 +47,49 @@ function App() {
     }
   };
 
-  const finishExam = (score, cats) => {
+  const finishExam = async (score, cats) => {
     setFinalScore(score);
     setFailedCats(cats);
     setIsProctoringActive(false);
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch(() => { });
+    
+    // Burn the code by calling complete-exam
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      await fetch(`${apiUrl}/complete-exam`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: accessCode, studentEmail, score })
+      });
+    } catch (e) {
+      console.error("Failed to commit completion to vault.", e);
     }
-    setCurrentPage('results');
+
+    // Unmount the QuizEngine naturally by navigating
+    navigate(`/exam/${examId}/results`);
+
+    // Cleanly exit fullscreen AFTER the component drops its security event listeners
+    if (document.fullscreenElement) {
+      setTimeout(() => {
+        document.exitFullscreen().catch(() => { });
+      }, 150);
+    }
+  };
+
+  const handleLogout = () => {
+    navigate('/');
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <div className="h-9 w-9 bg-brand-primary rounded flex items-center justify-center text-white font-bold"><i className="fa-solid fa-leaf"></i></div>
-            <div className="hidden md:block">
-              <h1 className="text-lg font-bold text-brand-dark leading-none uppercase tracking-tighter">Capstone Project</h1>
-              <span className="text-[10px] text-gray-500 font-black uppercase tracking-widest">ISO 14001:2015 Internal Auditor</span>
-            </div>
-          </div>
-        </div>
-      </header>
+    <>
+      <Routes>
+        <Route path="instructions" element={<Instructions onStartExam={handleStartPreFlight} onLogout={handleLogout} />} />
+        <Route path="preflight" element={<PreFlightCheck onReady={handleStartExam} onCancel={() => navigate(`/exam/${examId}/instructions`)} />} />
+        <Route path="assessment" element={<QuizEngine onFinish={finishExam} examData={examData} />} />
+        <Route path="results" element={<ResultsScreen score={finalScore} failedCats={failedCats} studentName={studentName} studentEmail={studentEmail} />} />
+        <Route path="*" element={<Navigate to="instructions" replace />} />
+      </Routes>
 
-      <main className="flex-grow container mx-auto px-4 py-8 max-w-4xl relative">
-        {currentPage === 'login' && <LoginScreen onLogin={handleLogin} />}
-
-        {currentPage === 'instructions' && (
-          // Update Instructions to trigger the Pre-Flight instead of starting the exam directly
-          <Instructions onStartExam={handleStartPreFlight} />
-        )}
-
-        {/* NEW: Pre-Flight Check Page */}
-        {currentPage === 'preflight' && (
-          <PreFlightCheck
-            onReady={handleStartExam}
-            onCancel={() => setCurrentPage('instructions')}
-          />
-        )}
-
-        {currentPage === 'assessment' && (
-          <QuizEngine onFinish={finishExam} />
-        )}
-
-        {currentPage === 'results' && (
-          <ResultsScreen
-            score={finalScore}
-            failedCats={failedCats}
-            studentName={studentName}
-            studentEmail={studentEmail}
-          />
-        )}
-      </main>
-
-      {/* Pass the chosen camera ID to the Proctor component */}
-      {isProctoringActive && (
+      {isProctoringActive && selectedCameraId !== 'developer-bypass' && (
         <ProctorCamera
           studentName={studentName}
           studentEmail={studentEmail}
@@ -115,6 +97,87 @@ function App() {
           cameraId={selectedCameraId}
         />
       )}
+      {import.meta.env.DEV && selectedCameraId === 'developer-bypass' && isProctoringActive && (
+        <div className="fixed bottom-4 right-4 bg-purple-900 text-white p-4 rounded-xl shadow-2xl z-50 text-xs font-black uppercase tracking-widest border-2 border-purple-400">
+           <i className="fa-solid fa-code text-purple-300 mr-2"></i> Dev Mode: Proctor Bypassed
+        </div>
+      )}
+    </>
+  );
+}
+
+function App() {
+  const [studentName, setStudentName] = useState('');
+  const [studentEmail, setStudentEmail] = useState('');
+  const [accessCode, setAccessCode] = useState('');
+
+  const [isProctoringActive, setIsProctoringActive] = useState(false);
+  const [selectedCameraId, setSelectedCameraId] = useState(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleContextMenu = (e) => e.preventDefault();
+    document.addEventListener('contextmenu', handleContextMenu);
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, []);
+
+  const handleLogin = (name, email, code, examId) => {
+    setStudentName(name);
+    setStudentEmail(email);
+    setAccessCode(code);
+    navigate(`/exam/${examId}/instructions`);
+  };
+
+  // Determine current exam title for header
+  let headerTitle = "Assessment Portal";
+  const match = location.pathname.match(/\/exam\/([^\/]+)/);
+  if (match && examLibrary[match[1]]) {
+    headerTitle = examLibrary[match[1]].title;
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col relative bg-slate-50">
+      <div className="fixed inset-0 pointer-events-none z-0 flex items-center justify-center opacity-10 mix-blend-multiply select-none">
+        <img src="/logo.png" alt="Watermark" className="w-[90vw] md:w-[60vw] max-w-4xl object-contain grayscale" />
+      </div>
+
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+        <div className="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center relative z-10 w-full">
+          <div className="w-[80px] md:w-[200px] flex justify-start flex-shrink-0">
+            <img src="/logo.png" alt="Astute Logo" className="h-6 md:h-9 max-w-full object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex'; }} />
+            <div className="h-8 w-8 bg-brand-primary rounded items-center justify-center text-white font-bold hidden"><i className="fa-solid fa-leaf"></i></div>
+          </div>
+
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-2 min-w-0">
+            <h1 className="text-[13px] md:text-lg font-bold text-brand-dark leading-none uppercase tracking-tighter truncate w-full">Capstone Project</h1>
+            <span className="text-[8px] md:text-[10px] text-gray-500 font-black uppercase tracking-widest mt-0.5 truncate w-full">{headerTitle}</span>
+          </div>
+
+          <div id="timer-portal-target" className="w-[80px] md:w-[200px] flex justify-end flex-shrink-0"></div>
+        </div>
+      </header>
+
+      <main className="flex-grow container mx-auto px-4 py-8 max-w-4xl relative">
+        <Routes>
+          <Route path="/" element={<LoginScreen onLogin={handleLogin} />} />
+          <Route path="/exam/:examId/*" element={
+            <ExamLayout 
+                studentName={studentName}
+                studentEmail={studentEmail}
+                accessCode={accessCode}
+                isProctoringActive={isProctoringActive}
+                selectedCameraId={selectedCameraId}
+                setIsProctoringActive={setIsProctoringActive}
+                setSelectedCameraId={setSelectedCameraId}
+            />
+          } />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
     </div>
   );
 }
