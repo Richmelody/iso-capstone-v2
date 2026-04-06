@@ -31,7 +31,7 @@ export default function LoginScreen({ onLogin }) {
         return;
       }
 
-      onLogin(name.trim(), email.trim(), code.trim(), data.exam_id);
+      onLogin(name.trim(), email.trim(), code.trim(), data.exam_id, data.savedState);
     } catch (e) {
       setErrorMsg("Vault Connection Refused. System down.");
       setIsLoading(false);
@@ -56,7 +56,7 @@ export default function LoginScreen({ onLogin }) {
             )}
             <div className="space-y-4 mb-6">
                 <div>
-                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Full Auditor Name</label>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Full Name</label>
                   <div className="relative">
                     <i className="fa-solid fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     <input 

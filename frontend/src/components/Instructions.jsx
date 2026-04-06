@@ -78,7 +78,7 @@ export default function Instructions({ onStartExam, onLogout }) {
               <i className="fa-solid fa-wifi text-brand-primary text-xl mt-1 mr-4 w-6 text-center"></i>
               <div>
                 <h5 className="font-black text-gray-800 text-xs uppercase mb-1">Network Stability</h5>
-                <p className="text-xs text-gray-600 font-medium leading-relaxed">A continuous, high-speed internet connection is required to synchronize your audit data with the server.</p>
+                <p className="text-xs text-gray-600 font-medium leading-relaxed">A continuous, high-speed internet connection is required to synchronize your assessment data with the server.</p>
               </div>
             </div>
           </div>

@@ -111,10 +111,10 @@ export default function PreFlightCheck({ onReady, onCancel }) {
                             <span className="text-gray-500 font-bold text-sm"><i className="fa-solid fa-spinner fa-spin mr-2"></i> Accessing Camera...</span>
                         </div>
                     ) : errorMsg ? (
-                        <div className="bg-red-50 border border-red-200 p-4 rounded-xl text-center">
+                        <div className="bg-red-50 border border-red-200 p-4 rounded-xl text-center w-full my-auto">
                             <i className="fa-solid fa-video-slash text-red-500 text-3xl mb-3"></i>
-                            <p className="text-red-800 text-sm font-bold">{errorMsg}</p>
-                            <button onClick={onCancel} className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-lg text-xs font-bold uppercase hover:bg-red-200">Return</button>
+                            <p className="text-red-800 text-sm font-bold mb-4">{errorMsg}</p>
+                            <button onClick={onCancel} className="px-6 py-2 bg-red-100 text-red-700 rounded-lg text-xs font-bold uppercase hover:bg-red-200 shadow-sm border border-red-200">Return to Safety</button>
                         </div>
                     ) : (
                         <>
@@ -139,24 +139,25 @@ export default function PreFlightCheck({ onReady, onCancel }) {
                                 </div>
                             )}
 
-                            <div className="w-full flex flex-col space-y-3 mt-auto">
-                                <div className="flex space-x-3 w-full">
-                                    <button onClick={onCancel} className="flex-1 py-3 px-2 bg-gray-200 text-gray-700 rounded-xl font-bold text-xs uppercase hover:bg-gray-300">Cancel</button>
-                                    <button
-                                        onClick={handleProceed}
-                                        disabled={!stream}
-                                        className="flex-1 py-3 px-2 bg-brand-primary text-white rounded-xl font-bold text-xs uppercase shadow-lg hover:bg-emerald-600 disabled:opacity-50"
-                                    >
-                                        Feed Looks Good <i className="fa-solid fa-arrow-right ml-1"></i>
-                                    </button>
-                                </div>
-                                {import.meta.env.DEV && (
-                                    <button onClick={() => onReady('developer-bypass')} className="w-full py-2 bg-purple-100 text-purple-700 border-2 border-purple-200 rounded-xl font-bold text-[10px] uppercase hover:bg-purple-200 transition-colors">
-                                        <i className="fa-solid fa-code mr-2"></i> [DEV MODE] Skip Hardware Verification
-                                    </button>
-                                )}
+                            <div className="w-full flex space-x-3 mt-auto">
+                                <button onClick={onCancel} className="flex-1 py-3 px-2 bg-gray-200 text-gray-700 rounded-xl font-bold text-xs uppercase hover:bg-gray-300 transition-colors">Cancel</button>
+                                <button
+                                    onClick={handleProceed}
+                                    disabled={!stream}
+                                    className="flex-1 py-3 px-2 bg-brand-primary text-white rounded-xl font-bold text-xs uppercase shadow-lg hover:bg-emerald-600 disabled:opacity-50 transition-all"
+                                >
+                                    Feed Looks Good <i className="fa-solid fa-arrow-right ml-1"></i>
+                                </button>
                             </div>
                         </>
+                    )}
+
+                    {import.meta.env.DEV && (
+                        <div className="w-full mt-6 pt-4 border-t-2 border-gray-200 border-dashed">
+                            <button onClick={() => onReady('developer-bypass')} className="w-full py-3 bg-purple-100 text-purple-700 border-2 border-purple-300 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-purple-200 transition-colors shadow-sm">
+                                <i className="fa-solid fa-code mr-2"></i> [DEV MODE] Force Bypass Error
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>

@@ -8,17 +8,21 @@ import ProctorCamera from './components/ProctorCamera';
 import PreFlightCheck from './components/PreFlightCheck';
 import { examLibrary } from './data/exams';
 
-function ExamLayout({ 
-  studentName, 
-  studentEmail, 
+function ExamLayout({
+  studentName,
+  studentEmail,
   accessCode,
-  isProctoringActive, 
-  selectedCameraId, 
-  setIsProctoringActive, 
-  setSelectedCameraId 
+  isProctoringActive,
+  selectedCameraId,
+  setIsProctoringActive,
+  setSelectedCameraId,
+  isVaultBurned,
+  setIsVaultBurned,
+  recoveredState
 }) {
   const { examId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const examData = examLibrary[examId] || examLibrary["14001"];
 
   const [finalScore, setFinalScore] = useState(0);
@@ -26,6 +30,11 @@ function ExamLayout({
 
   // Prevent accessing exam routes without logging in
   if (!studentName || !studentEmail || !accessCode) {
+    return <Navigate to="/" replace />;
+  }
+
+  // BROWSER NAVIGATION TRAP: If they are burned, absolutely block backward routing
+  if (isVaultBurned && !location.pathname.includes('/assessment') && !location.pathname.includes('/results')) {
     return <Navigate to="/" replace />;
   }
 
@@ -47,22 +56,48 @@ function ExamLayout({
     }
   };
 
-  const finishExam = async (score, cats) => {
-    setFinalScore(score);
-    setFailedCats(cats);
-    setIsProctoringActive(false);
-    
-    // Burn the code by calling complete-exam
+  const executeVaultSync = async (userAnswers, timeLeft, currentIdx) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      await fetch(`${apiUrl}/sync-progress`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: accessCode,
+          studentEmail: studentEmail,
+          userAnswers: userAnswers,
+          timeLeft: timeLeft,
+          currentIdx: currentIdx
+        })
+      });
+    } catch (e) {
+      console.error("Failed to sync progress.", e);
+    }
+  };
+
+  const executeVaultBurn = async (scoreOrAnswers) => {
+    setIsVaultBurned(true); // Engages the global router trap
+    // onBurnNetwork can be called with either a score (number) or userAnswers (object)
+    const finalScore = typeof scoreOrAnswers === 'number' ? scoreOrAnswers : 0;
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
       await fetch(`${apiUrl}/complete-exam`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: accessCode, studentEmail, score })
+        body: JSON.stringify({ code: accessCode, studentEmail, score: finalScore })
       });
     } catch (e) {
       console.error("Failed to commit completion to vault.", e);
     }
+  };
+
+  const finishExam = async (score, cats) => {
+    setFinalScore(score);
+    setFailedCats(cats);
+    setIsProctoringActive(false);
+
+    // Attempt standard burn (idempotent, so duplicate calls are safely ignored)
+    await executeVaultBurn(score);
 
     // Unmount the QuizEngine naturally by navigating
     navigate(`/exam/${examId}/results`);
@@ -84,7 +119,7 @@ function ExamLayout({
       <Routes>
         <Route path="instructions" element={<Instructions onStartExam={handleStartPreFlight} onLogout={handleLogout} />} />
         <Route path="preflight" element={<PreFlightCheck onReady={handleStartExam} onCancel={() => navigate(`/exam/${examId}/instructions`)} />} />
-        <Route path="assessment" element={<QuizEngine onFinish={finishExam} examData={examData} />} />
+        <Route path="assessment" element={<QuizEngine onFinish={finishExam} onBurnNetwork={executeVaultBurn} onSyncNetwork={executeVaultSync} examData={examData} isVaultBurned={isVaultBurned} recoveredState={recoveredState} />} />
         <Route path="results" element={<ResultsScreen score={finalScore} failedCats={failedCats} studentName={studentName} studentEmail={studentEmail} />} />
         <Route path="*" element={<Navigate to="instructions" replace />} />
       </Routes>
@@ -99,7 +134,7 @@ function ExamLayout({
       )}
       {import.meta.env.DEV && selectedCameraId === 'developer-bypass' && isProctoringActive && (
         <div className="fixed bottom-4 right-4 bg-purple-900 text-white p-4 rounded-xl shadow-2xl z-50 text-xs font-black uppercase tracking-widest border-2 border-purple-400">
-           <i className="fa-solid fa-code text-purple-300 mr-2"></i> Dev Mode: Proctor Bypassed
+          <i className="fa-solid fa-code text-purple-300 mr-2"></i> Dev Mode: Proctor Bypassed
         </div>
       )}
     </>
@@ -114,6 +149,12 @@ function App() {
   const [isProctoringActive, setIsProctoringActive] = useState(false);
   const [selectedCameraId, setSelectedCameraId] = useState(null);
 
+  // Security trap state natively managed at the root layer
+  const [isVaultBurned, setIsVaultBurned] = useState(false);
+
+  // Resilient State Protocol
+  const [recoveredState, setRecoveredState] = useState(null);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -125,10 +166,11 @@ function App() {
     };
   }, []);
 
-  const handleLogin = (name, email, code, examId) => {
+  const handleLogin = (name, email, code, examId, savedState) => {
     setStudentName(name);
     setStudentEmail(email);
     setAccessCode(code);
+    setRecoveredState(savedState || null);
     navigate(`/exam/${examId}/instructions`);
   };
 
@@ -157,22 +199,25 @@ function App() {
             <span className="text-[8px] md:text-[10px] text-gray-500 font-black uppercase tracking-widest mt-0.5 truncate w-full">{headerTitle}</span>
           </div>
 
-          <div id="timer-portal-target" className="w-[80px] md:w-[200px] flex justify-end flex-shrink-0"></div>
+          <div id="timer-portal-target" className="w-[120px] md:w-[220px] flex justify-end flex-shrink-0"></div>
         </div>
       </header>
 
-      <main className="flex-grow container mx-auto px-4 py-8 max-w-4xl relative">
+      <main className="flex-grow container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-4xl relative">
         <Routes>
           <Route path="/" element={<LoginScreen onLogin={handleLogin} />} />
           <Route path="/exam/:examId/*" element={
-            <ExamLayout 
-                studentName={studentName}
-                studentEmail={studentEmail}
-                accessCode={accessCode}
-                isProctoringActive={isProctoringActive}
-                selectedCameraId={selectedCameraId}
-                setIsProctoringActive={setIsProctoringActive}
-                setSelectedCameraId={setSelectedCameraId}
+            <ExamLayout
+              studentName={studentName}
+              studentEmail={studentEmail}
+              accessCode={accessCode}
+              isProctoringActive={isProctoringActive}
+              selectedCameraId={selectedCameraId}
+              setIsProctoringActive={setIsProctoringActive}
+              setSelectedCameraId={setSelectedCameraId}
+              isVaultBurned={isVaultBurned}
+              setIsVaultBurned={setIsVaultBurned}
+              recoveredState={recoveredState}
             />
           } />
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -77,7 +77,7 @@ export default function ProctorCamera({ studentName, studentEmail, isProctoringA
         if (videoRef.current.readyState === 4) {
           const faces = await model.estimateFaces(videoRef.current, false);
           if (faces.length === 0) {
-            logViolation("NO_FACE", "Auditor left the camera view.");
+            logViolation("NO_FACE", "Candidate left the camera view.");
           } else if (faces.length > 1) {
             logViolation("MULTIPLE_FACES", "Additional persons detected in camera view.");
           }

@@ -5,6 +5,8 @@ import sqlite3
 import base64
 import os
 import uuid
+import json
+import httpx
 
 app = FastAPI()
 
@@ -58,13 +60,23 @@ def init_db():
                 exam_id TEXT,
                 is_used BOOLEAN DEFAULT 0,
                 assigned_email TEXT,
-                assigned_name TEXT
+                assigned_name TEXT,
+                saved_score INTEGER DEFAULT 0,
+                saved_time_left INTEGER DEFAULT 3600,
+                saved_question_idx INTEGER DEFAULT 0,
+                saved_failed_cats TEXT DEFAULT '[]',
+                saved_answers TEXT DEFAULT '{}'
             )
         """)
         try:
             conn.execute("ALTER TABLE access_codes ADD COLUMN assigned_name TEXT")
         except sqlite3.OperationalError:
             pass # Column likely already exists
+            
+        try:
+            conn.execute("ALTER TABLE access_codes ADD COLUMN saved_answers TEXT DEFAULT '{}'")
+        except sqlite3.OperationalError:
+            pass # Column already exists
             
         conn.execute("""
             CREATE TABLE IF NOT EXISTS exam_results (
@@ -134,11 +146,15 @@ def verify_code(req: VerifyRequest):
     try:
         with sqlite3.connect(DB_PATH, timeout=15) as conn:
             cur = conn.cursor()
-            cur.execute("SELECT id, exam_id, is_used, assigned_email, assigned_name FROM access_codes WHERE code = ?", (req.code,))
+            cur.execute("""
+                SELECT id, exam_id, is_used, assigned_email, assigned_name, 
+                       saved_score, saved_time_left, saved_question_idx, saved_failed_cats, saved_answers
+                FROM access_codes WHERE code = ?
+            """, (req.code,))
             row = cur.fetchone()
             if not row:
                 raise HTTPException(status_code=400, detail="SECURITY ALERT: Invalid Access Code")
-            code_id, exam_id, is_used, assigned_email, assigned_name = row
+            code_id, exam_id, is_used, assigned_email, assigned_name, saved_score, saved_time, saved_idx, saved_cats, saved_answers = row
             
             if is_used:
                 raise HTTPException(status_code=400, detail="EXPIRED: This access code has already been burned.")
@@ -153,7 +169,19 @@ def verify_code(req: VerifyRequest):
             conn.execute("UPDATE access_codes SET assigned_email = ?, assigned_name = ? WHERE id = ?", (req.studentEmail, req.studentName, code_id))
             conn.commit()
             
-            return {"status": "success", "exam_id": exam_id}
+            response = {"status": "success", "exam_id": exam_id}
+            
+            # If they have a saved state, inject it into the verified response
+            if saved_idx and int(saved_idx) > 0 or (saved_answers and saved_answers != '{}'):
+                response["savedState"] = {
+                    "score": int(saved_score),
+                    "timeLeft": int(saved_time),
+                    "currentIdx": int(saved_idx),
+                    "failedCats": json.loads(saved_cats),
+                    "userAnswers": json.loads(saved_answers) if saved_answers else {}
+                }
+                
+            return response
     except HTTPException:
         raise
     except Exception as e:
@@ -163,6 +191,34 @@ class CompleteRequest(BaseModel):
     code: str
     studentEmail: str
     score: int
+    percent: str = "N/A"
+    passed: bool = False
+
+class SyncRequest(BaseModel):
+    code: str
+    studentEmail: str
+    userAnswers: dict
+    timeLeft: int
+    currentIdx: int
+
+@app.post("/sync-progress")
+def sync_progress(req: SyncRequest):
+    try:
+        with sqlite3.connect(DB_PATH, timeout=15) as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT id FROM access_codes WHERE code = ? COLLATE NOCASE AND assigned_email = ? COLLATE NOCASE AND is_used = 0", (req.code, req.studentEmail))
+            if not cur.fetchone():
+                raise HTTPException(status_code=400, detail="Invalid sync constraints")
+                
+            conn.execute("""
+                UPDATE access_codes 
+                SET saved_answers = ?, saved_time_left = ?, saved_question_idx = ? 
+                WHERE code = ?
+            """, (json.dumps(req.userAnswers), req.timeLeft, req.currentIdx, req.code))
+            conn.commit()
+            return {"status": "synced"}
+    except Exception as e:
+         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/complete-exam")
 def complete_exam(req: CompleteRequest):
@@ -189,6 +245,23 @@ def complete_exam(req: CompleteRequest):
                 """, (assigned_name, req.studentEmail, exam_id, req.score))
                 
             conn.commit()
+
+            # Transmit Webhook Securely from the Backend
+            try:
+                # Use a fire-and-forget timeout so we don't block the frontend response
+                with httpx.Client(timeout=2.0) as client:
+                    client.post("https://hook.eu1.make.com/6qavu69ct5v9vuw4mcdxuc0iopyikare", json={
+                        "source": f"ISO_Capstone_{exam_id}",
+                        "name": assigned_name or "Unknown",
+                        "email": req.studentEmail,
+                        "score": req.score,
+                        "percent": req.percent,
+                        "passed": req.passed
+                    })
+            except Exception as e:
+                # Deliberately ignore webhook misfires to let the database save succeed
+                pass
+
             return {"status": "success", "message": "Exam completed, code burned and results saved"}
     except HTTPException:
         raise

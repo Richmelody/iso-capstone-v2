@@ -12,24 +12,6 @@ export default function ResultsScreen({ score, failedCats, studentName, studentE
   const strokeDashoffset = 471 - (percent / 100) * 471;
   const isPassed = percent >= 80;
 
-  useEffect(() => {
-    // Dynamic payload sending examId explicitly to Make.com
-    const data = { 
-        source: `ISO_Capstone_${examId}`, 
-        name: studentName, 
-        email: studentEmail, 
-        score: score, 
-        percent: percent + "%",
-        passed: isPassed
-    };
-    
-    fetch("https://hook.eu1.make.com/6qavu69ct5v9vuw4mcdxuc0iopyikare", { 
-        method: "POST", 
-        headers: {"Content-Type": "application/json"}, 
-        body: JSON.stringify(data) 
-    }).catch(console.error);
-  }, [studentName, studentEmail, score, percent, examId, isPassed]);
-
   return (
     <div className="page-container">
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden p-10 text-center">
@@ -50,11 +32,11 @@ export default function ResultsScreen({ score, failedCats, studentName, studentE
                 </svg>
                 <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl font-black text-gray-900">{percent}%</span>
             </div>
-            <h2 className="text-3xl font-black text-gray-900 mb-2 uppercase tracking-tighter">Audit Closed</h2>
+            <h2 className="text-3xl font-black text-gray-900 mb-2 uppercase tracking-tighter">Assessment Closed</h2>
             <p className="text-gray-600 mb-8 font-bold border-b pb-6">
               {isPassed 
-                ? "Audit Validation Passed. You have demonstrated technical competency in ISO 14001:2015 auditing principles."
-                : "Competency Gaps Identified. Your audit logic requires refinement in the areas identified below before Internal Auditor authorization."
+                ? `Assessment Validation Passed. You have demonstrated technical competency in ${examData.title} principles.`
+                : "Competency Gaps Identified. Your logic requires refinement in the areas identified below before certification authorization."
               }
             </p>
             
@@ -78,7 +60,7 @@ export default function ResultsScreen({ score, failedCats, studentName, studentE
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onClick={() => window.location.reload()} className="px-8 py-4 border-2 rounded-xl font-black text-gray-500 uppercase text-xs hover:bg-gray-100 transition">Restart Audit</button>
+                <button onClick={() => window.location.reload()} className="px-8 py-4 border-2 rounded-xl font-black text-gray-500 uppercase text-xs hover:bg-gray-100 transition">Restart Assessment</button>
                 <a href="https://learn.astutebusinessconsult.com" className="px-8 py-4 bg-brand-dark text-white rounded-xl font-black shadow-xl uppercase text-xs flex items-center justify-center hover:bg-black transition">Academy Dashboard</a>
             </div>
         </div>
