@@ -16,8 +16,7 @@ export default function LoginScreen({ onLogin }) {
     setIsLoading(true);
 
     try {
-      // Typically use an env var for the API URL, using localhost:8000 for local dev
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const apiUrl = import.meta.env.VITE_API_URL;
       const res = await fetch(`${apiUrl}/verify-code`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

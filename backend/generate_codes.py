@@ -3,10 +3,9 @@ import random
 import string
 import os
 
-DB_PATH = "/app/data/proctor_logs.db"
-# Fallback for running locally outside docker
-if not os.path.exists(DB_PATH):
-    DB_PATH = "data/proctor_logs.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+DB_PATH = os.path.join(DATA_DIR, "proctor_logs.db")
 
 def generate_code(exam_id: str, length=8):
     """Generate a secure, unique alphanumeric string"""

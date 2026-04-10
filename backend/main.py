@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import sqlite3
 import base64
@@ -10,12 +11,17 @@ import httpx
 
 app = FastAPI()
 
-# Configure CORS
+# Configure CORS - Approved Guest List
 origins = [
-    "https://assessments.chigozieikuru.cloud",
     "http://localhost:5173",
     "http://localhost:3000",
+    "https://capstoneasstesting.chigozieikuru.cloud"
 ]
+
+# Add FRONTEND_URL from environment if available
+frontend_env = os.environ.get("FRONTEND_URL")
+if frontend_env and frontend_env not in origins:
+    origins.append(frontend_env)
 
 app.add_middleware(
     CORSMiddleware,
@@ -33,8 +39,9 @@ class CheatingLog(BaseModel):
     timestamp: str
     snapshot: str  # Base64 image string
 
-# Ensure directories exist
-DATA_DIR = "/app/data"
+# Ensure directories exist relatively to this file to support Native CloudPanel and local dev flawlessly
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 SNAPSHOTS_DIR = os.path.join(DATA_DIR, "snapshots")
 DB_PATH = os.path.join(DATA_DIR, "proctor_logs.db")
 
@@ -101,6 +108,9 @@ try:
 except Exception as e:
     print(f"Error initializing database: {e}")
 
+# Mount static files to securely expose snapshots via URL
+app.mount("/snapshots", StaticFiles(directory=SNAPSHOTS_DIR), name="snapshots")
+
 @app.post("/log-cheating")
 def log_cheating(log: CheatingLog):
     # Ensure dir exists in case the volume was mounted empty after startup
@@ -113,7 +123,7 @@ def log_cheating(log: CheatingLog):
             # Handle data URLs (e.g., "data:image/png;base64,...")
             image_data_str = image_data_str.split(",")[1]
             
-        image_data = base64.b64decode(image_data_str)
+        image_data = base64.b64decode(image_data_str, validate=True)
         filename = f"{uuid.uuid4().hex}.png"
         filepath = os.path.join(SNAPSHOTS_DIR, filename)
         
@@ -191,6 +201,7 @@ class CompleteRequest(BaseModel):
     code: str
     studentEmail: str
     score: int
+    totalScore: int
     percent: str = "N/A"
     passed: bool = False
 
@@ -246,6 +257,31 @@ def complete_exam(req: CompleteRequest):
                 
             conn.commit()
 
+            # Fetch cheating events for this session
+            cheating_events = []
+            try:
+                # We use timestamp > -1 day to ensure we only get logs from the current attempt
+                cur.execute("""
+                    SELECT violation_type, details, timestamp, snapshot_path 
+                    FROM cheating_logs 
+                    WHERE student_email = ? COLLATE NOCASE AND timestamp > datetime('now', '-1 day')
+                """, (req.studentEmail,))
+                
+                api_url = os.environ.get("API_PUBLIC_URL", "https://api.chigozieikuru.cloud")
+                
+                for row_log in cur.fetchall():
+                    v_type, v_details, v_time, s_path = row_log
+                    filename = os.path.basename(s_path)
+                    image_url = f"{api_url}/snapshots/{filename}"
+                    cheating_events.append({
+                        "type": v_type,
+                        "details": v_details,
+                        "timestamp": v_time,
+                        "image_url": image_url
+                    })
+            except Exception as e:
+                print(f"Error fetching cheating logs: {e}")
+
             # Transmit Webhook Securely from the Backend
             try:
                 # Use a fire-and-forget timeout so we don't block the frontend response
@@ -255,8 +291,10 @@ def complete_exam(req: CompleteRequest):
                         "name": assigned_name or "Unknown",
                         "email": req.studentEmail,
                         "score": req.score,
+                        "total_score": req.totalScore,
                         "percent": req.percent,
-                        "passed": req.passed
+                        "passed": req.passed,
+                        "cheating_events": cheating_events
                     })
             except Exception as e:
                 # Deliberately ignore webhook misfires to let the database save succeed

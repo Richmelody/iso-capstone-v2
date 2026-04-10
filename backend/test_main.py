@@ -72,7 +72,8 @@ def test_complete_exam_idempotency():
     complete_payload = {
         "code": "TEST-CODE-99",
         "studentEmail": "tester@astute.com",
-        "score": 15
+        "score": 15,
+        "totalScore": 20
     }
     response1 = client.post("/complete-exam", json=complete_payload)
     assert response1.status_code == 200
@@ -86,10 +87,38 @@ def test_complete_exam_idempotency():
     # Verify the database only holds exactly ONE ledger entry despite 2 runs
     with sqlite3.connect(TEST_DB_PATH) as conn:
         cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM exam_results WHERE code='TEST-CODE-99'")
-        row = cur.fetchone()
+
         
         # NOTE: exam_results uses exam_id, student_email. Need to query accurately:
         cur.execute("SELECT COUNT(*) FROM exam_results WHERE student_email='tester@astute.com'")
         count = cur.fetchone()[0]
         assert count == 1
+
+def test_sync_progress_success():
+    client.post("/verify-code", json={"code": "TEST-CODE-99", "studentEmail": "tester@astute.com", "studentName": "Test User"})
+    
+    sync_payload = {
+        "code": "TEST-CODE-99",
+        "studentEmail": "tester@astute.com",
+        "userAnswers": {"1": "A"},
+        "timeLeft": 2000,
+        "currentIdx": 2
+    }
+    response = client.post("/sync-progress", json=sync_payload)
+    assert response.status_code == 200
+    assert response.json()["status"] == "synced"
+
+def test_log_cheating_invalid_image():
+    payload = {
+        "studentEmail": "cheater@astute.com",
+        "studentName": "Bad Actor",
+        "violationType": "Multiple Persons",
+        "details": "Two people on screen",
+        "timestamp": "2024-01-01T00:00:00Z",
+        "snapshot": "this-is-not-valid-base64-!@#"
+    }
+    response = client.post("/log-cheating", json=payload)
+    # The endpoint should raise a 400 bad request for invalid base64 encoding instead of completely crashing the server
+    assert response.status_code == 400
+    assert "Image decoding failed" in response.json()["detail"]
+

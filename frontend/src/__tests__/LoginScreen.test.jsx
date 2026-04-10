@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -44,7 +45,7 @@ describe('LoginScreen Authorization component', () => {
 
     // Ensure it eventually calls the router hand-off
     await waitFor(() => {
-      expect(handleLogin).toHaveBeenCalledWith('Test User', 'test@example.com', 'DEMO-14001', '14001');
+      expect(handleLogin).toHaveBeenCalledWith('Test User', 'test@example.com', 'DEMO-14001', '14001', undefined);
     });
   });
 });

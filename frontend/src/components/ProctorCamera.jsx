@@ -17,7 +17,7 @@ export default function ProctorCamera({ studentName, studentEmail, isProctoringA
   const isDragging = useRef(false);
   const dragOffset = useRef({ x: 0, y: 0 });
 
-  const endpoint = import.meta.env.VITE_VPS_PROCTOR_ENDPOINT || "http://localhost:8000/log-cheating";
+  const endpoint = `${import.meta.env.VITE_API_URL}/log-cheating`;
 
   const logViolation = async (type, detail) => {
     setWarningMsg("SECURITY ANOMALY DETECTED. THIS EVENT HAS BEEN LOGGED.");

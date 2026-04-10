@@ -58,7 +58,7 @@ function ExamLayout({
 
   const executeVaultSync = async (userAnswers, timeLeft, currentIdx) => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const apiUrl = import.meta.env.VITE_API_URL;
       await fetch(`${apiUrl}/sync-progress`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -79,12 +79,13 @@ function ExamLayout({
     setIsVaultBurned(true); // Engages the global router trap
     // onBurnNetwork can be called with either a score (number) or userAnswers (object)
     const finalScore = typeof scoreOrAnswers === 'number' ? scoreOrAnswers : 0;
+    const totalScore = examData?.questions?.length || 20;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const apiUrl = import.meta.env.VITE_API_URL;
       await fetch(`${apiUrl}/complete-exam`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: accessCode, studentEmail, score: finalScore })
+        body: JSON.stringify({ code: accessCode, studentEmail, score: finalScore, totalScore })
       });
     } catch (e) {
       console.error("Failed to commit completion to vault.", e);
