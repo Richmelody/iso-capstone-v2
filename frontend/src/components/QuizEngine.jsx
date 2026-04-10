@@ -93,12 +93,57 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
       }
     };
 
+    const handleKeyDown = (e) => {
+      if (hasTrippedRef.current) return;
+
+      // Detect PrintScreen or Command/Windows + Shift + S/3/4/5 (Screenshot shortcuts)
+      const isMacScreenshot = e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5' || e.key === 'S' || e.key === 's');
+      const isWindowsScreenshot = e.key === 'PrintScreen' || (e.ctrlKey && e.key === 'PrintScreen') || (e.altKey && e.key === 'PrintScreen') || (e.metaKey && e.shiftKey && (e.key === 'S' || e.key === 's'));
+
+      if (e.key === 'PrintScreen' || isMacScreenshot || isWindowsScreenshot) {
+        e.preventDefault();
+        
+        // Attempt to clear clipboard to prevent saving the screenshot if OS allows
+        try {
+          navigator.clipboard.writeText('');
+        } catch (err) {}
+
+        hasTrippedRef.current = true;
+        setLockoutMessage(`Proctoring Alert: Unauthorized screen capture detected.`);
+        
+        if (onBurnNetwork) {
+            onBurnNetwork(userAnswers);
+        }
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (hasTrippedRef.current) return;
+      if (e.key === 'PrintScreen') {
+        e.preventDefault();
+        try {
+          navigator.clipboard.writeText('');
+        } catch (err) {}
+
+        hasTrippedRef.current = true;
+        setLockoutMessage(`Proctoring Alert: Unauthorized screen capture detected.`);
+        
+        if (onBurnNetwork) {
+            onBurnNetwork(userAnswers);
+        }
+      }
+    };
+
     document.addEventListener('visibilitychange', enforceSecurity);
     document.addEventListener('fullscreenchange', enforceSecurity);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
 
     return () => {
       document.removeEventListener('visibilitychange', enforceSecurity);
       document.removeEventListener('fullscreenchange', enforceSecurity);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
     };
   }, [onBurnNetwork, userAnswers]);
 
