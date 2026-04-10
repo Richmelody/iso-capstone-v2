@@ -72,17 +72,28 @@ export default function ProctorCamera({ studentName, studentEmail, isProctoringA
     };
 
     const startDetectionLoop = () => {
-      activeIntervalRef.current = setInterval(async () => {
+      const runDetection = async () => {
         if (!isProctoringActive || unmounted || !model || !videoRef.current) return;
+        
         if (videoRef.current.readyState === 4) {
-          const faces = await model.estimateFaces(videoRef.current, false);
-          if (faces.length === 0) {
-            logViolation("NO_FACE", "Candidate left the camera view.");
-          } else if (faces.length > 1) {
-            logViolation("MULTIPLE_FACES", "Additional persons detected in camera view.");
+          try {
+            const faces = await model.estimateFaces(videoRef.current, false);
+            if (faces.length === 0) {
+              logViolation("NO_FACE", "Candidate left the camera view.");
+            } else if (faces.length > 1) {
+              logViolation("MULTIPLE_FACES", "Additional persons detected in camera view.");
+            }
+          } catch (e) {
+            console.warn("Face estimation error:", e);
           }
         }
-      }, 2000);
+        
+        if (!unmounted && isProctoringActive) {
+          activeIntervalRef.current = setTimeout(runDetection, 2000);
+        }
+      };
+      
+      runDetection();
     };
 
     if (isProctoringActive) {
@@ -108,7 +119,7 @@ export default function ProctorCamera({ studentName, studentEmail, isProctoringA
 
     return () => {
       unmounted = true;
-      if (activeIntervalRef.current) clearInterval(activeIntervalRef.current);
+      if (activeIntervalRef.current) clearTimeout(activeIntervalRef.current);
       if (streamRef.current) streamRef.current.getTracks().forEach(track => track.stop());
       document.removeEventListener('copy', handleCopy);
       document.removeEventListener('paste', handlePaste);

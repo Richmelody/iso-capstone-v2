@@ -60,14 +60,21 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
     return () => clearInterval(timer);
   }, [onFinish, userAnswers]);
 
-  // 2. Prevent Refreshing the Page
+  // 2. Prevent Refreshing the Page & Prevent Right Clicking
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       e.preventDefault();
       e.returnValue = '';
     };
+    const handleContextMenu = (e) => e.preventDefault();
+    
     window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('contextmenu', handleContextMenu);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('contextmenu', handleContextMenu);
+    };
   }, []);
 
   // 3. STRICT PROCTORING ENFORCEMENT (Auto-Submit / Red Screen)
@@ -75,10 +82,9 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
     const enforceSecurity = () => {
       if (hasTrippedRef.current) return;
       
-      if (document.hidden || !document.fullscreenElement) {
+      if (document.hidden) {
         hasTrippedRef.current = true;
-        let reason = document.hidden ? "Focus lost on the assessment window" : "Fullscreen environment exited";
-        setLockoutMessage(`Proctoring Alert: ${reason}`);
+        setLockoutMessage(`Proctoring Alert: Focus lost on the assessment window.`);
         
         // Immediately burn their payload
         if (onBurnNetwork) {

@@ -122,3 +122,45 @@ def test_log_cheating_invalid_image():
     assert response.status_code == 400
     assert "Image decoding failed" in response.json()["detail"]
 
+def test_snapshot_authentication_and_traversal():
+    # 1. Test Unauthenticated Access
+    response = client.get("/snapshots/fake-image.png")
+    assert response.status_code == 401
+    
+    # 2. Test Invalid Token
+    response = client.get("/snapshots/fake-image.png?token=wrong-token-123")
+    assert response.status_code == 401
+    
+    # 3. Test Path Traversal Hack Attempt
+    os.environ["SNAPSHOT_SECRET"] = "test-secret"
+    response = client.get("/snapshots/../main.py?token=test-secret")
+    # FastAPI's native path normalizer strips ../ and turns it into /main.py which intrinsically 404s before hitting our logic.
+    assert response.status_code in [400, 404]
+
+def test_timestamp_spoofing_prevention():
+    # We send a completely fake, decades-old timestamp to try and spoof the audit log
+    payload = {
+        "studentEmail": "spoof@astute.com",
+        "studentName": "Spoofer",
+        "violationType": "Face Missing",
+        "details": "Checking timestamp security",
+        "timestamp": "1999-01-01T00:00:00Z", 
+        "snapshot": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" # Valid tiny base64 PNG
+    }
+    response = client.post("/log-cheating", json=payload)
+    assert response.status_code == 200
+    
+    # Check DB to ensure the stored timestamp is the server's current time, NOT 1999!
+    with sqlite3.connect(TEST_DB_PATH) as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT timestamp FROM cheating_logs WHERE student_email='spoof@astute.com'")
+        row = cur.fetchone()
+        assert row is not None
+        
+        saved_timestamp = row[0]
+        assert "1999" not in saved_timestamp
+        # It should contain the current year/datetime since it is UTC server generated
+        import datetime
+        current_year = str(datetime.datetime.now(datetime.UTC).year)
+        assert current_year in saved_timestamp
+

@@ -1,6 +1,6 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import sqlite3
 import base64
@@ -8,8 +8,28 @@ import os
 import uuid
 import json
 import httpx
+import datetime
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    import time
+    for attempt in range(5):
+        try:
+            init_db()
+            break
+        except sqlite3.OperationalError as e:
+            if attempt == 4:
+                print(f"FATAL: Could not initialize database due to sustained locks: {e}")
+            else:
+                time.sleep(0.5)
+        except Exception as e:
+            print(f"Error initializing database: {e}")
+            break
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
 
 # Configure CORS - Approved Guest List
 origins = [
@@ -96,20 +116,32 @@ def init_db():
             )
         """)
 
-        # Insert test codes
-        conn.execute("INSERT OR IGNORE INTO access_codes (code, exam_id) VALUES ('DEMO-14001', '14001')")
-        conn.execute("INSERT OR IGNORE INTO access_codes (code, exam_id) VALUES ('DEMO-9001', '9001')")
+        # Insert test codes only in non-production environments
+        if os.environ.get("ENV", "development") == "development":
+            conn.execute("INSERT OR IGNORE INTO access_codes (code, exam_id) VALUES ('DEMO-14001', '14001')")
+            conn.execute("INSERT OR IGNORE INTO access_codes (code, exam_id) VALUES ('DEMO-9001', '9001')")
+        
         conn.commit()
 
-# Initialize DB on startup. 
-# Inside a docker container, this runs when main.py is imported by uvicorn.
-try:
-    init_db()
-except Exception as e:
-    print(f"Error initializing database: {e}")
+# Remove public StaticFiles mount to secure PII
+# app.mount("/snapshots", StaticFiles(directory=SNAPSHOTS_DIR), name="snapshots")
 
-# Mount static files to securely expose snapshots via URL
-app.mount("/snapshots", StaticFiles(directory=SNAPSHOTS_DIR), name="snapshots")
+@app.get("/snapshots/{filename}")
+def get_snapshot(filename: str, token: str = None):
+    # Enforce basic security layer
+    expected_token = os.environ.get("SNAPSHOT_SECRET", "astute-secure-view")
+    if token != expected_token:
+        raise HTTPException(status_code=401, detail="SECURITY ALERT: Unauthorized access to secure logs")
+    
+    # Prevent basic path traversal
+    if ".." in filename or "/" in filename:
+         raise HTTPException(status_code=400, detail="Invalid filename")
+         
+    filepath = os.path.join(SNAPSHOTS_DIR, filename)
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="File not found")
+        
+    return FileResponse(filepath)
 
 @app.post("/log-cheating")
 def log_cheating(log: CheatingLog):
@@ -132,14 +164,15 @@ def log_cheating(log: CheatingLog):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Image decoding failed: {str(e)}")
 
-    # Log to database. Use synchronous def so fastapi runs it in threadpool
+    # Log to database using strict server-side timestamps to prevent spoofing
     try:
+        secure_timestamp = datetime.datetime.now(datetime.UTC).isoformat().replace("+00:00", "Z")
         with sqlite3.connect(DB_PATH, timeout=15) as conn:
             conn.execute("PRAGMA journal_mode=WAL;")
             conn.execute("""
                 INSERT INTO cheating_logs (student_email, student_name, violation_type, details, timestamp, snapshot_path)
                 VALUES (?, ?, ?, ?, ?, ?)
-            """, (log.studentEmail, log.studentName, log.violationType, log.details, log.timestamp, filepath))
+            """, (log.studentEmail, log.studentName, log.violationType, log.details, secure_timestamp, filepath))
             conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database logging failed: {str(e)}")
@@ -232,7 +265,7 @@ def sync_progress(req: SyncRequest):
          raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/complete-exam")
-def complete_exam(req: CompleteRequest):
+def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
     try:
         with sqlite3.connect(DB_PATH, timeout=15) as conn:
             cur = conn.cursor()
@@ -272,7 +305,8 @@ def complete_exam(req: CompleteRequest):
                 for row_log in cur.fetchall():
                     v_type, v_details, v_time, s_path = row_log
                     filename = os.path.basename(s_path)
-                    image_url = f"{api_url}/snapshots/{filename}"
+                    secret = os.environ.get("SNAPSHOT_SECRET", "astute-secure-view")
+                    image_url = f"{api_url}/snapshots/{filename}?token={secret}"
                     cheating_events.append({
                         "type": v_type,
                         "details": v_details,
@@ -282,23 +316,27 @@ def complete_exam(req: CompleteRequest):
             except Exception as e:
                 print(f"Error fetching cheating logs: {e}")
 
-            # Transmit Webhook Securely from the Backend
-            try:
-                # Use a fire-and-forget timeout so we don't block the frontend response
-                with httpx.Client(timeout=2.0) as client:
-                    client.post("https://hook.eu1.make.com/6qavu69ct5v9vuw4mcdxuc0iopyikare", json={
-                        "source": f"ISO_Capstone_{exam_id}",
-                        "name": assigned_name or "Unknown",
-                        "email": req.studentEmail,
-                        "score": req.score,
-                        "total_score": req.totalScore,
-                        "percent": req.percent,
-                        "passed": req.passed,
-                        "cheating_events": cheating_events
-                    })
-            except Exception as e:
-                # Deliberately ignore webhook misfires to let the database save succeed
-                pass
+            # Transmit Webhook Securely from the Backend via Background Task
+            submission_timestamp = datetime.datetime.now(datetime.UTC).isoformat().replace("+00:00", "Z")
+
+            def send_webhook():
+                try:
+                    with httpx.Client(timeout=5.0) as client:
+                        client.post("https://hook.eu1.make.com/6qavu69ct5v9vuw4mcdxuc0iopyikare", json={
+                            "source": f"ISO_Capstone_{exam_id}",
+                            "name": assigned_name or "Unknown",
+                            "email": req.studentEmail,
+                            "score": req.score,
+                            "total_score": req.totalScore,
+                            "percent": req.percent,
+                            "passed": req.passed,
+                            "submitted_at": submission_timestamp,
+                            "cheating_events": cheating_events
+                        })
+                except Exception as e:
+                    pass
+
+            background_tasks.add_task(send_webhook)
 
             return {"status": "success", "message": "Exam completed, code burned and results saved"}
     except HTTPException:

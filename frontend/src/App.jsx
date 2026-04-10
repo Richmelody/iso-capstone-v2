@@ -78,14 +78,16 @@ function ExamLayout({
   const executeVaultBurn = async (scoreOrAnswers) => {
     setIsVaultBurned(true); // Engages the global router trap
     // onBurnNetwork can be called with either a score (number) or userAnswers (object)
-    const finalScore = typeof scoreOrAnswers === 'number' ? scoreOrAnswers : 0;
+    const score = typeof scoreOrAnswers === 'number' ? scoreOrAnswers : 0;
     const totalScore = examData?.questions?.length || 20;
+    const percent = totalScore > 0 ? ((score / totalScore) * 100).toFixed(1) + "%" : "0.0%";
+    const passed = totalScore > 0 && (score / totalScore) >= 0.7;
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
       await fetch(`${apiUrl}/complete-exam`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: accessCode, studentEmail, score: finalScore, totalScore })
+        body: JSON.stringify({ code: accessCode, studentEmail, score, totalScore, percent, passed })
       });
     } catch (e) {
       console.error("Failed to commit completion to vault.", e);
@@ -97,8 +99,20 @@ function ExamLayout({
     setFailedCats(cats);
     setIsProctoringActive(false);
 
-    // Attempt standard burn (idempotent, so duplicate calls are safely ignored)
-    await executeVaultBurn(score);
+    const totalScore = examData?.questions?.length || 20;
+    const percent = totalScore > 0 ? ((score / totalScore) * 100).toFixed(1) + "%" : "0.0%";
+    const passed = totalScore > 0 && (score / totalScore) >= 0.7;
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      await fetch(`${apiUrl}/complete-exam`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: accessCode, studentEmail, score, totalScore, percent, passed })
+      });
+    } catch (e) {
+      console.error("Failed to commit completion to vault.", e);
+    }
 
     // Unmount the QuizEngine naturally by navigating
     navigate(`/exam/${examId}/results`);
@@ -158,14 +172,6 @@ function App() {
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    const handleContextMenu = (e) => e.preventDefault();
-    document.addEventListener('contextmenu', handleContextMenu);
-    return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
-    };
-  }, []);
 
   const handleLogin = (name, email, code, examId, savedState) => {
     setStudentName(name);
