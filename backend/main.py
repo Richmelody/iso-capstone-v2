@@ -44,7 +44,8 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 origins = [
     "http://localhost:5173",
     "http://localhost:3000",
-    "https://capstoneasstesting.chigozieikuru.cloud"
+    "https://capstoneasstesting.chigozieikuru.cloud",
+    "https://assessments.chigozieikuru.cloud"  # Production frontend
 ]
 
 # Add FRONTEND_URL from environment if available
@@ -243,7 +244,7 @@ class CompleteRequest(BaseModel):
     code: str
     studentEmail: str
     score: int
-    totalScore: int
+    totalScore: int = 20  # Default: backward-compat with old frontend builds
     percent: str = "N/A"
     passed: bool = False
     cheating_events: list = []
