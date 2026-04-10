@@ -1,6 +1,7 @@
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel
 import sqlite3
 import base64
@@ -29,6 +30,14 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    body = await request.body()
+    print(f"VALIDATION ERROR on {request.url.path}")
+    print(f"  Raw body: {body.decode('utf-8', errors='replace')}")
+    print(f"  Errors: {exc.errors()}")
+    return JSONResponse(status_code=422, content={"detail": exc.errors()})
 
 
 # Configure CORS - Approved Guest List
@@ -237,6 +246,7 @@ class CompleteRequest(BaseModel):
     totalScore: int
     percent: str = "N/A"
     passed: bool = False
+    cheating_events: list = []
 
 class SyncRequest(BaseModel):
     code: str

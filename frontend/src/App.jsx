@@ -81,13 +81,13 @@ function ExamLayout({
     const score = typeof scoreOrAnswers === 'number' ? scoreOrAnswers : 0;
     const totalScore = examData?.questions?.length || 20;
     const percent = totalScore > 0 ? ((score / totalScore) * 100).toFixed(1) + "%" : "0.0%";
-    const passed = totalScore > 0 && (score / totalScore) >= 0.7;
+    const passed = false; // Always fail: vault burn = proctoring violation
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
       await fetch(`${apiUrl}/complete-exam`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: accessCode, studentEmail, score, totalScore, percent, passed })
+        body: JSON.stringify({ code: accessCode, studentEmail, score, totalScore, percent, passed, cheating_events: [] })
       });
     } catch (e) {
       console.error("Failed to commit completion to vault.", e);
@@ -108,7 +108,7 @@ function ExamLayout({
       await fetch(`${apiUrl}/complete-exam`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: accessCode, studentEmail, score, totalScore, percent, passed })
+        body: JSON.stringify({ code: accessCode, studentEmail, score, totalScore, percent, passed, cheating_events: [] })
       });
     } catch (e) {
       console.error("Failed to commit completion to vault.", e);
