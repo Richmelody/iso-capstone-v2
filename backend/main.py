@@ -122,9 +122,19 @@ def init_db():
                 student_email TEXT,
                 exam_id TEXT,
                 final_score INTEGER,
+                total_score INTEGER,
+                percent TEXT,
+                passed BOOLEAN,
                 timestamp TEXT DEFAULT CURRENT_TIMESTAMP
             )
         """)
+
+        try:
+            conn.execute("ALTER TABLE exam_results ADD COLUMN total_score INTEGER")
+            conn.execute("ALTER TABLE exam_results ADD COLUMN percent TEXT")
+            conn.execute("ALTER TABLE exam_results ADD COLUMN passed BOOLEAN")
+        except sqlite3.OperationalError:
+            pass # Columns already exist
 
         # Insert test codes only in non-production environments
         if os.environ.get("ENV", "development") == "development":
@@ -295,20 +305,31 @@ def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
             
             if assigned_name:
                 conn.execute("""
-                    INSERT INTO exam_results (student_name, student_email, exam_id, final_score)
-                    VALUES (?, ?, ?, ?)
-                """, (assigned_name, req.studentEmail, exam_id, req.score))
+                    INSERT INTO exam_results (student_name, student_email, exam_id, final_score, total_score, percent, passed)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, (assigned_name, req.studentEmail, exam_id, req.score, req.totalScore, req.percent, req.passed))
                 
             conn.commit()
 
-            # Fetch cheating events for this session
+            # Fetch total cheating events count for this session
+            total_cheating_events = 0
             cheating_events = []
             try:
-                # We use timestamp > -1 day to ensure we only get logs from the current attempt
+                # First, count exactly how many cheating logs occurred today
+                cur.execute("""
+                    SELECT COUNT(*) 
+                    FROM cheating_logs 
+                    WHERE student_email = ? COLLATE NOCASE AND timestamp > datetime('now', '-1 day')
+                """, (req.studentEmail,))
+                total_cheating_events = cur.fetchone()[0]
+                
+                # Fetch only a MAXIMUM of 10 cheating events to avoid crashing make.com payloads
                 cur.execute("""
                     SELECT violation_type, details, timestamp, snapshot_path 
                     FROM cheating_logs 
                     WHERE student_email = ? COLLATE NOCASE AND timestamp > datetime('now', '-1 day')
+                    ORDER BY timestamp DESC
+                    LIMIT 10
                 """, (req.studentEmail,))
                 
                 api_url = os.environ.get("API_PUBLIC_URL", "https://api.chigozieikuru.cloud")
@@ -335,6 +356,7 @@ def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
                     with httpx.Client(timeout=5.0) as client:
                         client.post("https://hook.eu1.make.com/6qavu69ct5v9vuw4mcdxuc0iopyikare", json={
                             "source": f"ISO_Capstone_{exam_id}",
+                            "environment": os.environ.get("ENV", "development"),
                             "name": assigned_name or "Unknown",
                             "email": req.studentEmail,
                             "score": req.score,
@@ -342,6 +364,7 @@ def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
                             "percent": req.percent,
                             "passed": req.passed,
                             "submitted_at": submission_timestamp,
+                            "total_cheating_glitches": total_cheating_events,
                             "cheating_events": cheating_events
                         })
                 except Exception as e:

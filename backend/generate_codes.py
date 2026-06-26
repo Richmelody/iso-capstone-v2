@@ -2,16 +2,25 @@ import sqlite3
 import random
 import string
 import os
+import argparse
+import sys
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 DB_PATH = os.path.join(DATA_DIR, "proctor_logs.db")
 
+EXAM_CATALOG = {
+    "1": {"id": "14001-fnd", "title": "ISO 14001:2015 Foundations"},
+    "2": {"id": "9001-fnd", "title": "ISO 9001:2015 Foundations"},
+    "3": {"id": "45001-fnd", "title": "ISO 45001:2018 Foundations"},
+    "4": {"id": "fssc22000-fnd", "title": "FSSC 22000 Foundations"},
+}
+
 def generate_code(exam_id: str, length=8):
     """Generate a secure, unique alphanumeric string"""
     chars = string.ascii_uppercase + string.digits
     random_str = ''.join(random.choice(chars) for _ in range(length))
-    # Format: ASTUTE-[EXAM_ID]-[RANDOM]
+    # Format: ASTUTE-[EXAM_ID]-[RANDOM] (uppercase it for looks)
     return f"ASTUTE-{exam_id.upper()}-{random_str}"
 
 def generate_batch(exam_id: str, count: int):
@@ -27,7 +36,13 @@ def generate_batch(exam_id: str, count: int):
                 code TEXT UNIQUE,
                 exam_id TEXT,
                 is_used BOOLEAN DEFAULT 0,
-                assigned_email TEXT
+                assigned_email TEXT,
+                assigned_name TEXT,
+                saved_score INTEGER DEFAULT 0,
+                saved_time_left INTEGER DEFAULT 3600,
+                saved_question_idx INTEGER DEFAULT 0,
+                saved_failed_cats TEXT DEFAULT '[]',
+                saved_answers TEXT DEFAULT '{}'
             )
         """)
         
@@ -51,29 +66,33 @@ def generate_batch(exam_id: str, count: int):
     print("-------------------------------------\n")
     print("Provide these codes to candidates securely. They are single-use per email.")
 
-if __name__ == "__main__":
-    import sys
-    
-    # If no command line arguments are provided, run interactively
-    if len(sys.argv) == 1:
-        print("\n=== ASTUTE Vault: Code Generator ===")
-        exam_id = input("1. Enter the Exam ID (e.g. 14001, 9001): ").strip()
-        if not exam_id:
-            print("Error: Exam ID is required.")
-            sys.exit(1)
-            
-        count_str = input("2. How many codes do you want to generate? (default 1): ").strip()
-        count = int(count_str) if count_str.isdigit() else 1
-        
-        print("\n")
-        generate_batch(exam_id, count)
-        
-    else:
-        # Support for traditional flags if they want to automate it later
-        import argparse
+def main():
+    if len(sys.argv) > 1:
         parser = argparse.ArgumentParser(description="Generate Secure Access Codes for ISO Exams")
-        parser.add_argument("--exam", required=True, help="Exam ID (e.g. 14001, 9001)")
+        parser.add_argument("--exam", required=True, help="Exam ID (e.g. 14001-fnd, fssc22000-fnd)")
         parser.add_argument("--count", type=int, default=1, help="Number of codes to generate")
-        
         args = parser.parse_args()
         generate_batch(args.exam, args.count)
+        return
+
+    print("\n=== ASTUTE Vault: Code Generator ===")
+    print("Select an Exam Module:")
+    for key, exam in EXAM_CATALOG.items():
+        print(f"{key}. {exam['title']} ({exam['id']})")
+    
+    choice = input("\nEnter the number corresponding to the exam: ").strip()
+    
+    if choice not in EXAM_CATALOG:
+        print("Error: Invalid choice.")
+        sys.exit(1)
+        
+    exam_id = EXAM_CATALOG[choice]["id"]
+    
+    count_str = input("How many codes do you want to generate? (default 1): ").strip()
+    count = int(count_str) if count_str.isdigit() else 1
+    
+    print("\n")
+    generate_batch(exam_id, count)
+
+if __name__ == "__main__":
+    main()

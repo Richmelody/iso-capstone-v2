@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { examLibrary } from '../data/exams';
+import { examLibrary } from '../data';
 
 export default function ResultsScreen({ score, failedCats, studentName, studentEmail }) {
   const { examId } = useParams();
-  const examData = examLibrary[examId] || examLibrary["14001"];
+  const examData = examLibrary[examId] || examLibrary["14001-fnd"];
   const remediationData = examData.remediationData || {};
 
   const totalQuestions = examData.questions ? examData.questions.length : 20;

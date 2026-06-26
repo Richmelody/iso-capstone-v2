@@ -6,7 +6,7 @@ import QuizEngine from './components/QuizEngine';
 import ResultsScreen from './components/ResultsScreen';
 import ProctorCamera from './components/ProctorCamera';
 import PreFlightCheck from './components/PreFlightCheck';
-import { examLibrary } from './data/exams';
+import { examLibrary } from './data';
 
 function ExamLayout({
   studentName,
@@ -23,7 +23,7 @@ function ExamLayout({
   const { examId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const examData = examLibrary[examId] || examLibrary["14001"];
+  const examData = examLibrary[examId] || examLibrary["14001-fnd"];
 
   const [finalScore, setFinalScore] = useState(0);
   const [failedCats, setFailedCats] = useState(new Set());
