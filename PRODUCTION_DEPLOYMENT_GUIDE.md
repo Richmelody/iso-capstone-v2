@@ -1,138 +1,127 @@
-# 🚀 ISO Capstone: Official Production Deployment Guide
+# 🚀 ISO Capstone: Failproof CI/CD & VPS Deployment Guide
 
-This document is the definitive, battle-tested blueprint for deploying the ISO Capstone Exam System to your company's live Production VPS. It includes all the "hard lessons" and edge cases discovered during the Staging deployment to ensure a flawless, zero-downtime transition.
-
-## 🏗️ Architecture & Branch Strategy
-- **Staging VPS (Your Server)**: Tracks the `staging` branch. Used for testing new AI features and UI updates.
-- **Production VPS (Company Server)**: Tracks the `main` branch. 
-- **Frontend Domain**: e.g., `assessments.company.com`
-- **Backend Domain**: e.g., `api.assessments.company.com`
+This document captures the hard-earned lessons, edge cases, and exact operational workflows required to manage the ISO Capstone system. It guarantees a safe, failproof deployment pipeline from your local machine, to the Staging VPS, and finally to the Live Company VPS without disrupting other existing services (like the company LMS).
 
 ---
 
-## Phase 1: CloudPanel & Server Preparation
-*Do not use the `root` user. Isolate the frontend and backend for security.*
-
-1. **Create Backend Site (Python App)**
-   - **Domain**: `api.assessments.company.com`
-   - **App Port**: `8081`
-   - **Python Version**: `3.12`
-   - **Site User**: `iso_api_prod`
-
-2. **Create Frontend Site (Static HTML)**
-   - **Domain**: `assessments.company.com`
-   - **Site User**: `iso_web_prod`
+## 🏗️ The CI/CD Pipeline Architecture
+We use a two-branch, two-server architecture:
+1. **Local Machine**: Where you write and test code.
+2. **Staging VPS (`staging` branch)**: `iso-demo.chigozieikuru.cloud`. This is your personal server where new features are tested before going live.
+3. **Production VPS (`main` branch)**: `exams.astutebusinessprojects.cloud`. The live company server.
 
 ---
 
-## Phase 2: Secure Git Authentication
-*HTTP cloning will timeout. You must use SSH.*
+## 🔄 Day-to-Day Workflow: From Code to Live
 
-1. Generate an SSH key on the Company VPS for both users:
+### Phase 1: Local Development to Staging
+When you finish building a new feature locally:
+
+1. **Push to Staging from your Local Machine:**
    ```bash
-   ssh-keygen -t ed25519 -C "production-vps"
-   cat ~/.ssh/id_ed25519.pub
+   git checkout staging
+   git add .
+   git commit -m "feat: your new feature"
+   git push origin staging
    ```
-2. Add both SSH keys to the GitHub Repository Deploy Keys.
-3. Verify connection: `ssh -T git@github.com`
+2. **Pull and Deploy on the Staging VPS:**
+   *SSH into your Staging VPS and run the deployment commands (see Phase 3 below).*
+
+### Phase 2: Staging to Production (The Merge)
+Once you have tested the staging site and confirmed it is bug-free:
+
+1. **Merge Staging into Main on your Local Machine:**
+   ```bash
+   git checkout main
+   git merge staging
+   git push origin main
+   ```
+2. **Pull and Deploy on the Production VPS:**
+   *SSH into the Company VPS and run the deployment commands (see Phase 3 below).*
 
 ---
 
-## Phase 3: Backend API Deployment (`main` branch)
-*Log in as your backend user (e.g., `iso_api_prod`)*
+## 🚀 Phase 3: The Failproof Deployment Execution
+*These are the exact commands you run on the VPS (Staging or Production) to apply the code updates.*
 
-### 1. Clone the Production Branch
+### 1. Frontend Deployment (React)
+*Log in to the server. Switch to your frontend user (e.g., `su - exams_capstone`).*
+
 ```bash
-cd ~/htdocs/api.assessments.company.com
-git init
-git remote add origin git@github.com:Richmelody/iso-capstone-v2.git
-git fetch
-git checkout -t origin/main -f
+# 1. Navigate to the frontend folder
+cd ~/htdocs/exams.astutebusinessprojects.cloud
+git pull origin main  # (Use 'origin staging' if on the Staging VPS)
+
+# 2. Force the correct Environment URL
+# If on Production:
+echo "VITE_API_URL=https://api-exams.astutebusinessprojects.cloud" > frontend/.env.production
+# If on Staging:
+echo "VITE_API_URL=https://api-iso-demo.chigozieikuru.cloud" > frontend/.env.production
+
+# 3. Enter the frontend folder
+cd frontend
+
+# 4. Clean out old packages to prevent Native Binding / Rollup bugs
+rm -rf node_modules package-lock.json
+
+# 5. Compile the site (Make sure you are using Node 22 via NVM!)
+npm install
+npm run build
 ```
 
-### 2. Configure Production Environment Variables
-*The `.env` file must be created manually to enforce 12-factor isolation. It is CRITICAL to set `ENV=production` so test codes (DEMO-14001) are permanently locked out.*
+### 2. Backend Deployment (FastAPI)
+*Log in to the server. Switch to your backend user (e.g., `su - api_capston`).*
+
 ```bash
+# 1. Navigate to the backend folder
+cd ~/htdocs/api-exams.astutebusinessprojects.cloud
+git pull origin main  # (Use 'origin staging' if on the Staging VPS)
+
+# 2. Activate the virtual environment
+# NOTE: The virtual environment MUST be located strictly inside the 'backend' folder!
 cd backend
-cat <<EOT >> .env
-FRONTEND_URL=https://assessments.company.com
-API_PUBLIC_URL=https://api.assessments.company.com
-ENV=production
-EOT
-```
-
-### 3. Install & Boot the Server
-*We use `python-dotenv` (which we added to the codebase) to ensure the `.env` file is read reliably. We use `killall uvicorn` (not `python3`) to prevent Port 8081 collisions.*
-```bash
-# Activate virtual environment
 source venv/bin/activate
 
-# Install dependencies
+# 3. Force reinstall dependencies (Fixes the fatal `anyio` Server 500 crashes)
+pip install --force-reinstall anyio
 pip install -r requirements.txt
 
-# Ruthlessly terminate any stuck instances
+# 4. Kill the old instance securely
 killall uvicorn
 
-# Boot the API in the background securely
-nohup venv/bin/uvicorn main:app --host 127.0.0.1 --port 8081 > api.log 2>&1 &
+# 5. Boot the new server in the background
+# If on Production:
+nohup uvicorn main:app --host 127.0.0.1 --port 8091 > api.log 2>&1 &
+# If on Staging:
+nohup uvicorn main:app --host 127.0.0.1 --port 8081 > api.log 2>&1 &
 
-# Verify it booted cleanly (Look for "Application startup complete")
+# 6. Verify the boot was successful
 cat api.log
 ```
 
 ---
 
-## Phase 4: Frontend Deployment (`main` branch)
-*Log in as your frontend user (e.g., `iso_web_prod`)*
+## 🛡️ Critical Glitches & "Hard Lessons" Log
 
-### 1. Clone the Production Branch
-```bash
-cd ~/htdocs/assessments.company.com
-git init
-git remote add origin git@github.com:Richmelody/iso-capstone-v2.git
-git fetch
-git checkout -t origin/main -f
+### 1. The Root LMS Danger & Node.js
+**The Bug:** Vite 8 requires Node.js v22. The default server OS only provides v18. Upgrading Node globally via `root` risks breaking the company's existing LMS.
+**The Fix:** We exclusively use `nvm` (Node Version Manager) to install Node.js strictly inside the isolated frontend user (`/home/exams_capstone/`). It requires zero root access and leaves the LMS 100% untouched.
+
+### 2. The CloudPanel Let's Encrypt / React Router Conflict
+**The Bug:** React requires Nginx to route all traffic to `/index.html` via `try_files`. However, Let's Encrypt needs to read a hidden `.well-known` folder in the root to issue SSL certificates, resulting in a 404 failure.
+**The Fix:** Add this exact block to the CloudPanel Vhost to securely bypass the React routing for SSL generation:
+```nginx
+location ~ /.well-known {
+  root /home/exams_capstone/htdocs/exams.astutebusinessprojects.cloud;
+  auth_basic off;
+  allow all;
+}
 ```
 
-### 2. Overwrite the Vite Production URL
-*Vite automatically prioritizes `.env.production`. You **MUST** overwrite this file before building, otherwise the frontend will be hardcoded to the wrong API.*
-```bash
-cd frontend
-echo "VITE_API_URL=https://api.assessments.company.com" > .env.production
-```
+### 3. The Vite `.env.production` Override Trap
+**The Bug:** Vite automatically overrides `.env` with `.env.production` when building for production. If the old production URL is checked into Git, the frontend will be permanently hardcoded to the wrong server and throw "Vault connection refused" CORS errors.
+**The Fix:** The deployment pipeline MUST echo the correct URL into `.env.production` right before running `npm run build`.
 
-### 3. Compile the React Application
-```bash
-npm install
-npm run build
-```
-
----
-
-## Phase 5: CloudPanel Nginx Configuration (The Final Step)
-*Because React is a Single Page Application (SPA), Nginx will throw a 404 error if a user refreshes the page mid-exam unless we explicitly tell Nginx how to route traffic.*
-
-1. Go to your CloudPanel Dashboard.
-2. Click on the Frontend Site (`assessments.company.com`).
-3. Click the **Vhost** tab.
-4. **Change the Root Directory:**
-   Find the line `{{root}}` (or `root /home/...;`) near the top. Change it to exactly point to the `dist` folder:
-   ```nginx
-   root /home/iso_web_prod/htdocs/assessments.company.com/frontend/dist;
-   ```
-5. **Fix the React Routing:**
-   Scroll to the very bottom. **Delete** this block:
-   ```nginx
-   if (-f $request_filename) {
-     break;
-   }
-   ```
-   **Replace it** with this exact block:
-   ```nginx
-   location / {
-     try_files $uri $uri/ /index.html;
-   }
-   ```
-6. Click **Save**.
-
-Your production environment is now live, securely isolated, and completely decoupled from your legacy monolith!
+### 4. The `anyio._backends` 500 Crash
+**The Bug:** Sometimes when the FastAPI server is restarted, it throws a `500 Internal Server Error` and a `ModuleNotFoundError: No module named 'anyio._backends'`, blocking all CORS headers.
+**The Fix:** Run `pip install --force-reinstall anyio` inside the `backend` folder before booting the server to rebuild the corrupted native bindings.
