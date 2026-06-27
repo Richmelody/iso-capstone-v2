@@ -11,6 +11,9 @@ import json
 import httpx
 import datetime
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
+
+load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
