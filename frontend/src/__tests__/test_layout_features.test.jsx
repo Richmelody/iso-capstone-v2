@@ -554,6 +554,6 @@ describe('ResultsScreen — Defensive Rendering (Epic 5.2 Failsafe)', () => {
 
     // The basic result card must always render regardless
     // The basic result card must always render regardless
-    expect(screen.getByText(/Assessment Complete/i)).toBeInTheDocument();
+    expect(screen.getByText(/PASSED/i)).toBeInTheDocument();
   });
 });

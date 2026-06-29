@@ -199,6 +199,8 @@ function App() {
     headerTitle = examLibrary[match[1]].title;
   }
 
+  const inAssessment = location.pathname.includes('/assessment');
+
   return (
     <div className="min-h-screen flex flex-col relative bg-slate-50">
       <div className="fixed inset-0 pointer-events-none z-0 flex items-center justify-center opacity-10 mix-blend-multiply select-none">
@@ -207,17 +209,23 @@ function App() {
 
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center relative z-10 w-full">
-          <div className="w-[80px] md:w-[200px] flex justify-start flex-shrink-0">
-            <img src="/logo.png" alt="Astute Logo" className="h-6 md:h-9 max-w-full object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex'; }} />
-            <div className="h-8 w-8 bg-brand-primary rounded items-center justify-center text-white font-bold hidden"><i className="fa-solid fa-leaf"></i></div>
-          </div>
-
-          <div className="flex-1 flex flex-col items-center justify-center text-center px-2 min-w-0">
-            <h1 className="text-[13px] md:text-lg font-bold text-brand-dark leading-none uppercase tracking-tighter truncate w-full">Capstone Project</h1>
-            <span className="text-[8px] md:text-[10px] text-gray-500 font-black uppercase tracking-widest mt-0.5 truncate w-full">{headerTitle}</span>
-          </div>
-
-          <div id="timer-portal-target" className="w-[120px] md:w-[220px] flex justify-end flex-shrink-0"></div>
+          {!inAssessment ? (
+            <div className="w-full flex flex-col items-center justify-center mt-1">
+              <img src="/logo.png" alt="Astute Logo" className="h-7 md:h-9 max-w-full object-contain mb-1" />
+              <span className="text-[9px] md:text-[11px] text-slate-400 font-bold uppercase tracking-widest">{headerTitle}</span>
+            </div>
+          ) : (
+            <>
+              <div className="w-[100px] md:w-[200px] flex justify-start flex-shrink-0">
+                <img src="/logo.png" alt="Astute Logo" className="h-6 md:h-8 max-w-full object-contain" />
+              </div>
+              <div className="flex-1 hidden md:flex flex-col items-center justify-center text-center px-2 min-w-0">
+                <h1 className="text-lg font-bold text-slate-800 leading-none uppercase tracking-tighter truncate w-full">Capstone Project</h1>
+                <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-0.5 truncate w-full">{headerTitle}</span>
+              </div>
+              <div id="timer-portal-target" className="w-[100px] md:w-[220px] flex justify-end flex-shrink-0"></div>
+            </>
+          )}
         </div>
       </header>
 

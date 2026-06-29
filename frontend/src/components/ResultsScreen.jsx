@@ -19,11 +19,22 @@ export default function ResultsScreen({ score, failedCats, studentName, studentE
       <div className="w-full max-w-3xl bg-white/60 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] rounded-[2rem] border border-white/80 overflow-hidden">
         
         {/* Header */}
-        <div className="p-8 sm:p-12 text-center border-b border-white/40 bg-white/30">
-          <h2 className="text-3xl font-light text-slate-800 mb-3 tracking-wide">Assessment Complete</h2>
-          <div className="inline-flex items-center gap-2 bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full text-slate-600 font-medium text-sm shadow-sm border border-white/60">
-            <span className={`w-2 h-2 rounded-full ${isPassed ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
-            {percent}% — {examData.title}
+        <div className={`p-8 sm:p-12 text-center border-b ${isPassed ? 'border-emerald-200 bg-emerald-50/50' : 'border-rose-200 bg-rose-50/50'}`}>
+          <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 shadow-sm ${isPassed ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}`}>
+            <i className={`text-3xl fa-solid ${isPassed ? 'fa-check' : 'fa-xmark'}`}></i>
+          </div>
+          <h2 className={`text-4xl font-bold mb-2 tracking-wide uppercase ${isPassed ? 'text-emerald-800' : 'text-rose-800'}`}>
+            {isPassed ? 'PASSED' : 'FAILED'}
+          </h2>
+          <p className="text-slate-600 text-lg mb-6 font-medium">{examData.title}</p>
+          
+          <div className="flex flex-wrap items-center justify-center gap-3 text-slate-700">
+            <div className="bg-white/70 backdrop-blur-md px-6 py-2.5 rounded-xl shadow-sm border border-white/80 font-bold text-xl text-slate-800">
+              {percent}%
+            </div>
+            <div className="bg-white/70 backdrop-blur-md px-6 py-2.5 rounded-xl shadow-sm border border-white/80 font-medium text-lg text-slate-700">
+              {score} out of {totalQuestions} correct
+            </div>
           </div>
         </div>
         

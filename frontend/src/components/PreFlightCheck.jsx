@@ -140,13 +140,15 @@ export default function PreFlightCheck({ onReady, onCancel }) {
                             )}
 
                             <div className="w-full flex space-x-3 mt-auto">
-                                <button onClick={onCancel} className="flex-1 py-3 px-2 bg-gray-200 text-gray-700 rounded-xl font-bold text-xs uppercase hover:bg-gray-300 transition-colors">Cancel</button>
+                                <button onClick={onCancel} className="flex-1 flex items-center justify-center py-3 px-2 bg-gray-200 text-gray-700 rounded-xl font-bold text-xs uppercase hover:bg-gray-300 transition-colors">
+                                    Cancel
+                                </button>
                                 <button
                                     onClick={handleProceed}
                                     disabled={!stream}
-                                    className="flex-1 py-3 px-2 bg-brand-primary text-white rounded-xl font-bold text-xs uppercase shadow-lg hover:bg-emerald-600 disabled:opacity-50 transition-all"
+                                    className="flex-1 flex items-center justify-center py-3 px-2 bg-brand-primary text-white rounded-xl font-bold text-xs uppercase shadow-lg hover:bg-emerald-600 disabled:opacity-50 transition-all"
                                 >
-                                    Feed Looks Good <i className="fa-solid fa-arrow-right ml-1"></i>
+                                    Feed Looks Good <i className="fa-solid fa-arrow-right ml-2"></i>
                                 </button>
                             </div>
                         </>

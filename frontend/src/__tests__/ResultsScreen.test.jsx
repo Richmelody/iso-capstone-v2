@@ -28,7 +28,7 @@ describe('ResultsScreen Component', () => {
     renderWithRouter(props);
     
     // Check if the passing banner is displayed
-    expect(screen.getByText(/Assessment Complete/i)).toBeInTheDocument();
+    expect(screen.getByText(/PASSED/i)).toBeInTheDocument();
     
     // Check for "Board Review Note" denoting passing
     expect(screen.getByText(/Board Review/i)).toBeInTheDocument();
