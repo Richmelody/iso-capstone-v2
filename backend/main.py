@@ -382,6 +382,27 @@ def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
             # Transmit Webhook Securely from the Backend via Background Task
             submission_timestamp = datetime.datetime.now(datetime.UTC).isoformat().replace("+00:00", "Z")
 
+            # Map standard and category to clean names
+            std_map = {
+                "14001": "ISO 14001:2015",
+                "9001": "ISO 9001:2015",
+                "45001": "ISO 45001:2018",
+                "fssc22000": "FSSC 22000"
+            }
+            cat_map = {
+                "fnd": "Foundations",
+                "imp": "Implementer",
+                "ia": "Internal Auditor",
+                "la": "Lead Auditor"
+            }
+            
+            parts = exam_id.split("-") if exam_id else []
+            raw_std = parts[0] if len(parts) > 0 else ""
+            raw_cat = parts[1] if len(parts) > 1 else ""
+            
+            mapped_standard = std_map.get(raw_std, raw_std)
+            mapped_category = cat_map.get(raw_cat, raw_cat)
+
             def send_webhook():
                 try:
                     with httpx.Client(timeout=5.0) as client:
@@ -394,6 +415,8 @@ def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
                             "total_score": req.totalScore,
                             "percent": req.percent,
                             "passed": req.passed,
+                            "standard": mapped_standard,
+                            "category": mapped_category,
                             "submitted_at": submission_timestamp,
                             "total_cheating_glitches": total_cheating_events,
                             "cheating_events": cheating_events
