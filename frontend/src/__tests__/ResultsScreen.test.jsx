@@ -28,10 +28,10 @@ describe('ResultsScreen Component', () => {
     renderWithRouter(props);
     
     // Check if the passing banner is displayed
-    expect(screen.getByText(/Assessment Session Closed/i)).toBeInTheDocument();
+    expect(screen.getByText(/Assessment Complete/i)).toBeInTheDocument();
     
     // Check for "Board Review Note" denoting passing
-    expect(screen.getByText(/Board Review Note/i)).toBeInTheDocument();
+    expect(screen.getByText(/Board Review/i)).toBeInTheDocument();
     
     // Assure passing button is rendered to Dashboard
     expect(screen.getByText(/Return to Dashboard/i)).toBeInTheDocument();
@@ -53,11 +53,11 @@ describe('ResultsScreen Component', () => {
     renderWithRouter(props);
     
     // Should display Targeted Remediation
-    expect(screen.getByText(/Targeted Remediation Directive/i)).toBeInTheDocument();
+    expect(screen.getByText(/Study Directives/i)).toBeInTheDocument();
     
     // Should map the exact categories to the screen
-    expect(screen.getByText(/Technical Directive: Clause 4: Context of the Organization/i)).toBeInTheDocument();
-    expect(screen.getByText(/Technical Directive: Clause 5: Leadership/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Clause 4: Context of the Organization/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Clause 5: Leadership/i).length).toBeGreaterThan(0);
     
     // It should NOT render the Board Review
     expect(screen.queryByText(/Board Review Note/i)).not.toBeInTheDocument();
@@ -70,9 +70,9 @@ describe('ResultsScreen Component', () => {
     renderWithRouter({ score: 10, failedCats: new Set() });
     
     // Ensure all 3 steps of the roadmap are always present regardless of pass/fail
-    expect(screen.getByText(/Certification Audit Roadmap/i)).toBeInTheDocument();
-    expect(screen.getByText(/Step 1: Technical Submission/i)).toBeInTheDocument();
-    expect(screen.getByText(/Step 2: Performance & Integrity Validation/i)).toBeInTheDocument();
-    expect(screen.getByText(/Step 3: Final Certification Decision/i)).toBeInTheDocument();
+    expect(screen.getByText(/Certification Roadmap/i)).toBeInTheDocument();
+    expect(screen.getByText(/Technical Submission/i)).toBeInTheDocument();
+    expect(screen.getByText(/Integrity Validation/i)).toBeInTheDocument();
+    expect(screen.getByText(/Final Decision/i)).toBeInTheDocument();
   });
 });

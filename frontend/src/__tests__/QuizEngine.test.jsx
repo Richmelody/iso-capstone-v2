@@ -28,6 +28,19 @@ describe('QuizEngine Component - Standard User Flows', () => {
     ]
   };
 
+  // ─── Pinned layout: identity optMap so Option A stays at display position 0
+  // and Option D stays at display position 1. Prevents shuffle non-determinism
+  // from breaking tests. Production always gets a real random layout.
+  const PINNED_RECOVERED_STATE = {
+    currentIdx: 0,
+    timeLeft: 1200,
+    userAnswers: {},
+    layout: [
+      { qIdx: 0, optMap: [0, 1] }, // Q0: Option A=pos0, Option B=pos1
+      { qIdx: 1, optMap: [0, 1] }, // Q1: Option C=pos0, Option D=pos1
+    ],
+  };
+
   const mockOnFinish = vi.fn();
   const mockOnSync = vi.fn();
 
@@ -36,90 +49,75 @@ describe('QuizEngine Component - Standard User Flows', () => {
   });
 
   it('renders exactly on the first question upon mount', () => {
-    render(<QuizEngine examData={mockExamData} onFinish={mockOnFinish} onSyncNetwork={mockOnSync} />);
+    render(<QuizEngine examData={mockExamData} onFinish={mockOnFinish} onSyncNetwork={mockOnSync} recoveredState={PINNED_RECOVERED_STATE} />);
     
-    // Check HUD and question rendering
     expect(screen.getByText(/What is the context of the organization\?/i)).toBeInTheDocument();
     expect(screen.getByText(/Assessment Task #1/i)).toBeInTheDocument();
     expect(screen.getByText(/Option A/i)).toBeInTheDocument();
     expect(screen.getByText(/Option B/i)).toBeInTheDocument();
-    expect(screen.getByText("Skip Question")).toBeInTheDocument(); // Since no option is selected yet
+    expect(screen.getByText("Skip Question")).toBeInTheDocument();
   });
 
   it('allows a user to select an option, sync to the network, and advance to the next question', () => {
-    render(<QuizEngine examData={mockExamData} onFinish={mockOnFinish} onSyncNetwork={mockOnSync} />);
+    render(<QuizEngine examData={mockExamData} onFinish={mockOnFinish} onSyncNetwork={mockOnSync} recoveredState={PINNED_RECOVERED_STATE} />);
     
-    // Select Option A
     const optionA = screen.getByText(/Option A/i);
     fireEvent.click(optionA);
 
-    // The button should dynamically change to "Commit & Continue"
     const commitBtn = screen.getByText(/Commit & Continue/i);
     expect(commitBtn).toBeInTheDocument();
-
-    // Click commit
     fireEvent.click(commitBtn);
 
-    // Verify it called sync
     expect(mockOnSync).toHaveBeenCalled();
-
-    // Verify it advanced to the second question
     expect(screen.getByText(/Assessment Task #2/i)).toBeInTheDocument();
     expect(screen.getByText(/What represents top management\?/i)).toBeInTheDocument();
   });
 
   it('allows a user to skip a question without answering', () => {
-    render(<QuizEngine examData={mockExamData} onFinish={mockOnFinish} onSyncNetwork={mockOnSync} />);
+    render(<QuizEngine examData={mockExamData} onFinish={mockOnFinish} onSyncNetwork={mockOnSync} recoveredState={PINNED_RECOVERED_STATE} />);
     
-    // Do NOT select an option, immediately hit Skip
     const skipBtn = screen.getByText(/Skip Question/i);
     fireEvent.click(skipBtn);
 
-    // Should advance without syncing an answer
     expect(screen.getByText(/Assessment Task #2/i)).toBeInTheDocument();
   });
 
   it('opens the review drawer and shows correct completion statuses', () => {
-    render(<QuizEngine examData={mockExamData} onFinish={mockOnFinish} onSyncNetwork={mockOnSync} />);
+    render(<QuizEngine examData={mockExamData} onFinish={mockOnFinish} onSyncNetwork={mockOnSync} recoveredState={PINNED_RECOVERED_STATE} />);
     
-    // Select an option on Question 1, don't commit it, just open review drawer
     fireEvent.click(screen.getByText(/Option A/i));
     
     const drawerBtn = screen.getByText(/Open Review Panel/i);
     fireEvent.click(drawerBtn);
 
-    // Drawer should open showing progress
     expect(screen.getByText(/Audit Progress/i)).toBeInTheDocument();
-    expect(screen.getByText(/1 of 2 Completed/i)).toBeInTheDocument(); // Because we selected 1 answer
+    expect(screen.getByText(/1 of 2 Completed/i)).toBeInTheDocument();
     
-    // Verify it contains buttons to navigate dynamically
     const qButtons = screen.getAllByRole('button', { name: /^[1-2]$/ });
     expect(qButtons).toHaveLength(2);
   });
 
   it('finishes the exam accurately scoring the logical flows', () => {
-    render(<QuizEngine examData={mockExamData} onFinish={mockOnFinish} onSyncNetwork={mockOnSync} />);
+    render(<QuizEngine examData={mockExamData} onFinish={mockOnFinish} onSyncNetwork={mockOnSync} recoveredState={PINNED_RECOVERED_STATE} />);
     
-    // Answer Q1 correctly
+    // Answer Q1 correctly (Option A = original idx 0 = correct for Q0)
     fireEvent.click(screen.getByText(/Option A/i));
     fireEvent.click(screen.getByText("Commit & Continue"));
 
-    // Answer Q2 incorrectly
+    // Answer Q2 incorrectly (Option C = original idx 0 = wrong for Q1)
     fireEvent.click(screen.getByText(/Option C/i));
     fireEvent.click(screen.getByText("Commit & Continue"));
 
-    // Because it was the last question, the drawer opens.
-    // Click Review & Submit from the drawer
     fireEvent.click(screen.getByText(/Review & Submit/i));
-
-    // The confirmation modal should pop up
     expect(screen.getByText(/Finalize Assessment/i)).toBeInTheDocument();
-    
-    // Assume we hit Finalize
     fireEvent.click(screen.getByText(/Finalize & Submit/i));
 
-    // Score evaluation: Q1 correct, Q2 wrong.
-    // Expect final score = 1. Failed Category = 'Leadership'
-    expect(mockOnFinish).toHaveBeenCalledWith(1, new Set(["Leadership"]));
+    // Epic 2.1: onFinish now passes (score, failedCats, assignedLayout, userAnswers)
+    expect(mockOnFinish).toHaveBeenCalledWith(
+      1,
+      new Set(["Leadership"]),
+      expect.any(Array),
+      expect.any(Object)
+    );
   });
 });

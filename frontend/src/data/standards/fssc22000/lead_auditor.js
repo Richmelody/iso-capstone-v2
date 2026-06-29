@@ -1,5 +1,5 @@
 export default {
-  title: "ISO 9001:2015 Foundations",
+  title: "FSSC 22000 Lead Auditor",
   questions: [
     // TODO: Insert AI-generated questions here
   ],

@@ -1,507 +1,460 @@
 export default {
   "title": "ISO 14001:2015 Foundations",
   "questions": [
+    // --- PART 1: ARCHITECTURE (1-10) - Recall ---
     {
-      "category": "Definitions",
-      "section": "1. Fundamentals",
-      "text": "In ISO 14001, an 'Environmental Aspect' is best defined as:",
+      "category": "Architecture",
+      "section": "Core Concepts",
+      "text": "ISO 14001 is an international standard that provides requirements for which type of management system?",
       "options": [
-        {
-          "text": "The cause (interaction with the environment)",
-          "correct": true
-        },
-        {
-          "text": "The effect (change to the environment)",
-          "correct": false
-        },
-        {
-          "text": "The legal limit for pollution",
-          "correct": false
-        },
-        {
-          "text": "The emergency response plan",
-          "correct": false
-        }
+        { "text": "Quality Management System", "correct": false },
+        { "text": "Environmental Management System", "correct": true },
+        { "text": "Occupational Health and Safety System", "correct": false },
+        { "text": "Food Safety Management System", "correct": false }
       ],
-      "rationale": "An Aspect is the 'Cause' (e.g., Emissions), while Impact is the 'Effect'. Legal limits are Compliance Obligations."
+      "rationale": "Basic recall of the purpose of the ISO 14001 standard.",
+      "lms_direction": "Review the Introduction section of the ISO 14001 standard."
     },
     {
-      "category": "Structure",
-      "section": "1. Fundamentals",
-      "text": "ISO 14001 follows which structure to ensure compatibility with ISO 9001 and ISO 45001?",
+      "category": "Architecture",
+      "section": "Core Concepts",
+      "text": "The ISO 14001 standard is based on which continuous improvement framework?",
       "options": [
-        {
-          "text": "Annex SL (High Level Structure)",
-          "correct": true
-        },
-        {
-          "text": "The Kyoto Protocol Structure",
-          "correct": false
-        },
-        {
-          "text": "PDCA-Advanced Framework",
-          "correct": false
-        },
-        {
-          "text": "The Global Reporting Initiative (GRI)",
-          "correct": false
-        }
+        { "text": "Plan-Do-Check-Act (PDCA)", "correct": true },
+        { "text": "Step-Review-Execute-Manage", "correct": false },
+        { "text": "Assess-Train-Verify-Act", "correct": false },
+        { "text": "Design-Build-Test-Monitor", "correct": false }
       ],
-      "rationale": "Annex SL provides the harmonized 10-clause structure for all ISO Management Systems."
+      "rationale": "Tests the fundamental management cycle used in ISO standards.",
+      "lms_direction": "Consult the ISO 14001 framework and PDCA overview module."
     },
     {
-      "category": "Scope",
-      "section": "1. Fundamentals",
-      "text": "Can an organization exclude a specific department from the Scope of the EMS to avoid auditing it?",
+      "category": "Architecture",
+      "section": "Structure",
+      "text": "In ISO 14001, which clause is dedicated to the 'Context of the Organization'?",
       "options": [
-        {
-          "text": "No, the scope must be credible and include all significant aspects",
-          "correct": true
-        },
-        {
-          "text": "Yes, if the General Manager approves it",
-          "correct": false
-        },
-        {
-          "text": "Yes, if the department is low risk",
-          "correct": false
-        },
-        {
-          "text": "No, unless they pay a higher certification fee",
-          "correct": false
-        }
+        { "text": "Clause 4", "correct": true },
+        { "text": "Clause 5", "correct": false },
+        { "text": "Clause 6", "correct": false },
+        { "text": "Clause 7", "correct": false }
       ],
-      "rationale": "The scope must be credible and cannot exclude activities that affect environmental performance to mislead stakeholders."
+      "rationale": "Direct recall of the High-Level Structure.",
+      "lms_direction": "Refer to the High-Level Structure summary table."
     },
     {
-      "category": "Leadership",
-      "section": "1. Fundamentals",
-      "text": "Who is ultimately accountable for the effectiveness of the EMS?",
+      "category": "Architecture",
+      "section": "Definitions",
+      "text": "True or False: An 'Environmental Aspect' is defined as an element of an organization’s activities, products, or services that interacts with the environment.",
       "options": [
-        {
-          "text": "Top Management",
-          "correct": true
-        },
-        {
-          "text": "The Environmental Health & Safety Manager",
-          "correct": false
-        },
-        {
-          "text": "The External Auditor",
-          "correct": false
-        },
-        {
-          "text": "The Quality Department",
-          "correct": false
-        }
+        { "text": "True", "correct": true },
+        { "text": "False", "correct": false }
       ],
-      "rationale": "Clause 5.1 places ultimate accountability on Top Management. They cannot delegate accountability, only responsibility."
+      "rationale": "Tests the foundational definition of an aspect.",
+      "lms_direction": "Review the 'Definitions' section regarding Environmental Aspects."
     },
     {
-      "category": "Aspects",
-      "section": "2. Planning Phase",
-      "text": "Scenario: You see a new machine installed last week. The 'Aspects Register' does not list it. Is this an NC?",
+      "category": "Architecture",
+      "section": "Definitions",
+      "text": "What is an 'Environmental Impact' in the context of ISO 14001?",
       "options": [
-        {
-          "text": "Yes, Clause 6.1.2 (Failure to identify new aspects)",
-          "correct": true
-        },
-        {
-          "text": "No, they have a 3-month grace period",
-          "correct": false
-        },
-        {
-          "text": "It is an Opportunity for Improvement (OFI)",
-          "correct": false
-        },
-        {
-          "text": "No, unless the machine leaks",
-          "correct": false
-        }
+        { "text": "The cost of cleaning up a chemical spill.", "correct": false },
+        { "text": "Any change to the environment, whether adverse or beneficial, resulting from an organization’s environmental aspects.", "correct": true },
+        { "text": "The legal fine paid for violating environmental regulations.", "correct": false },
+        { "text": "The training record of employees regarding waste management.", "correct": false }
       ],
-      "rationale": "New activities/equipment create new risks. The register must be updated immediately before operation."
+      "rationale": "Tests the distinction between an aspect (cause) and an impact (effect).",
+      "lms_direction": "Review the concepts of Aspects vs. Impacts in the standard."
     },
     {
-      "category": "Legal",
-      "section": "2. Planning Phase",
-      "text": "Which document must the auditor check to verify Clause 6.1.3 (Compliance Obligations)?",
+      "category": "Architecture",
+      "section": "Structure",
+      "text": "Which clause of ISO 14001 is titled 'Leadership'?",
       "options": [
-        {
-          "text": "The Legal Register (List of Laws)",
-          "correct": true
-        },
-        {
-          "text": "The Health & Safety Policy",
-          "correct": false
-        },
-        {
-          "text": "The ISO 14001 Standard itself",
-          "correct": false
-        },
-        {
-          "text": "The Google Search History",
-          "correct": false
-        }
+        { "text": "Clause 4", "correct": false },
+        { "text": "Clause 5", "correct": true },
+        { "text": "Clause 6", "correct": false },
+        { "text": "Clause 7", "correct": false }
       ],
-      "rationale": "Auditors must verify the organization has identified its specific legal requirements via a Legal Register."
+      "rationale": "Direct recall of the standard structure.",
+      "lms_direction": "Refer to the Leadership module."
     },
     {
-      "category": "Lifecycle",
-      "section": "2. Planning Phase",
-      "text": "ISO 14001 requires organizations to consider which perspective when determining aspects?",
+      "category": "Architecture",
+      "section": "Structure",
+      "text": "Under ISO 14001, which clause is titled 'Planning'?",
       "options": [
-        {
-          "text": "Lifecycle Perspective",
-          "correct": true
-        },
-        {
-          "text": "Cradle-to-Cradle Certification",
-          "correct": false
-        },
-        {
-          "text": "Gate-to-Gate (Factory only)",
-          "correct": false
-        },
-        {
-          "text": "Carbon Footprint Analysis",
-          "correct": false
-        }
+        { "text": "Clause 5", "correct": false },
+        { "text": "Clause 6", "correct": true },
+        { "text": "Clause 7", "correct": false },
+        { "text": "Clause 8", "correct": false }
       ],
-      "rationale": "They must consider upstream (suppliers) and downstream (disposal/use) impacts, though a full LCA is not required."
+      "rationale": "Direct recall of the High-Level Structure.",
+      "lms_direction": "Consult the planning phase requirements in the course materials."
     },
     {
-      "category": "Risks",
-      "section": "2. Planning Phase",
-      "text": "Scenario: The company identified a flood risk but has no plan to address it. This is a failure of:",
+      "category": "Architecture",
+      "section": "Structure",
+      "text": "Which clause of ISO 14001 focuses on 'Performance Evaluation,' including monitoring and internal audits?",
       "options": [
-        {
-          "text": "Clause 6.1.1 (Risks & Opportunities)",
-          "correct": true
-        },
-        {
-          "text": "Clause 7.2 (Competence)",
-          "correct": false
-        },
-        {
-          "text": "Clause 9.1 (Monitoring)",
-          "correct": false
-        },
-        {
-          "text": "Clause 10.2 (Non-Conformity)",
-          "correct": false
-        }
+        { "text": "Clause 7", "correct": false },
+        { "text": "Clause 8", "correct": false },
+        { "text": "Clause 9", "correct": true },
+        { "text": "Clause 10", "correct": false }
       ],
-      "rationale": "Identified risks must be addressed via the planning process. Identifying a risk and ignoring it is a non-conformance."
+      "rationale": "Direct recall of the monitoring phase of the standard.",
+      "lms_direction": "Review the monitoring and evaluation module."
     },
     {
-      "category": "Control",
-      "section": "3. Operational Control",
-      "text": "Scenario: Hazardous waste bins are unlabeled and overflowing. The procedure requires labeling. This is a breach of:",
+      "category": "Architecture",
+      "section": "Core Concepts",
+      "text": "Under ISO 14001, Clause 10 covers which overarching concept?",
       "options": [
-        {
-          "text": "Clause 8.1 (Operational Planning & Control)",
-          "correct": true
-        },
-        {
-          "text": "Clause 4.2 (Interested Parties)",
-          "correct": false
-        },
-        {
-          "text": "Clause 5.3 (Roles and Responsibilities)",
-          "correct": false
-        },
-        {
-          "text": "Clause 6.1.1 (General Risks)",
-          "correct": false
-        }
+        { "text": "Operation", "correct": false },
+        { "text": "Improvement", "correct": true },
+        { "text": "Support", "correct": false },
+        { "text": "Leadership", "correct": false }
       ],
-      "rationale": "Failure to implement established criteria (procedures/labels) is a direct Clause 8.1 NC."
+      "rationale": "Direct recall of the final clause covering corrective actions.",
+      "lms_direction": "Revisit the Improvement module."
     },
     {
-      "category": "Competence",
-      "section": "3. Operational Control",
-      "text": "You ask an operator about the environmental impact of their job. They say 'I don't know'. Breach of:",
+      "category": "Architecture",
+      "section": "Core Concepts",
+      "text": "True or False: The 'Scope' of an Environmental Management System describes the boundaries and applicability of the system within the organization.",
       "options": [
-        {
-          "text": "Clause 7.3 (Awareness)",
-          "correct": true
-        },
-        {
-          "text": "Clause 5.2 (Policy)",
-          "correct": false
-        },
-        {
-          "text": "Clause 9.1.2 (Evaluation of Compliance)",
-          "correct": false
-        },
-        {
-          "text": "Clause 10.1 (General Improvement)",
-          "correct": false
-        }
+        { "text": "True", "correct": true },
+        { "text": "False", "correct": false }
       ],
-      "rationale": "Staff must be aware of the implications of not conforming with the EMS requirements (Clause 7.3)."
+      "rationale": "Tests the basic concept of defining what the system covers.",
+      "lms_direction": "Consult the context and scope lesson."
+    },
+
+    // --- PART 2: CLAUSE UNDERSTANDING (11-20) - Understanding ---
+    {
+      "category": "Clause Knowledge",
+      "section": "Mapping",
+      "text": "When top management establishes an 'Environmental Policy' for the company, which clause of ISO 14001 are they fulfilling?",
+      "options": [
+        { "text": "Clause 4 (Context)", "correct": false },
+        { "text": "Clause 5 (Leadership)", "correct": true },
+        { "text": "Clause 7 (Support)", "correct": false },
+        { "text": "Clause 9 (Performance Evaluation)", "correct": false }
+      ],
+      "rationale": "Policies are a core requirement of leadership commitments.",
+      "lms_direction": "Study the Environmental Policy requirements in Clause 5."
     },
     {
-      "category": "Emergency",
-      "section": "3. Operational Control",
-      "text": "Scenario: A chemical spill occurs. The spill kit is empty. This is a failure of:",
+      "category": "Clause Knowledge",
+      "section": "Mapping",
+      "text": "Which ISO 14001 clause requires an organization to identify 'Risks and Opportunities' associated with their environmental aspects?",
       "options": [
-        {
-          "text": "Clause 8.2 (Emergency Preparedness)",
-          "correct": true
-        },
-        {
-          "text": "Clause 10.2 (Corrective Action)",
-          "correct": false
-        },
-        {
-          "text": "Clause 8.1 (Operational Control)",
-          "correct": false
-        },
-        {
-          "text": "Clause 4.4 (EMS System)",
-          "correct": false
-        }
+        { "text": "Clause 4", "correct": false },
+        { "text": "Clause 6", "correct": true },
+        { "text": "Clause 8", "correct": false },
+        { "text": "Clause 10", "correct": false }
       ],
-      "rationale": "Clause 8.2 requires the capability to respond. An empty kit means the response mechanism failed."
+      "rationale": "Risk and opportunity planning is part of Clause 6.",
+      "lms_direction": "Review the Planning and Risks module."
     },
     {
-      "category": "Contractors",
-      "section": "3. Operational Control",
-      "text": "A contractor dumps paint down a drain. The company says 'Not our employee, not our problem.' Are they correct?",
+      "category": "Clause Knowledge",
+      "section": "Mapping",
+      "text": "Ensuring that employees are trained and competent to perform tasks that affect environmental performance is a requirement of which ISO 14001 clause?",
       "options": [
-        {
-          "text": "No, Clause 8.1 requires control of outsourced processes",
-          "correct": true
-        },
-        {
-          "text": "Yes, contractors are excluded from the EMS",
-          "correct": false
-        },
-        {
-          "text": "Yes, this is a legal issue, not an EMS issue",
-          "correct": false
-        },
-        {
-          "text": "No, but it is only a Minor NC",
-          "correct": false
-        }
+        { "text": "Clause 5 (Leadership)", "correct": false },
+        { "text": "Clause 6 (Planning)", "correct": false },
+        { "text": "Clause 7 (Support)", "correct": true },
+        { "text": "Clause 10 (Improvement)", "correct": false }
       ],
-      "rationale": "The organization retains responsibility for environmental impacts of outsourced work (Contractors)."
+      "rationale": "Training and competence fall under Support.",
+      "lms_direction": "Review the Support/Resource module focusing on Competence."
     },
     {
-      "category": "Design",
-      "section": "3. Operational Control",
-      "text": "When designing a new product, the organization must consider environmental requirements. This relates to:",
+      "category": "Clause Knowledge",
+      "section": "Mapping",
+      "text": "Which ISO 14001 clause requires an organization to identify and have access to applicable 'Compliance Obligations' (legal requirements)?",
       "options": [
-        {
-          "text": "Clause 8.1 (Design & Development controls)",
-          "correct": true
-        },
-        {
-          "text": "Clause 9.3 (Management Review)",
-          "correct": false
-        },
-        {
-          "text": "Clause 5.1 (Leadership)",
-          "correct": false
-        },
-        {
-          "text": "Clause 10.1 (Improvement)",
-          "correct": false
-        }
+        { "text": "Clause 6 (Planning)", "correct": true },
+        { "text": "Clause 8 (Operation)", "correct": false },
+        { "text": "Clause 9 (Performance Evaluation)", "correct": false },
+        { "text": "Clause 4 (Context)", "correct": false }
       ],
-      "rationale": "Operational control extends to the design phase to minimize lifecycle impacts (e.g., material selection)."
+      "rationale": "Identifying legal requirements is part of the planning process.",
+      "lms_direction": "Consult the Compliance Obligations section under Planning."
     },
     {
-      "category": "Monitoring",
-      "section": "4. Performance Eval",
-      "text": "Scenario: The pH meter used to check wastewater has not been calibrated in 2 years. Clause breached?",
+      "category": "Clause Knowledge",
+      "section": "Mapping",
+      "text": "Which TWO of the following are required to be established and maintained under the ISO 14001 standard? (Select TWO)",
       "options": [
-        {
-          "text": "Clause 9.1.1 (Monitoring & Measurement)",
-          "correct": true
-        },
-        {
-          "text": "Clause 7.1.3 (Infrastructure)",
-          "correct": false
-        },
-        {
-          "text": "Clause 8.1 (Operational Control)",
-          "correct": false
-        },
-        {
-          "text": "Clause 10.2 (Non-Conformity)",
-          "correct": false
-        }
+        { "text": "Environmental Policy", "correct": true },
+        { "text": "Environmental Objectives", "correct": true },
+        { "text": "Annual profit and loss statements", "correct": false },
+        { "text": "Staff salary schedules", "correct": false }
       ],
-      "rationale": "Equipment used to measure environmental performance must be calibrated and verified to ensure valid data."
+      "rationale": "Policy and Objectives are mandatory management system elements.",
+      "lms_direction": "Review the mandatory documented information elements for ISO 14001."
     },
     {
-      "category": "Evaluation",
-      "section": "4. Performance Eval",
-      "text": "The organization checks its compliance with the law every year. Is this enough?",
+      "category": "Clause Knowledge",
+      "section": "Mapping",
+      "text": "When an organization implements controls to ensure that its operations do not harm the environment (e.g., controlling a chemical process), this is part of which clause?",
       "options": [
-        {
-          "text": "Yes, if the frequency is defined and effective (Clause 9.1.2)",
-          "correct": true
-        },
-        {
-          "text": "No, it must be monthly",
-          "correct": false
-        },
-        {
-          "text": "No, it must be weekly",
-          "correct": false
-        },
-        {
-          "text": "Yes, but only if the auditor approves",
-          "correct": false
-        }
+        { "text": "Clause 6 (Planning)", "correct": false },
+        { "text": "Clause 7 (Support)", "correct": false },
+        { "text": "Clause 8 (Operation)", "correct": true },
+        { "text": "Clause 9 (Performance Evaluation)", "correct": false }
       ],
-      "rationale": "Clause 9.1.2 requires evaluation at planned intervals. 'Annual' is acceptable if the risk is low and justified."
+      "rationale": "Operational controls are the day-to-day actions in Clause 8.",
+      "lms_direction": "Refer to the Operational Planning and Control module."
     },
     {
-      "category": "Internal Audit",
-      "section": "4. Performance Eval",
-      "text": "Scenario: The Environmental Manager audits his own department. Is this allowed?",
+      "category": "Clause Knowledge",
+      "section": "Mapping",
+      "text": "Which ISO 14001 clause covers the requirement for 'Internal Audits' to verify if the EMS is working effectively?",
       "options": [
-        {
-          "text": "No, auditors must ensure objectivity and impartiality (Clause 9.2)",
-          "correct": true
-        },
-        {
-          "text": "Yes, he knows the system best",
-          "correct": false
-        },
-        {
-          "text": "Yes, if the company is small",
-          "correct": false
-        },
-        {
-          "text": "No, unless he is a Lead Auditor",
-          "correct": false
-        }
+        { "text": "Clause 7", "correct": false },
+        { "text": "Clause 8", "correct": false },
+        { "text": "Clause 9", "correct": true },
+        { "text": "Clause 10", "correct": false }
       ],
-      "rationale": "Auditors cannot audit their own work. Impartiality is a core principle of Clause 9.2."
+      "rationale": "Internal auditing is a performance evaluation tool.",
+      "lms_direction": "Refer to the Internal Audit module."
     },
     {
-      "category": "Review",
-      "section": "4. Performance Eval",
-      "text": "Management Review (9.3) must include discussion of:",
+      "category": "Clause Knowledge",
+      "section": "Mapping",
+      "text": "True or False: 'Management Review' (where leadership evaluates the system) is a requirement of ISO 14001 Clause 9.",
       "options": [
-        {
-          "text": "Trends in nonconformities and corrective actions",
-          "correct": true
-        },
-        {
-          "text": "A list of employee birthdays",
-          "correct": false
-        },
-        {
-          "text": "The stock market performance",
-          "correct": false
-        },
-        {
-          "text": "Detailed maintenance logs for every machine",
-          "correct": false
-        }
+        { "text": "True", "correct": true },
+        { "text": "False", "correct": false }
       ],
-      "rationale": "Management Review is a strategic look at system performance data, including NC trends, not operational minutiae."
+      "rationale": "Management Review is a key component of Performance Evaluation.",
+      "lms_direction": "Study the Management Review section of the standard."
     },
     {
-      "category": "Evidence",
-      "section": "5. Audit Skills",
-      "text": "Which of the following is valid 'Audit Evidence'?",
+      "category": "Clause Knowledge",
+      "section": "Mapping",
+      "text": "Which ISO 14001 clause governs the control of 'Documented Information' (keeping records, files, and procedures)?",
       "options": [
-        {
-          "text": "A signed training record and operator interview",
-          "correct": true
-        },
-        {
-          "text": "A rumor heard in the canteen",
-          "correct": false
-        },
-        {
-          "text": "The auditor's personal opinion",
-          "correct": false
-        },
-        {
-          "text": "A feeling that something is wrong",
-          "correct": false
-        }
+        { "text": "Clause 4", "correct": false },
+        { "text": "Clause 5", "correct": false },
+        { "text": "Clause 7", "correct": true },
+        { "text": "Clause 8", "correct": false }
       ],
-      "rationale": "Evidence must be verifiable. Hearsay, opinions, and feelings are not valid audit evidence."
+      "rationale": "Resource and document support is in Clause 7.",
+      "lms_direction": "Refer to the Document Control module."
     },
     {
-      "category": "NC Writing",
-      "section": "5. Audit Skills",
-      "text": "A Non-Conformity statement must contain:",
+      "category": "Clause Knowledge",
+      "section": "Mapping",
+      "text": "When a company fixes a nonconformity (e.g., a chemical leak) and investigates the root cause to prevent it from recurring, they are acting according to which clause?",
       "options": [
-        {
-          "text": "The Criteria (Requirement), The Evidence, and The Finding",
-          "correct": true
-        },
-        {
-          "text": "The name of the person to blame",
-          "correct": false
-        },
-        {
-          "text": "The solution to the problem",
-          "correct": false
-        },
-        {
-          "text": "The cost of the mistake",
-          "correct": false
-        }
+        { "text": "Clause 6", "correct": false },
+        { "text": "Clause 8", "correct": false },
+        { "text": "Clause 9", "correct": false },
+        { "text": "Clause 10", "correct": true }
       ],
-      "rationale": "NCs focus on the system failure (Criteria vs Evidence). Blame is irrelevant; solutions are the auditee's job."
+      "rationale": "Corrective action is the essence of Improvement (Clause 10).",
+      "lms_direction": "Study the Nonconformity and Corrective Action module."
+    },
+
+    // --- PART 3: SCENARIO APPLICATION (21-35) - Application ---
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "A company is assessing its relationship with 'interested parties' (e.g., neighbors, regulators, local government) that affect its environmental performance. Which clause requires this?",
+      "options": [
+        { "text": "Clause 4 (Context of the Organization)", "correct": true },
+        { "text": "Clause 7 (Support)", "correct": false },
+        { "text": "Clause 8 (Operation)", "correct": false },
+        { "text": "Clause 10 (Improvement)", "correct": false }
+      ],
+      "rationale": "Interested parties are part of the organizational context.",
+      "lms_direction": "Review the context of the organization module."
     },
     {
-      "category": "Improvement",
-      "section": "5. Audit Skills",
-      "text": "Fixing a leak is a 'Correction'. Finding out *why* it leaked is:",
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "An organization holds a drill to prepare for a potential chemical fire. Which ISO 14001 clause requires 'Emergency Preparedness and Response'?",
       "options": [
-        {
-          "text": "Root Cause Analysis (Clause 10.2)",
-          "correct": true
-        },
-        {
-          "text": "Preventive Maintenance",
-          "correct": false
-        },
-        {
-          "text": "Continual Improvement",
-          "correct": false
-        },
-        {
-          "text": "Risk Assessment",
-          "correct": false
-        }
+        { "text": "Clause 6 (Planning)", "correct": false },
+        { "text": "Clause 7 (Support)", "correct": false },
+        { "text": "Clause 8 (Operation)", "correct": true },
+        { "text": "Clause 9 (Performance Evaluation)", "correct": false }
       ],
-      "rationale": "You must eliminate the root cause to prevent recurrence. This is the definition of Corrective Action."
+      "rationale": "Emergency response is an operational control.",
+      "lms_direction": "Review the emergency preparedness module."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "An auditor finds that employees do not know the company's Environmental Policy. Which ISO 14001 clause is violated?",
+      "options": [
+        { "text": "Clause 4 (Context)", "correct": false },
+        { "text": "Clause 5 (Leadership)", "correct": true },
+        { "text": "Clause 8 (Operation)", "correct": false },
+        { "text": "Clause 10 (Improvement)", "correct": false }
+      ],
+      "rationale": "Leadership is responsible for establishing and communicating the policy.",
+      "lms_direction": "Study the Communication of Environmental Policy requirements."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "A team identifies that their factory creates two environmental impacts: (1) noise pollution for local residents and (2) water waste in the drain. Which TWO clauses are most relevant to identifying these environmental aspects and impacts? (Select TWO)",
+      "options": [
+        { "text": "Clause 4 (Context)", "correct": true },
+        { "text": "Clause 6 (Planning)", "correct": true },
+        { "text": "Clause 8 (Operation)", "correct": false },
+        { "text": "Clause 9 (Performance Evaluation)", "correct": false }
+      ],
+      "rationale": "Aspects are identified within the context (4) and managed/planned (6).",
+      "lms_direction": "Refer to the Environmental Aspects and Impacts module."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "An employee notices a pipe is leaking oil into the parking lot and reports it immediately. Taking immediate action to stop the leak is an example of a 'Correction' under which clause?",
+      "options": [
+        { "text": "Clause 6 (Planning)", "correct": false },
+        { "text": "Clause 7 (Support)", "correct": false },
+        { "text": "Clause 8 (Operation)", "correct": false },
+        { "text": "Clause 10 (Improvement)", "correct": true }
+      ],
+      "rationale": "Corrections and corrective actions are found in Clause 10.",
+      "lms_direction": "Review the definitions of Correction vs. Corrective Action."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "A company decides to reduce its paper usage by 20% this year. This is an example of setting an:",
+      "options": [
+        { "text": "Environmental Aspect", "correct": false },
+        { "text": "Environmental Objective", "correct": true },
+        { "text": "Interested Party", "correct": false },
+        { "text": "Internal Audit", "correct": false }
+      ],
+      "rationale": "Quantifiable goals are environmental objectives.",
+      "lms_direction": "Review Environmental Objectives and planning to achieve them."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "True or False: If a company fails an internal audit, they are not required to take any action until the external certification auditor arrives.",
+      "options": [
+        { "text": "True", "correct": false },
+        { "text": "False", "correct": true }
+      ],
+      "rationale": "ISO 14001 requires the organization to react to internal audit findings via Clause 10 (Improvement).",
+      "lms_direction": "Refer to the handling of audit nonconformities."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "A maintenance worker is unsure about the waste disposal procedure for used batteries. This is a failure to meet the requirements of which clause regarding 'Competence and Awareness'?",
+      "options": [
+        { "text": "Clause 5 (Leadership)", "correct": false },
+        { "text": "Clause 7 (Support)", "correct": true },
+        { "text": "Clause 8 (Operation)", "correct": false },
+        { "text": "Clause 9 (Performance Evaluation)", "correct": false }
+      ],
+      "rationale": "Competence and awareness are in Clause 7.",
+      "lms_direction": "Review the awareness and competence training module."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "A facility decides to switch to a greener electricity provider to reduce its carbon footprint. This change should be documented as part of which process?",
+      "options": [
+        { "text": "Clause 4 (Context)", "correct": false },
+        { "text": "Clause 6 (Planning/Objectives)", "correct": true },
+        { "text": "Clause 8 (Operation)", "correct": false },
+        { "text": "Clause 9 (Evaluation)", "correct": false }
+      ],
+      "rationale": "Decisions to meet objectives (like reducing carbon footprint) occur in the planning phase.",
+      "lms_direction": "Refer to the Planning module."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "The company holds a meeting to communicate their new environmental procedures to all staff. Which clause governs 'Communication'?",
+      "options": [
+        { "text": "Clause 4", "correct": false },
+        { "text": "Clause 5", "correct": false },
+        { "text": "Clause 7", "correct": true },
+        { "text": "Clause 10", "correct": false }
+      ],
+      "rationale": "Communication is a support process in Clause 7.",
+      "lms_direction": "Refer to the communication requirements module."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "An organization is preparing for an external audit. Which TWO activities are part of 'Performance Evaluation'? (Select TWO)",
+      "options": [
+        { "text": "Conducting an Internal Audit", "correct": true },
+        { "text": "Management Review", "correct": true },
+        { "text": "Designing a new product", "correct": false },
+        { "text": "Writing a job description", "correct": false }
+      ],
+      "rationale": "Both audits and management reviews are mechanisms for evaluating performance.",
+      "lms_direction": "Review the Internal Audit and Management Review module."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "During an audit, you are asked to show how the organization ensures that its contractors follow environmental rules. This relates to which clause?",
+      "options": [
+        { "text": "Clause 8 (Operation - Outsourced Processes)", "correct": true },
+        { "text": "Clause 4 (Context)", "correct": false },
+        { "text": "Clause 5 (Leadership)", "correct": false },
+        { "text": "Clause 6 (Planning)", "correct": false }
+      ],
+      "rationale": "Operational control includes controlling externally provided processes.",
+      "lms_direction": "Review the contractor and outsourced processes module."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "You are measuring the amount of water the factory uses each month to see if you are meeting your goal. This measurement is part of:",
+      "options": [
+        { "text": "Clause 6 (Planning)", "correct": false },
+        { "text": "Clause 9 (Performance Evaluation)", "correct": true },
+        { "text": "Clause 10 (Improvement)", "correct": false },
+        { "text": "Clause 5 (Leadership)", "correct": false }
+      ],
+      "rationale": "Monitoring and measuring performance is in Clause 9.",
+      "lms_direction": "Review the monitoring and measurement module."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "A company realizes their waste storage area is not compliant with local environmental laws. They must update the area to be compliant. This is an example of:",
+      "options": [
+        { "text": "Identifying Compliance Obligations (Clause 6)", "correct": true },
+        { "text": "Identifying Interested Parties (Clause 4)", "correct": false },
+        { "text": "Leadership commitment (Clause 5)", "correct": false },
+        { "text": "Internal Audit (Clause 9)", "correct": false }
+      ],
+      "rationale": "Ensuring facilities meet legal requirements is part of Compliance Obligations.",
+      "lms_direction": "Refer to the Compliance Obligations lesson."
+    },
+    {
+      "category": "Scenario Application",
+      "section": "Workplace Event",
+      "text": "True or False: If an organization finds that it has violated an environmental law, it is required to investigate the root cause and prevent it from happening again under ISO 14001 Clause 10.",
+      "options": [
+        { "text": "True", "correct": true },
+        { "text": "False", "correct": false }
+      ],
+      "rationale": "ISO 14001 requires handling nonconformity via Clause 10.",
+      "lms_direction": "Study the Nonconformity and Corrective Action protocols."
     }
   ],
   "remediationData": {
-    "Definitions": "Review ISO 14001 Clause 3 terms. Master the distinction between Aspect (Cause) and Impact (Effect).",
-    "Structure": "Study Annex SL. This 10-clause structure is the backbone of all integrated management systems.",
-    "Scope": "Review Clause 4.3. The scope cannot exclude activities to 'hide' risks. It must be credible.",
-    "Leadership": "Re-read Clause 5.1. Top Management cannot delegate accountability, only responsibility.",
-    "Aspects": "Focus on Clause 6.1.2. The Aspects Register must be a 'live' document updated with change.",
-    "Legal": "Focus on Clause 6.1.3. You cannot audit compliance without checking the Legal Register first.",
-    "Lifecycle": "Review Clause 6.1.2. Understand how to control impacts upstream (suppliers) and downstream (disposal).",
-    "Risks": "Review Clause 6.1.1. Risks identified in planning must have actions assigned to them.",
-    "Control": "Focus on Clause 8.1. Procedures are the 'Criteria'. If they are not followed, it is an NC.",
-    "Competence": "Focus on Clause 7.2/7.3. Employees don't need to recite policy, but must know their impacts.",
-    "Emergency": "Review Clause 8.2. Preparedness means having equipment (spill kits) ready and tested.",
-    "Contractors": "Review Clause 8.1 (Outsourced Processes). The site is responsible for contractor behavior.",
-    "Design": "Study Lifecycle controls in Design. Pollution prevention starts at the drawing board.",
-    "Monitoring": "Focus on Clause 9.1.1. Uncalibrated equipment renders all data invalid. Check tags.",
-    "Evaluation": "Review Clause 9.1.2. Evaluation of Compliance is a check against Law, not just Procedure.",
-    "Internal Audit": "Study Clause 9.2. Impartiality is key. You cannot mark your own homework.",
-    "Review": "Review Clause 9.3 inputs. Management must review systemic data, not just operational noise.",
-    "Evidence": "Audit Principles: Evidence must be verifiable (Records, Observation, or Statement of Fact).",
-    "NC Writing": "Practice the 'PLOR' or 'CEC' method. Never blame a person; blame the process gap.",
-    "Improvement": "Focus on Clause 10.2. Distinguish between 'Fixing it' (Correction) and 'Stopping it forever' (RCA)."
+    "Architecture": "Revisit the course module on 'ISO 14001 Structure and Core Concepts'. Focus on understanding the PDCA cycle, Environmental Aspects vs. Impacts, and the High-Level Structure (Clauses 4-10).",
+    "Clause Knowledge": "Review the clause mapping reference chart. Remember to connect management activities to the corresponding standard clause (e.g., Clause 6 for Planning and Risks, Clause 7 for Support).",
+    "Scenario Application": "Practice applying the standard to real-world scenarios. Focus on identifying what actions are required under the Operational (Clause 8), Performance Evaluation (Clause 9), and Improvement (Clause 10) clauses."
   }
-};
+}

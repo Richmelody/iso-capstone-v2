@@ -1,12 +1,88 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, examData, isVaultBurned, recoveredState }) {
+// ─── Epic 1.3: Named exports so unit tests can import & verify them directly ───
+
+/**
+ * generateLayout(bank, count)
+ * Randomly selects `count` unique questions from `bank`, shuffles their options,
+ * and returns a layout array: [{ qIdx, optMap }, ...]
+ * qIdx    → index of the question in the original bank
+ * optMap  → permutation array mapping display position → original option index
+ */
+export function generateLayout(bank, count = 20) {
+  // Build a shuffled copy of all indices, then take the first `count`
+  const indices = Array.from({ length: bank.length }, (_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  return indices.slice(0, count).map((qIdx) => ({
+    qIdx,
+    optMap: shuffleOptions(bank[qIdx].options),
+  }));
+}
+
+/**
+ * shuffleOptions(options)
+ * Returns a Fisher-Yates shuffled permutation of [0..n-1].
+ * optMap[displayPosition] = originalOptionIndex
+ * Epic 5.1: Grading MUST use optMap to translate display selection → original index.
+ */
+export function shuffleOptions(options) {
+  const optMap = Array.from({ length: options.length }, (_, i) => i);
+  for (let i = optMap.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [optMap[i], optMap[j]] = [optMap[j], optMap[i]];
+  }
+  return optMap;
+}
+
+export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, examData, isVaultBurned, recoveredState, accessCode }) {
   const questionBank = examData?.questions || [];
+
+  // ─── Epic 1.4: Layout — restore from backend or generate fresh ───────────
+  const [assignedLayout, setAssignedLayout] = useState(() => {
+    // Priority 1: Restore from backend savedState (server is source of truth)
+    if (recoveredState?.layout && recoveredState.layout.length > 0) {
+      return recoveredState.layout;
+    }
+    // Priority 2: Generate a fresh layout and it will be locked to DB on first sync
+    if (questionBank.length > 0) {
+      return generateLayout(questionBank, Math.min(20, questionBank.length));
+    }
+    return [];
+  });
+
+  // The active question list derived from the layout
+  const activeQuestions = assignedLayout.map(({ qIdx, optMap }) => ({
+    ...questionBank[qIdx],
+    qIdx,
+    optMap,
+  }));
 
   // Core Non-Linear State
   const [currentIdx, setCurrentIdx] = useState(recoveredState ? recoveredState.currentIdx : 0);
-  const [userAnswers, setUserAnswers] = useState(recoveredState && recoveredState.userAnswers ? recoveredState.userAnswers : {});
+  const [userAnswers, setUserAnswers] = useState(
+    recoveredState && recoveredState.userAnswers ? recoveredState.userAnswers : {}
+  );
+
+  // ─── Epic 4.1: localStorage Vault — write on every state change ──────────
+  const VAULT_KEY = accessCode ? `iso_exam_state_${accessCode}` : null;
+  useEffect(() => {
+    if (!VAULT_KEY || assignedLayout.length === 0) return;
+    try {
+      localStorage.setItem(VAULT_KEY, JSON.stringify({
+        userAnswers,
+        timeLeft,
+        currentIdx,
+        assignedLayout,
+      }));
+    } catch (e) {
+      // Storage quota exceeded — non-fatal, backend sync is the primary store
+      console.warn('localStorage vault write failed:', e);
+    }
+  }, [userAnswers, currentIdx, assignedLayout]);
   
   // UI Display States
   const [showReviewDrawer, setShowReviewDrawer] = useState(false);
@@ -32,9 +108,11 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
   const calculateFinals = (answers) => {
     let finalScore = 0;
     const cats = new Set();
-    questionBank.forEach((q, idx) => {
-      const selected = answers[idx];
-      if (selected !== undefined && q.options[selected] && q.options[selected].correct) {
+    // Epic 5.1: Grade against the ORIGINAL option index (answers already store
+    // the original index via optMap mapping — see handleSelectOption below).
+    activeQuestions.forEach((q, displayIdx) => {
+      const originalIdx = answers[displayIdx];
+      if (originalIdx !== undefined && q.options[originalIdx] && q.options[originalIdx].correct) {
         finalScore++;
       } else {
         cats.add(q.category);
@@ -147,21 +225,29 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
     };
   }, [onBurnNetwork, userAnswers]);
 
-  const q = questionBank[currentIdx];
+  const layoutItem = assignedLayout[currentIdx] || {};
+  const q = activeQuestions[currentIdx] || questionBank[0];
   const currentlySelected = userAnswers[currentIdx];
 
-  const handleSelectOption = (optIdx) => {
-    const nextAnswers = { ...userAnswers, [currentIdx]: optIdx };
+  const handleSelectOption = (displayIdx) => {
+    // Epic 5.1 GRADING FAILSAFE: translate the display position the user clicked
+    // back to the ORIGINAL option index using optMap before saving.
+    // This ensures grading logic always works against the original bank order.
+    const originalIdx = layoutItem.optMap ? layoutItem.optMap[displayIdx] : displayIdx;
+    const nextAnswers = { ...userAnswers, [currentIdx]: originalIdx };
     setUserAnswers(nextAnswers);
   };
 
   const handleCommitAnswer = () => {
-    // Save to Vault
+    // Epic 1.4: On the FIRST commit (currentIdx === 0), include the layout so
+    // the backend locks it into SQLite immediately — preventing any future
+    // re-generation on refresh.
+    const isFirstSync = currentIdx === 0 && !recoveredState?.layout;
     if (onSyncNetwork) {
-      onSyncNetwork(userAnswers, timeLeft, currentIdx);
+      onSyncNetwork(userAnswers, timeLeft, currentIdx, isFirstSync ? assignedLayout : undefined);
     }
     // Jump to next or open review drawer if on last question
-    if (currentIdx < questionBank.length - 1) {
+    if (currentIdx < activeQuestions.length - 1) {
       setCurrentIdx(currentIdx + 1);
     } else {
       setShowReviewDrawer(true);
@@ -169,7 +255,7 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
   };
 
   const handleSkip = () => {
-    if (currentIdx < questionBank.length - 1) {
+    if (currentIdx < activeQuestions.length - 1) {
       setCurrentIdx(currentIdx + 1);
     }
   };
@@ -181,11 +267,13 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
   };
 
   const handleFinalSubmit = () => {
-     isSubmittingRef.current = true; // Mark as legitimate submission
-     setShowSubmitModal(false);
-     hasTrippedRef.current = true;
-     const { finalScore, failedCats } = calculateFinals(userAnswers);
-     onFinish(finalScore, failedCats);
+    // Epic 4.4: Safe Submission Lock — block offline submissions
+    if (!navigator.onLine) return;
+    isSubmittingRef.current = true; // Mark as legitimate submission
+    setShowSubmitModal(false);
+    hasTrippedRef.current = true;
+    const { finalScore, failedCats } = calculateFinals(userAnswers);
+    onFinish(finalScore, failedCats, assignedLayout, userAnswers);
   };
 
   const formatTime = (secs) => {
@@ -232,6 +320,7 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
   );
 
   const answeredCount = Object.keys(userAnswers).length;
+  const totalQuestions = activeQuestions.length;
 
   return (
     <div className="page-container relative">
@@ -254,7 +343,7 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
               </div>
               
               <div className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md border border-emerald-200 shadow-inner flex items-center gap-1">
-                <i className="fa-solid fa-check-double text-[8px]"></i> {answeredCount}/{questionBank.length}
+                <i className="fa-solid fa-check-double text-[8px]"></i> {answeredCount}/{totalQuestions}
               </div>
               
               <i className="fa-solid fa-chevron-right text-gray-400 group-hover:text-emerald-500 transition-colors ml-1 hidden sm:block"></i>
@@ -276,9 +365,16 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
         
         <div className="p-8 flex-grow">
           <div className="space-y-3">
-            {q.options.map((opt, i) => {
-              const isSelected = currentlySelected === i;
-              
+            {/* Epic 1.3: Render options in SHUFFLED order via optMap.
+                displayIdx = position user sees (0,1,2,3)
+                originalIdx = optMap[displayIdx] = position in the original bank
+                handleSelectOption maps displayIdx → originalIdx before saving */}
+            {(layoutItem.optMap || [0,1,2,3]).map((originalIdx, displayIdx) => {
+              const opt = q.options[originalIdx];
+              if (!opt) return null;
+              // A user answer is stored as the ORIGINAL index — compare to originalIdx
+              const isSelected = currentlySelected === originalIdx;
+
               let cardClass = "p-5 rounded-xl border-2 flex items-center cursor-pointer transition-all duration-200 hover:shadow-md ";
               if (isSelected) {
                 cardClass += "bg-brand-primary/5 border-brand-primary";
@@ -287,17 +383,17 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
               }
 
               return (
-                <div 
-                  key={i} 
+                <div
+                  key={displayIdx}
                   role="button"
                   tabIndex={0}
                   aria-pressed={isSelected}
-                  className={cardClass} 
-                  onClick={() => handleSelectOption(i)}
+                  className={cardClass}
+                  onClick={() => handleSelectOption(displayIdx)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      handleSelectOption(i);
+                      handleSelectOption(displayIdx);
                     }
                   }}
                 >
@@ -357,7 +453,7 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
             </div>
             <div className="p-6 overflow-y-auto flex-grow bg-slate-50">
                <div className="grid grid-cols-5 gap-3">
-                 {questionBank.map((_, idx) => {
+                 {activeQuestions.map((_, idx) => {
                    const isAnswered = userAnswers[idx] !== undefined;
                    const isActive = currentIdx === idx;
                    
@@ -414,13 +510,13 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
                 </p>
              </div>
              <div className="p-8 pb-4">
-                {answeredCount < questionBank.length ? (
+                {answeredCount < totalQuestions ? (
                   <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start mb-6">
                      <i className="fa-solid fa-circle-exclamation text-red-500 text-xl mr-4 mt-0.5 animate-pulse"></i>
                      <div>
                        <h4 className="text-red-800 font-extrabold text-sm uppercase tracking-widest mb-1">Incomplete Answers</h4>
                        <p className="text-red-600/80 text-[11px] font-bold leading-snug">
-                         You have precisely <span className="text-red-700 bg-red-200/50 px-1.5 py-0.5 rounded">{questionBank.length - answeredCount}</span> unanswered questions remaining. Skipping questions will result in a zero for that item.
+                         You have precisely <span className="text-red-700 bg-red-200/50 px-1.5 py-0.5 rounded">{totalQuestions - answeredCount}</span> unanswered questions remaining. Skipping questions will result in a zero for that item.
                        </p>
                      </div>
                   </div>
@@ -443,11 +539,16 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
                >
                  Cancel
                </button>
-               <button 
+               {/* Epic 4.4: Safe Submission Lock — block offline submissions */}
+               <button
                   onClick={handleFinalSubmit}
-                  className="flex-[1.5] py-3 text-xs font-black text-white bg-brand-primary hover:bg-emerald-600 hover:shadow-lg rounded-xl uppercase tracking-widest transition shadow flex items-center justify-center"
+                  disabled={!navigator.onLine}
+                  className="flex-[1.5] py-3 text-xs font-black text-white bg-brand-primary hover:bg-emerald-600 hover:shadow-lg rounded-xl uppercase tracking-widest transition shadow flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                >
-                 Finalize & Submit <i className="fa-solid fa-clipboard-check text-brand-gold ml-2"></i>
+                 {navigator.onLine
+                   ? <><span>Finalize &amp; Submit</span><i className="fa-solid fa-clipboard-check text-brand-gold ml-2"></i></>
+                   : <><i className="fa-solid fa-wifi-slash mr-2"></i>Network Lost — Progress Saved Locally</>
+                 }
                </button>
              </div>
           </div>

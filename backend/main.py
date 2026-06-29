@@ -111,12 +111,19 @@ def init_db():
         try:
             conn.execute("ALTER TABLE access_codes ADD COLUMN assigned_name TEXT")
         except sqlite3.OperationalError:
-            pass # Column likely already exists
-            
+            pass  # Column already exists
+
         try:
             conn.execute("ALTER TABLE access_codes ADD COLUMN saved_answers TEXT DEFAULT '{}'")
         except sqlite3.OperationalError:
-            pass # Column already exists
+            pass  # Column already exists
+
+        # Epic 1.1: Layout persistence column — stores the candidate's unique
+        # question variation (20 of 35) and option shuffle map as JSON.
+        try:
+            conn.execute("ALTER TABLE access_codes ADD COLUMN saved_layout TEXT DEFAULT NULL")
+        except sqlite3.OperationalError:
+            pass  # Column already exists — idempotent (Epic 5.4 failsafe)
             
         conn.execute("""
             CREATE TABLE IF NOT EXISTS exam_results (
@@ -213,39 +220,45 @@ def verify_code(req: VerifyRequest):
         with sqlite3.connect(DB_PATH, timeout=15) as conn:
             cur = conn.cursor()
             cur.execute("""
-                SELECT id, exam_id, is_used, assigned_email, assigned_name, 
-                       saved_score, saved_time_left, saved_question_idx, saved_failed_cats, saved_answers
+                SELECT id, exam_id, is_used, assigned_email, assigned_name,
+                       saved_score, saved_time_left, saved_question_idx, saved_failed_cats,
+                       saved_answers, saved_layout
                 FROM access_codes WHERE code = ?
             """, (req.code,))
             row = cur.fetchone()
             if not row:
                 raise HTTPException(status_code=400, detail="SECURITY ALERT: Invalid Access Code")
-            code_id, exam_id, is_used, assigned_email, assigned_name, saved_score, saved_time, saved_idx, saved_cats, saved_answers = row
-            
+            code_id, exam_id, is_used, assigned_email, assigned_name, saved_score, saved_time, saved_idx, saved_cats, saved_answers, saved_layout = row
+
             if is_used:
-                raise HTTPException(status_code=400, detail="EXPIRED: This access code has already been burned.")
-                
+                raise HTTPException(status_code=400, detail="EXPIRED: This access code has already been used.")
+
             if assigned_email and assigned_email.lower() != req.studentEmail.lower():
                 raise HTTPException(status_code=400, detail="ACCESS DENIED: Code is locked to another candidate's email.")
-                
+
             if assigned_name and assigned_name.strip().lower() != req.studentName.strip().lower():
                 raise HTTPException(status_code=400, detail="ACCESS DENIED: Code is locked to another candidate's name.")
-                
+
             # Lock to email AND name
             conn.execute("UPDATE access_codes SET assigned_email = ?, assigned_name = ? WHERE id = ?", (req.studentEmail, req.studentName, code_id))
             conn.commit()
-            
+
             response = {"status": "success", "exam_id": exam_id}
-            
-            # If they have a saved state, inject it into the verified response
+
+            # Epic 1.2a: Restore saved session state if any progress exists
             if saved_idx and int(saved_idx) > 0 or (saved_answers and saved_answers != '{}'):
-                response["savedState"] = {
+                saved_state = {
                     "score": int(saved_score),
                     "timeLeft": int(saved_time),
                     "currentIdx": int(saved_idx),
                     "failedCats": json.loads(saved_cats),
                     "userAnswers": json.loads(saved_answers) if saved_answers else {}
                 }
+                # Epic 1.2a: Include the persisted layout so the candidate sees
+                # EXACTLY the same question order and option shuffle on resume.
+                if saved_layout:
+                    saved_state["layout"] = json.loads(saved_layout)
+                response["savedState"] = saved_state
                 
             return response
     except HTTPException:
@@ -268,25 +281,40 @@ class SyncRequest(BaseModel):
     userAnswers: dict
     timeLeft: int
     currentIdx: int
+    # Epic 1.2b / Epic 5.3: layout is Optional so legacy frontends without this
+    # field never trigger a 422 Unprocessable Entity error.
+    layout: list = None
 
 @app.post("/sync-progress")
 def sync_progress(req: SyncRequest):
     try:
         with sqlite3.connect(DB_PATH, timeout=15) as conn:
             cur = conn.cursor()
-            cur.execute("SELECT id FROM access_codes WHERE code = ? COLLATE NOCASE AND assigned_email = ? COLLATE NOCASE AND is_used = 0", (req.code, req.studentEmail))
+            cur.execute(
+                "SELECT id FROM access_codes WHERE code = ? COLLATE NOCASE AND assigned_email = ? COLLATE NOCASE AND is_used = 0",
+                (req.code, req.studentEmail)
+            )
             if not cur.fetchone():
                 raise HTTPException(status_code=400, detail="Invalid sync constraints")
-                
+
+            # Epic 1.2b: Persist layout when provided.
+            # COALESCE ensures a legacy sync (no layout field) NEVER overwrites
+            # an existing saved_layout — Epic 5.3 failsafe.
+            layout_json = json.dumps(req.layout) if req.layout is not None else None
             conn.execute("""
-                UPDATE access_codes 
-                SET saved_answers = ?, saved_time_left = ?, saved_question_idx = ? 
+                UPDATE access_codes
+                SET saved_answers     = ?,
+                    saved_time_left   = ?,
+                    saved_question_idx = ?,
+                    saved_layout      = COALESCE(?, saved_layout)
                 WHERE code = ?
-            """, (json.dumps(req.userAnswers), req.timeLeft, req.currentIdx, req.code))
+            """, (json.dumps(req.userAnswers), req.timeLeft, req.currentIdx, layout_json, req.code))
             conn.commit()
             return {"status": "synced"}
+    except HTTPException:
+        raise
     except Exception as e:
-         raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/complete-exam")
 def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
@@ -375,7 +403,7 @@ def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
 
             background_tasks.add_task(send_webhook)
 
-            return {"status": "success", "message": "Exam completed, code burned and results saved"}
+            return {"status": "success", "message": "Exam completed, code used and results saved"}
     except HTTPException:
         raise
     except Exception as e:

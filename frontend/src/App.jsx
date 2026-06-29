@@ -27,6 +27,9 @@ function ExamLayout({
 
   const [finalScore, setFinalScore] = useState(0);
   const [failedCats, setFailedCats] = useState(new Set());
+  // Epic 2.1: Store completed exam layout + answers to feed ResultsScreen
+  const [completedLayout, setCompletedLayout] = useState(null);
+  const [completedAnswers, setCompletedAnswers] = useState({});
 
   // Prevent accessing exam routes without logging in
   if (!studentName || !studentEmail || !accessCode) {
@@ -56,19 +59,23 @@ function ExamLayout({
     }
   };
 
-  const executeVaultSync = async (userAnswers, timeLeft, currentIdx) => {
+  // Epic 1.4 / 2.1: Accept optional layout so the first sync locks it to the DB.
+  const executeVaultSync = async (userAnswers, timeLeft, currentIdx, layout) => {
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
+      const body = {
+        code: accessCode,
+        studentEmail: studentEmail,
+        userAnswers: userAnswers,
+        timeLeft: timeLeft,
+        currentIdx: currentIdx,
+      };
+      // Epic 5.3: Only include layout when provided — backward-compat with old payloads
+      if (layout) body.layout = layout;
       await fetch(`${apiUrl}/sync-progress`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          code: accessCode,
-          studentEmail: studentEmail,
-          userAnswers: userAnswers,
-          timeLeft: timeLeft,
-          currentIdx: currentIdx
-        })
+        body: JSON.stringify(body)
       });
     } catch (e) {
       console.error("Failed to sync progress.", e);
@@ -94,9 +101,12 @@ function ExamLayout({
     }
   };
 
-  const finishExam = async (score, cats) => {
+  // Epic 2.1: Receive assignedLayout + userAnswers from QuizEngine on completion.
+  const finishExam = async (score, cats, assignedLayout, userAnswers) => {
     setFinalScore(score);
     setFailedCats(cats);
+    if (assignedLayout) setCompletedLayout(assignedLayout);
+    if (userAnswers)    setCompletedAnswers(userAnswers);
     setIsProctoringActive(false);
 
     const totalScore = examData?.questions?.length || 20;
@@ -134,8 +144,9 @@ function ExamLayout({
       <Routes>
         <Route path="instructions" element={<Instructions onStartExam={handleStartPreFlight} onLogout={handleLogout} />} />
         <Route path="preflight" element={<PreFlightCheck onReady={handleStartExam} onCancel={() => navigate(`/exam/${examId}/instructions`)} />} />
-        <Route path="assessment" element={<QuizEngine onFinish={finishExam} onBurnNetwork={executeVaultBurn} onSyncNetwork={executeVaultSync} examData={examData} isVaultBurned={isVaultBurned} recoveredState={recoveredState} />} />
-        <Route path="results" element={<ResultsScreen score={finalScore} failedCats={failedCats} studentName={studentName} studentEmail={studentEmail} />} />
+        <Route path="assessment" element={<QuizEngine onFinish={finishExam} onBurnNetwork={executeVaultBurn} onSyncNetwork={executeVaultSync} examData={examData} isVaultBurned={isVaultBurned} recoveredState={recoveredState} accessCode={accessCode} />} />
+        {/* Epic 2.1: Pass assignedLayout + userAnswers so ResultsScreen can render per-question review */}
+        <Route path="results" element={<ResultsScreen score={finalScore} failedCats={failedCats} studentName={studentName} studentEmail={studentEmail} assignedLayout={completedLayout} userAnswers={completedAnswers} />} />
         <Route path="*" element={<Navigate to="instructions" replace />} />
       </Routes>
 

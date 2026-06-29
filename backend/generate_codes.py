@@ -9,11 +9,18 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 DB_PATH = os.path.join(DATA_DIR, "proctor_logs.db")
 
-EXAM_CATALOG = {
-    "1": {"id": "14001-fnd", "title": "ISO 14001:2015 Foundations"},
-    "2": {"id": "9001-fnd", "title": "ISO 9001:2015 Foundations"},
-    "3": {"id": "45001-fnd", "title": "ISO 45001:2018 Foundations"},
-    "4": {"id": "fssc22000-fnd", "title": "FSSC 22000 Foundations"},
+STANDARDS = {
+    "1": {"prefix": "14001", "name": "ISO 14001:2015"},
+    "2": {"prefix": "9001", "name": "ISO 9001:2015"},
+    "3": {"prefix": "45001", "name": "ISO 45001:2018"},
+    "4": {"prefix": "fssc22000", "name": "FSSC 22000"},
+}
+
+CATEGORIES = {
+    "1": {"suffix": "fnd", "name": "Foundations"},
+    "2": {"suffix": "imp", "name": "Implementer"},
+    "3": {"suffix": "ia", "name": "Internal Auditor"},
+    "4": {"suffix": "la", "name": "Lead Auditor"},
 }
 
 def generate_code(exam_id: str, length=8):
@@ -76,17 +83,29 @@ def main():
         return
 
     print("\n=== ASTUTE Vault: Code Generator ===")
-    print("Select an Exam Module:")
-    for key, exam in EXAM_CATALOG.items():
-        print(f"{key}. {exam['title']} ({exam['id']})")
+    print("STEP 1: Select the Standard:")
+    for key, std in STANDARDS.items():
+        print(f"{key}. {std['name']}")
     
-    choice = input("\nEnter the number corresponding to the exam: ").strip()
+    std_choice = input("\nEnter the number corresponding to the standard: ").strip()
     
-    if choice not in EXAM_CATALOG:
+    if std_choice not in STANDARDS:
         print("Error: Invalid choice.")
         sys.exit(1)
         
-    exam_id = EXAM_CATALOG[choice]["id"]
+    print("\nSTEP 2: Select the Training Category:")
+    for key, cat in CATEGORIES.items():
+        print(f"{key}. {cat['name']}")
+        
+    cat_choice = input("\nEnter the number corresponding to the category: ").strip()
+    
+    if cat_choice not in CATEGORIES:
+        print("Error: Invalid choice.")
+        sys.exit(1)
+        
+    exam_id = f"{STANDARDS[std_choice]['prefix']}-{CATEGORIES[cat_choice]['suffix']}"
+    title = f"{STANDARDS[std_choice]['name']} {CATEGORIES[cat_choice]['name']}"
+    print(f"\nGenerating codes for: {title} ({exam_id})")
     
     count_str = input("How many codes do you want to generate? (default 1): ").strip()
     count = int(count_str) if count_str.isdigit() else 1

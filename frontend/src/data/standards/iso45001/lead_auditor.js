@@ -1,5 +1,5 @@
 export default {
-  title: "ISO 9001:2015 Foundations",
+  title: "ISO 45001:2018 Lead Auditor",
   questions: [
     // TODO: Insert AI-generated questions here
   ],

@@ -12,6 +12,7 @@ client = TestClient(main.app)
 
 @pytest.fixture(autouse=True)
 def setup_teardown():
+    main.DB_PATH = TEST_DB_PATH
     # Make sure we start absolutely clean
     if os.path.exists(TEST_DB_PATH):
         os.remove(TEST_DB_PATH)
@@ -77,7 +78,7 @@ def test_complete_exam_idempotency():
     }
     response1 = client.post("/complete-exam", json=complete_payload)
     assert response1.status_code == 200
-    assert "code burned and results saved" in response1.json()["message"]
+    assert "code used and results saved" in response1.json()["message"]
     
     # Try to spam the endpoint to duplicate scores
     response2 = client.post("/complete-exam", json=complete_payload)
