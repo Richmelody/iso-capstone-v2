@@ -86,9 +86,9 @@ export default function Instructions({ onStartExam, onLogout }) {
 
         <button
           onClick={() => setShowConsentModal(true)}
-          className="w-full bg-brand-dark text-white font-black text-xl py-5 rounded-2xl shadow-xl hover:bg-emerald-900 transition flex items-center justify-center"
+          className="w-full bg-brand-dark text-white font-black text-lg md:text-xl py-5 px-4 rounded-2xl shadow-xl hover:bg-emerald-900 transition flex items-center justify-center text-center"
         >
-          <span>Review System Permissions</span> <i className="fa-solid fa-shield-halved ml-3 text-brand-gold"></i>
+          Review System Permissions <i className="fa-solid fa-shield-halved ml-3 flex-shrink-0 text-brand-gold"></i>
         </button>
       </div>
 
