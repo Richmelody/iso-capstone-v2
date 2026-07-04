@@ -86,7 +86,7 @@ function ExamLayout({
     setIsVaultBurned(true); // Engages the global router trap
     // onBurnNetwork can be called with either a score (number) or userAnswers (object)
     const score = typeof scoreOrAnswers === 'number' ? scoreOrAnswers : 0;
-    const totalScore = examData?.questions?.length || 20;
+    const totalScore = 20;
     const percent = totalScore > 0 ? ((score / totalScore) * 100).toFixed(1) + "%" : "0.0%";
     const passed = false; // Always fail: vault burn = proctoring violation
     try {
@@ -109,7 +109,7 @@ function ExamLayout({
     if (userAnswers)    setCompletedAnswers(userAnswers);
     setIsProctoringActive(false);
 
-    const totalScore = examData?.questions?.length || 20;
+    const totalScore = (assignedLayout && assignedLayout.length > 0) ? assignedLayout.length : 20;
     const percent = totalScore > 0 ? ((score / totalScore) * 100).toFixed(1) + "%" : "0.0%";
     const passed = totalScore > 0 && (score / totalScore) >= 0.7;
 
