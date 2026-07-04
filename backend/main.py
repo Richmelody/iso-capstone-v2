@@ -158,7 +158,7 @@ def init_db():
 
 @app.get("/snapshots/{filename}")
 @app.get("/evidence/{file_id}")
-def get_snapshot(file_id: str, token: str = None, filename: str = None):
+def get_snapshot(file_id: str = None, token: str = None, filename: str = None):
     # Support both old /snapshots/{filename} and new /evidence/{file_id}
     target = filename if filename else file_id
     if target and not target.endswith(".png"):
