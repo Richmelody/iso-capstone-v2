@@ -49,7 +49,8 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
     }
     // Priority 2: Generate a fresh layout and it will be locked to DB on first sync
     if (questionBank.length > 0) {
-      return generateLayout(questionBank, Math.min(20, questionBank.length));
+      const layoutSize = examData.layout_size || 20;
+      return generateLayout(questionBank, Math.min(layoutSize, questionBank.length));
     }
     return [];
   });
@@ -102,8 +103,9 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
   }, [isVaultBurned, lockoutMessage]);
 
   // Absolute Timer state
-  const [timeLeft, setTimeLeft] = useState(recoveredState ? recoveredState.timeLeft : 20 * 60);
-  const MathRef = React.useRef(Date.now() + (recoveredState ? recoveredState.timeLeft : 20 * 60) * 1000);
+  const initialTime = examData.time_limit ? examData.time_limit * 60 : 20 * 60;
+  const [timeLeft, setTimeLeft] = useState(recoveredState ? recoveredState.timeLeft : initialTime);
+  const MathRef = React.useRef(Date.now() + (recoveredState ? recoveredState.timeLeft : initialTime) * 1000);
 
   const calculateFinals = (answers) => {
     let finalScore = 0;

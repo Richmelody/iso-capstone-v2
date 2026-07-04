@@ -7,8 +7,8 @@ export default function ResultsScreen({ score, failedCats, studentName, studentE
   const examData = examLibrary[examId] || examLibrary["14001-fnd"];
   const remediationData = examData.remediationData || {};
 
-  const totalQuestions = 20;
-  const percent = Math.round((score / totalQuestions) * 100) || 0;
+  const totalQuestions = (assignedLayout && assignedLayout.length > 0) ? assignedLayout.length : (examData.layout_size || 20);
+  const percent = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
   const isPassed = percent >= 80;
 
   const hasReviewData = Array.isArray(assignedLayout) && assignedLayout.length > 0 && userAnswers;
