@@ -157,17 +157,23 @@ def init_db():
 # app.mount("/snapshots", StaticFiles(directory=SNAPSHOTS_DIR), name="snapshots")
 
 @app.get("/snapshots/{filename}")
-def get_snapshot(filename: str, token: str = None):
+@app.get("/evidence/{file_id}")
+def get_snapshot(file_id: str, token: str = None, filename: str = None):
+    # Support both old /snapshots/{filename} and new /evidence/{file_id}
+    target = filename if filename else file_id
+    if target and not target.endswith(".png"):
+        target = f"{target}.png"
+
     # Enforce basic security layer
     expected_token = os.environ.get("SNAPSHOT_SECRET", "astute-secure-view")
     if token != expected_token:
         raise HTTPException(status_code=401, detail="SECURITY ALERT: Unauthorized access to secure logs")
     
     # Prevent basic path traversal
-    if ".." in filename or "/" in filename:
+    if ".." in target or "/" in target:
          raise HTTPException(status_code=400, detail="Invalid filename")
          
-    filepath = os.path.join(SNAPSHOTS_DIR, filename)
+    filepath = os.path.join(SNAPSHOTS_DIR, target)
     if not os.path.exists(filepath):
         raise HTTPException(status_code=404, detail="File not found")
         
@@ -363,13 +369,14 @@ def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
                     LIMIT 10
                 """, (req.studentEmail,))
                 
-                api_url = os.environ.get("API_PUBLIC_URL", "https://api.chigozieikuru.cloud")
+                api_url = os.environ.get("API_PUBLIC_URL", "https://api-exams.astutebusinessprojects.cloud")
                 
                 for row_log in cur.fetchall():
                     v_type, v_details, v_time, s_path = row_log
                     filename = os.path.basename(s_path)
+                    file_id = filename.replace(".png", "")
                     secret = os.environ.get("SNAPSHOT_SECRET", "astute-secure-view")
-                    image_url = f"{api_url}/snapshots/{filename}?token={secret}"
+                    image_url = f"{api_url}/evidence/{file_id}?token={secret}"
                     cheating_events.append({
                         "type": v_type,
                         "details": v_details,
