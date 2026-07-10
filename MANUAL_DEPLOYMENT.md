@@ -104,7 +104,7 @@ To generate new batches of access codes for the live site, SSH into the backend 
    cd htdocs/api-exams.astutebusinessprojects.cloud/backend
    
    # Example: Generate 10 codes for ISO 27001
-   venv/bin/python generate_codes.py iso27001_foundation 10
+   venv/bin/python generate_codes.py --exam iso27001_foundation --count 10
    
    # Other standard IDs include: iso14001_foundation, fssc22000_foundation, iso45001_foundation
    ```
