@@ -27,7 +27,7 @@ Use these exact commands to deploy the `staging` branch to the demo/staging serv
    lsof -t -i :8081 | xargs kill -9
 
    # Restart the backend permanently on port 8081
-   nohup venv/bin/gunicorn -w 3 -k uvicorn.workers.UvicornWorker main:app --bind 127.0.0.1:8081 > gunicorn.log 2>&1 &
+   nohup venv/bin/uvicorn main:app --host 127.0.0.1 --port 8081 > uvicorn.log 2>&1 &
    ```
 
 ### Step B: Deploying the Staging Frontend
@@ -69,7 +69,7 @@ Use these exact commands to deploy the `main` branch to the live production serv
    lsof -t -i :8091 | xargs kill -9
 
    # Restart the backend permanently on port 8091
-   nohup venv/bin/gunicorn -w 3 -k uvicorn.workers.UvicornWorker main:app --bind 127.0.0.1:8091 > gunicorn.log 2>&1 &
+   nohup venv/bin/uvicorn main:app --host 127.0.0.1 --port 8091 > uvicorn.log 2>&1 &
    ```
 
 ### Step B: Deploying the Main Frontend
