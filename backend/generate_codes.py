@@ -14,6 +14,7 @@ STANDARDS = {
     "2": {"prefix": "9001", "name": "ISO 9001:2015"},
     "3": {"prefix": "45001", "name": "ISO 45001:2018"},
     "4": {"prefix": "fssc22000", "name": "FSSC 22000"},
+    "5": {"prefix": "27001", "name": "ISO/IEC 27001:2022"},
 }
 
 CATEGORIES = {

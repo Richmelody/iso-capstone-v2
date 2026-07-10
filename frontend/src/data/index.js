@@ -18,6 +18,8 @@ import fssc22000Implementer from './standards/fssc22000/implementer';
 import fssc22000InternalAuditor from './standards/fssc22000/internal_auditor';
 import fssc22000LeadAuditor from './standards/fssc22000/lead_auditor';
 
+import iso27001Foundation from './standards/iso27001/foundation';
+
 export const examLibrary = {
   // ISO 14001
   "14001-fnd": iso14001Foundation,
@@ -41,5 +43,8 @@ export const examLibrary = {
   "fssc22000-fnd": fssc22000Foundation,
   "fssc22000-imp": fssc22000Implementer,
   "fssc22000-ia": fssc22000InternalAuditor,
-  "fssc22000-la": fssc22000LeadAuditor
+  "fssc22000-la": fssc22000LeadAuditor,
+
+  // ISO 27001
+  "27001-fnd": iso27001Foundation
 };

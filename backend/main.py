@@ -394,7 +394,8 @@ def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
                 "14001": "ISO 14001:2015",
                 "9001": "ISO 9001:2015",
                 "45001": "ISO 45001:2018",
-                "fssc22000": "FSSC 22000"
+                "fssc22000": "FSSC 22000",
+                "27001": "ISO/IEC 27001:2022"
             }
             cat_map = {
                 "fnd": "Foundations",
