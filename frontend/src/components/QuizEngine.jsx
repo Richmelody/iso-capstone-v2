@@ -17,7 +17,13 @@ export function generateLayout(bank, count = 20) {
     const j = Math.floor(Math.random() * (i + 1));
     [indices[i], indices[j]] = [indices[j], indices[i]];
   }
-  return indices.slice(0, count).map((qIdx) => ({
+  
+  // SORT the randomly selected indices so they appear in their original bank order.
+  // Since the banks are structured from Recall (Easy) -> Application (Hard),
+  // this guarantees the exam always gets harder progressively, while still being random!
+  const selectedIndices = indices.slice(0, count).sort((a, b) => a - b);
+  
+  return selectedIndices.map((qIdx) => ({
     qIdx,
     optMap: shuffleOptions(bank[qIdx].options),
   }));
