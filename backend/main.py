@@ -48,7 +48,8 @@ origins = [
     "http://localhost:5173",
     "http://localhost:3000",
     "https://capstoneasstesting.chigozieikuru.cloud",
-    "https://assessments.chigozieikuru.cloud"  # Production frontend
+    "https://assessments.chigozieikuru.cloud",  # Old Production frontend
+    "https://exams.astutebusinessprojects.cloud" # New Production frontend
 ]
 
 # Add FRONTEND_URL from environment if available
