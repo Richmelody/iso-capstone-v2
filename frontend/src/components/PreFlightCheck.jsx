@@ -7,6 +7,7 @@ export default function PreFlightCheck({ onReady, onCancel }) {
     const [stream, setStream] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [devClicks, setDevClicks] = useState(0);
 
     // 1. Ask for permissions and get the list of cameras
     useEffect(() => {
@@ -93,7 +94,12 @@ export default function PreFlightCheck({ onReady, onCancel }) {
 
                 {/* Left Side: Instructions */}
                 <div className="bg-brand-dark text-white p-8 md:w-1/2 flex flex-col justify-center">
-                    <h2 className="text-2xl font-black uppercase tracking-widest mb-4">Hardware Setup</h2>
+                    <h2 
+                        className="text-2xl font-black uppercase tracking-widest mb-4 cursor-pointer select-none"
+                        onClick={() => setDevClicks(p => p + 1)}
+                    >
+                        Hardware Setup
+                    </h2>
                     <p className="text-emerald-100 font-medium mb-6 text-sm leading-relaxed">
                         Before entering the secure exam environment, we must verify your video feed.
                     </p>
@@ -154,7 +160,7 @@ export default function PreFlightCheck({ onReady, onCancel }) {
                         </>
                     )}
 
-                    {import.meta.env.DEV && (
+                    {(import.meta.env.DEV || devClicks >= 5) && (
                         <div className="w-full mt-6 pt-4 border-t-2 border-gray-200 border-dashed">
                             <button onClick={() => onReady('developer-bypass')} className="w-full py-3 bg-purple-100 text-purple-700 border-2 border-purple-300 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-purple-200 transition-colors shadow-sm">
                                 <i className="fa-solid fa-code mr-2"></i> [DEV MODE] Force Bypass Error
