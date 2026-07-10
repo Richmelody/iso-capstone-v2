@@ -87,3 +87,34 @@ Use these exact commands to deploy the `main` branch to the live production serv
    npm install
    npm run build
    ```
+
+---
+
+## 3. Post-Deployment Operations
+
+### Generating New Exam Access Codes
+To generate new batches of access codes for the live site, SSH into the backend server and run the python generation script.
+1. **SSH into the Backend:**
+   ```bash
+   ssh api_capston@72.62.5.218
+   # Password: cdE8N7et6dleeJuHW9mr
+   ```
+2. **Run the Generator:**
+   ```bash
+   cd htdocs/api-exams.astutebusinessprojects.cloud/backend
+   
+   # Example: Generate 10 codes for ISO 27001
+   venv/bin/python generate_codes.py iso27001_foundation 10
+   
+   # Other standard IDs include: iso14001_foundation, fssc22000_foundation, iso45001_foundation
+   ```
+The newly generated access codes will be printed in your terminal and saved to the production database automatically.
+
+### Immediate Post-Deployment Testing (No Camera Required)
+You can instantly verify the live site is working without needing a webcam by using the Secret Developer Bypass.
+1. Open the live site in your browser: `https://exams.astutebusinessprojects.cloud`
+2. Enter any valid Name, Email, and Access Code.
+3. On the **Pre-Flight Hardware Check** screen, look at the top header that says **"HARDWARE SETUP"**.
+4. **Rapidly click the "HARDWARE SETUP" title 5 times.**
+5. A secret red button labeled `[DEV MODE] Force Bypass Error` will appear. Click it.
+6. The system will turn green and let you enter the exam immediately, skipping the webcam checks.
