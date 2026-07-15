@@ -1,0 +1,278 @@
+
+ RUN  v1.6.1 /home/chigozie/Desktop/iso-capstone-system/frontend
+
+ ❯ src/__tests__/ExhibitViewer.test.jsx  (5 tests | 5 failed) 7ms
+   ❯ src/__tests__/ExhibitViewer.test.jsx > ExhibitViewer Component > renders nothing when exhibitData is null or undefined
+     → React is not defined
+   ❯ src/__tests__/ExhibitViewer.test.jsx > ExhibitViewer Component > renders the header and description when provided
+     → React is not defined
+   ❯ src/__tests__/ExhibitViewer.test.jsx > ExhibitViewer Component > renders the Risk Assessment Framework when risk matrix data is provided
+     → React is not defined
+   ❯ src/__tests__/ExhibitViewer.test.jsx > ExhibitViewer Component > renders the Statement of Applicability when rows are provided
+     → React is not defined
+   ❯ src/__tests__/ExhibitViewer.test.jsx > ExhibitViewer Component > gracefully handles malformed or missing fields within valid objects
+     → React is not defined
+ ✓ src/__tests__/LoginScreen.test.jsx  (2 tests) 142ms
+ ✓ src/__tests__/ResultsScreen.test.jsx  (3 tests) 96ms
+ ❯ src/__tests__/QuizEngine.test.jsx  (7 tests | 1 failed) 326ms
+   ❯ src/__tests__/QuizEngine.test.jsx > QuizEngine Component - Exhibit Hybrid UI > hides the ExhibitViewer when navigating to a question without an exhibit
+     → Found multiple elements with the text: /Skip/i
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"hidden sm:inline"[39m
+[36m>[39m
+  [0mSkip Question[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"sm:hidden"[39m
+[36m>[39m
+  [0mSkip[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"page-container relative"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-2 mb-4 md:mb-0"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"bg-brand-dark hover:bg-slate-800 text-white text-[9px] md:text-[10px] font-black uppercase tracking-widest px-2 md:px-4 py-2 rounded-lg shadow-sm border border-slate-700 transition whitespace-nowrap"[39m
+        [36m>[39m
+          [0mSubmit[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center bg-gray-50 border px-2 md:px-4 py-2 rounded-md"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"font-mono text-base md:text-xl font-bold text-brand-dark"[39m
+          [36m>[39m
+            [0m20:00[0m
+          [36m</span>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mb-4 flex flex-col sm:flex-row justify-between sm:items-end gap-2"[39m
+        [33mid[39m=[32m"exam-hud"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"bg-brand-gold text-white text-[10px] font-black px-2 py-1 rounded uppercase mb-1 inline-block"[39m
+          [36m>[39m
+            [0mImplementer[0m
+          [36m</span>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"text-xl md:text-2xl font-black text-gray-900 tracking-tighter uppercase"[39m
+          [36m>[39m
+            [0mFundamentals[0m
+          [36m</h2>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col sm:flex-col items-center sm:items-end gap-1 mt-2 sm:mt-0"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"group relative flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-widest bg-white hover:bg-emerald-50 text-emerald-800 px-4 py-2 rounded-xl shadow-sm hover:shadow-md border-[1.5px] border-emerald-300 hover:border-emerald-500 transition-all active:scale-95 overflow-hidden w-full sm:w-auto"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center"[39m
+            [36m>[39m
+              [36m<i[39m
+                [33mclass[39m=[32m"fa-solid fa-bars-staggered text-emerald-500 text-sm mr-2 group-hover:scale-110 transition-transform"[39m
+              [36m/>[39m
+              [36m<span>[39m
+                [0mOpen Review Panel[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md border border-emerald-200 shadow-inner flex items-center gap-1"[39m
+            [36m>[39m
+              [36m<i[39m
+                [33mclass[39m=[32m"fa-solid fa-check-double text-[8px]"[39m
+              [36m/>[39m
+              [0m [0m
+              [0m0[0m
+              [0m/[0m
+              [0m2[0m
+            [36m</div>[39m
+            [36m<i[39m
+              [33mclass[39m=[32m"fa-solid fa-chevron-right text-gray-400 group-hover:text-emerald-500 transition-colors ml-1 hidden sm:block"[39m
+            [36m/>[39m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-[8px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-widest animate-pulse"[39m
+          [36m>[39m
+            [36m<i[39m
+              [33mclass[39m=[32m"fa-solid fa-hand-pointer mr-1"[39m
+            [36m/>[39m
+            [0m Click to show unanswered questions[0m
+          [36m</span>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"lg:hidden w-full mb-4 mt-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"w-full bg-brand-gold text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl shadow-md hover:bg-yellow-600 transition flex items-center justify-center animate-pulse"[39m
+        [36m>[39m
+          [36m<i[39m
+            [33mclass[39m=[32m"fa-solid fa-paperclip mr-2"[39m
+          [36m/>[39m
+          [0m View Attached Exhibit[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col lg:flex-row lg:gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"hidden lg:block lg:w-1/2 mb-6 lg:mb-0"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"h-full w-full bg-white rounded-2xl shadow-inner border border-gray-200 overflow-hidden flex flex-col"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"bg-slate-800 text-white px-6 py-4 flex items-center justify-between border-b-4 border-brand-gold"[39m
+            [36m>[39m
+              [36m<h3[39m
+                [33mclass[39m=[32m"font-black text-lg uppercase tracking-widest flex items-center"[39m
+              [36m>[39m
+                [36m<i[39m
+                  [33mclass[39m=[32m"fa-solid fa-book-open text-brand-gold mr-3"[39m
+                [36m/>[39m
+                [0mReference Exhibit[0m
+              [36m</h3>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] text-slate-300 font-bold uppercase tracking-widest bg-slate-700 px-2 py-1 rounded"[39m
+              [36m>[39m
+                [0mRequired Context[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"p-6 overflow-y-auto flex-grow bg-slate-50 space-y-6"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"bg-blue-50 border border-blue-200 rounded-xl p-4 shadow-sm"[39m
+              [36m>[39m
+                [36m<h4[39m
+                  [33mclass[39m=[32m"text-[10px] font-black uppercase text-blue-800 tracking-widest mb-2"[39m
+                [36m>[39m
+                  [36m<i[39m
+                    [33mclass[39m=[32m"fa-solid fa-circle-info mr-2"[39m
+                  [36m/>[39m
+                  [0mExhibit Context[0m
+                [36m</h4>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-sm font-semibold text-blue-900 leading-relaxed"[39m
+                [36m>[39m
+                  [0mThis is a test exhibit.[0m
+                [36m</p>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-2xl shadow-xl border flex flex-col min-h-[420px] md:min-h-[550px] relative z-10 transition-all duration-300 lg:w-1/2"[39m
+          [33mid[39m=[32m"question-card"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-slate-50 p-8 border-b rounded-t-2xl"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"bg-brand-dark text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded inline-block mb-4 shadow-sm"[39m
+            [36m>[39m
+              [0mAssessment Task #[0m
+              [0m1[0m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-gray-800 text-xl leading-relaxed font-bold italic"[39m
+            [36m>[39m
+              [0mQuestion with exhibit?[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-8 flex-grow"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33maria-pressed[39m=[32m"false"[39m
+                [33mclass[39m=[32m"p-5 rounded-xl border-2 flex items-center cursor-pointer transition-all duration-200 hover:shadow-md bg-white border-gray-100 hover:border-brand-primary/40"[39m
+                [33mrole[39m=[32m"button"[39m
+                [33mtabindex[39m=[32m"0"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"w-5 h-5 rounded-full flex-shrink-0 mr-4 flex items-center justify-center transition-colors shadow-inner bg-gray-100 border border-gray-300"[39m
+                [36m/>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-sm font-semibold text-gray-600"[39m
+                [36m>[39m
+                  [0mA[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-gray-50 border-t flex justify-between items-center rounded-b-2xl"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex w-full divide-x divide-gray-200"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"flex-1 py-4 md:py-5 flex items-center justify-center text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition"[39m
+                [33mdisabled[39m=[32m""[39m
+              [36m>[39m
+                [36m<i[39m
+                  [33mclass[39m=[32m"fa-solid fa-arrow-left mr-1 md:mr-2"[39m
+                [36m/>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"hidden sm:inline"[39m
+                [36m>[39m
+                  [0mPrevious[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"sm:hidden"[39m
+                [36m>[39m
+                  [0mPrev[0m
+                [36m</span>[39m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"flex-[1.5] py-4 md:py-5 flex items-center justify-center text-[9px] md:text-[10px] font-black uppercase tracking-widest transition bg-gray-100 text-gray-500 hover:bg-gray-200"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"hidden sm:inline"[39m
+                [36m>[39m
+                  [0mSkip Question[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"sm:hidden"[39m
+                [36m>[39m
+                  [0mSkip[0m
+                [36m</span>[39m
+                [0m [0m
+                [36m<i[39m
+                  [33mclass[39m=[32m"fa-solid fa-forward ml-1 md:ml-2"[39m
+                [36m/>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ✓ src/__tests__/test_layout_features.test.jsx  (24 tests) 306ms
+
+ Test Files  2 failed | 3 passed (5)
+      Tests  6 failed | 35 passed (41)
+   Start at  16:17:16
+   Duration  1.58s (transform 343ms, setup 0ms, collect 1.28s, tests 877ms, environment 2.35s, prepare 726ms)
+

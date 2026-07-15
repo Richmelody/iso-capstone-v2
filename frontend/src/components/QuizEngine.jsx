@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import ExhibitViewer from './ExhibitViewer';
 
 // ─── Epic 1.3: Named exports so unit tests can import & verify them directly ───
 
@@ -94,7 +95,30 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
   // UI Display States
   const [showReviewDrawer, setShowReviewDrawer] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showExhibitModal, setShowExhibitModal] = useState(false);
   const [lockoutMessage, setLockoutMessage] = useState(null);
+  
+  const [showImplementerOnboarding, setShowImplementerOnboarding] = useState(() => {
+    const isImp = examData?.title?.toLowerCase().includes('implementer') || (accessCode && accessCode.includes('-IMP-'));
+    if (!isImp || !examData?.exhibits) return false;
+    
+    if (VAULT_KEY) {
+      try {
+        const stored = localStorage.getItem(VAULT_KEY + "_onboarded");
+        if (stored) return false; 
+      } catch (e) {}
+    }
+    return true; 
+  });
+
+  const dismissOnboarding = () => {
+    setShowImplementerOnboarding(false);
+    if (VAULT_KEY) {
+      try {
+        localStorage.setItem(VAULT_KEY + "_onboarded", "true");
+      } catch (e) {}
+    }
+  };
   
   const hasTrippedRef = React.useRef(false);
   const isSubmittingRef = React.useRef(false); // Add ref to track legitimate submissions
@@ -237,6 +261,9 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
   const q = activeQuestions[currentIdx] || questionBank[0];
   const currentlySelected = userAnswers[currentIdx];
 
+  const currentExhibitRef = q.exhibit_ref;
+  const currentExhibitData = currentExhibitRef && examData.exhibits ? examData.exhibits[currentExhibitRef] : null;
+
   const handleSelectOption = (displayIdx) => {
     // Epic 5.1 GRADING FAILSAFE: translate the display position the user clicked
     // back to the ORIGINAL option index using optMap before saving.
@@ -362,14 +389,36 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
         </div>
       </div>
 
-      {/* Main Question Card */}
-      <div id="question-card" className="bg-white rounded-2xl shadow-xl border flex flex-col min-h-[420px] md:min-h-[550px] relative z-10 transition-all duration-300">
-        <div className="bg-slate-50 p-8 border-b">
-          <div className="bg-brand-dark text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded inline-block mb-4 shadow-sm">
-            Assessment Task #{currentIdx + 1}
-          </div>
-          <p className="text-gray-800 text-xl leading-relaxed font-bold italic">{q.text}</p>
+      {/* Exhibit Mobile Toggle Button */}
+      {currentExhibitData && (
+        <div className="lg:hidden w-full mb-4 mt-2">
+          <button 
+            onClick={() => setShowExhibitModal(true)}
+            className="w-full bg-brand-gold text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl shadow-md hover:bg-yellow-600 transition flex items-center justify-center animate-pulse"
+          >
+            <i className="fa-solid fa-paperclip mr-2"></i> View Attached Exhibit
+          </button>
         </div>
+      )}
+
+      {/* Main Split Container */}
+      <div className={`flex flex-col ${currentExhibitData ? 'lg:flex-row lg:gap-6' : ''}`}>
+        
+        {/* Exhibit Viewer (Desktop Left Pane) */}
+        {currentExhibitData && (
+          <div className="hidden lg:block lg:w-1/2 mb-6 lg:mb-0">
+            <ExhibitViewer exhibitData={currentExhibitData} />
+          </div>
+        )}
+
+        {/* Main Question Card (Right Pane or Full Width) */}
+        <div id="question-card" className={`bg-white rounded-2xl shadow-xl border flex flex-col min-h-[420px] md:min-h-[550px] relative z-10 transition-all duration-300 ${currentExhibitData ? 'lg:w-1/2' : 'w-full'}`}>
+          <div className="bg-slate-50 p-8 border-b rounded-t-2xl">
+            <div className="bg-brand-dark text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded inline-block mb-4 shadow-sm">
+              Assessment Task #{currentIdx + 1}
+            </div>
+            <p className="text-gray-800 text-xl leading-relaxed font-bold italic">{q.text}</p>
+          </div>
         
         <div className="p-8 flex-grow">
           <div className="space-y-3">
@@ -444,6 +493,7 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
               </button>
            </div>
         </div>
+      </div>
       </div>
 
       {/* Slide-out Review Drawer */}
@@ -559,6 +609,69 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
                  }
                </button>
              </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Exhibit Modal */}
+      {showExhibitModal && currentExhibitData && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-slate-900/80 backdrop-blur-sm p-4 lg:hidden" onClick={() => setShowExhibitModal(false)}>
+          <div className="bg-white w-full h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-4 bg-slate-800 text-white border-b-4 border-brand-gold">
+              <h3 className="font-black uppercase tracking-widest text-sm"><i className="fa-solid fa-paperclip mr-2 text-brand-gold"></i> Attached Exhibit</h3>
+              <button onClick={() => setShowExhibitModal(false)} className="w-8 h-8 flex items-center justify-center bg-slate-700 rounded-full hover:bg-slate-600 transition-colors">
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <div className="flex-grow overflow-hidden bg-slate-50">
+              <ExhibitViewer exhibitData={currentExhibitData} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Implementer Onboarding Modal */}
+      {showImplementerOnboarding && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
+          <div className="bg-white max-w-lg w-full rounded-3xl shadow-2xl overflow-hidden transform animate-in zoom-in-95 duration-300">
+            <div className="bg-slate-800 p-6 flex flex-col items-center text-center border-b-4 border-brand-gold">
+               <i className="fa-solid fa-layer-group text-4xl text-brand-gold mb-3"></i>
+               <h3 className="text-xl font-black text-white uppercase tracking-widest">Implementer Exam Interface</h3>
+               <p className="text-slate-300 text-xs font-bold mt-2">Please read this quick orientation before starting.</p>
+            </div>
+            <div className="p-8 space-y-6 text-sm text-gray-700 font-medium">
+               <p className="leading-relaxed">
+                 Welcome to the Implementer capstone exam. Unlike Foundation exams, some questions here are complex scenarios that require referencing <strong>Exhibits</strong> (such as Risk Matrices or Statements of Applicability).
+               </p>
+               <div className="bg-slate-50 p-4 rounded-xl border border-gray-200 space-y-4">
+                 <div className="flex items-start">
+                   <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-2 mr-4 flex-shrink-0">
+                     <i className="fa-solid fa-desktop text-xl text-brand-primary"></i>
+                   </div>
+                   <div>
+                     <h4 className="font-black text-gray-900 uppercase text-[11px] tracking-widest mb-1">Desktop Experience</h4>
+                     <p className="text-xs text-gray-600">The exhibit will appear pinned to the left side of your screen while you answer the question on the right.</p>
+                   </div>
+                 </div>
+                 <div className="flex items-start">
+                   <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-2 mr-4 flex-shrink-0">
+                     <i className="fa-solid fa-mobile-screen text-xl text-brand-gold"></i>
+                   </div>
+                   <div>
+                     <h4 className="font-black text-gray-900 uppercase text-[11px] tracking-widest mb-1">Mobile Experience</h4>
+                     <p className="text-xs text-gray-600">Tap the pulsing yellow <strong>View Attached Exhibit</strong> button above the question to open the reference material.</p>
+                   </div>
+                 </div>
+               </div>
+            </div>
+            <div className="p-6 bg-gray-50 border-t border-gray-100">
+               <button 
+                  onClick={dismissOnboarding}
+                  className="w-full bg-brand-primary text-white py-4 rounded-xl font-black uppercase tracking-widest text-xs shadow-lg hover:bg-emerald-600 hover:shadow-xl transition flex items-center justify-center"
+               >
+                 Acknowledge & Begin Exam <i className="fa-solid fa-arrow-right ml-2"></i>
+               </button>
+            </div>
           </div>
         </div>
       )}

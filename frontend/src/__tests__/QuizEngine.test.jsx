@@ -121,3 +121,58 @@ describe('QuizEngine Component - Standard User Flows', () => {
     );
   });
 });
+
+describe('QuizEngine Component - Exhibit Hybrid UI', () => {
+  const mockExamWithExhibits = {
+    exhibits: {
+      case_study_1: { description: 'This is a test exhibit.' }
+    },
+    questions: [
+      {
+        section: "Implementer",
+        text: "Question with exhibit?",
+        category: "Test",
+        exhibit_ref: "case_study_1",
+        options: [{ text: "A", correct: true }]
+      },
+      {
+        section: "Implementer",
+        text: "Question without exhibit?",
+        category: "Test",
+        options: [{ text: "A", correct: true }]
+      }
+    ]
+  };
+
+  const PINNED_STATE = {
+    currentIdx: 0,
+    timeLeft: 1200,
+    userAnswers: {},
+    layout: [
+      { qIdx: 0, optMap: [0] },
+      { qIdx: 1, optMap: [0] },
+    ],
+  };
+
+  it('renders the ExhibitViewer and Mobile toggle button when an exhibit_ref is present', () => {
+    render(<QuizEngine examData={mockExamWithExhibits} onFinish={vi.fn()} onSyncNetwork={vi.fn()} recoveredState={PINNED_STATE} />);
+    
+    // Check if the exhibit viewer rendered the description
+    expect(screen.getByText('This is a test exhibit.')).toBeInTheDocument();
+    
+    // Check if the mobile toggle button is rendered
+    expect(screen.getByText(/View Attached Exhibit/i)).toBeInTheDocument();
+  });
+
+  it('hides the ExhibitViewer when navigating to a question without an exhibit', () => {
+    render(<QuizEngine examData={mockExamWithExhibits} onFinish={vi.fn()} onSyncNetwork={vi.fn()} recoveredState={PINNED_STATE} />);
+    
+    expect(screen.getByText('This is a test exhibit.')).toBeInTheDocument();
+    
+    // Click skip to go to Q2 (which has no exhibit)
+    fireEvent.click(screen.getByText("Skip Question"));
+    
+    expect(screen.queryByText('This is a test exhibit.')).not.toBeInTheDocument();
+    expect(screen.queryByText(/View Attached Exhibit/i)).not.toBeInTheDocument();
+  });
+});
