@@ -19,6 +19,7 @@ import fssc22000InternalAuditor from './standards/fssc22000/internal_auditor';
 import fssc22000LeadAuditor from './standards/fssc22000/lead_auditor';
 
 import iso27001Foundation from './standards/iso27001/foundation';
+import iso27001Implementer from './standards/iso27001/implementer';
 
 export const examLibrary = {
   // ISO 14001
@@ -46,5 +47,6 @@ export const examLibrary = {
   "fssc22000-la": fssc22000LeadAuditor,
 
   // ISO 27001
-  "27001-fnd": iso27001Foundation
+  "27001-fnd": iso27001Foundation,
+  "27001-imp": iso27001Implementer
 };

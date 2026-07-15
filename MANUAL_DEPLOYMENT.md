@@ -48,7 +48,19 @@ Use these exact commands to deploy the `staging` branch to the demo/staging serv
 
 ---
 
-## 2. MAIN PRODUCTION DEPLOYMENT (Live Environment)
+## 2. MERGING STAGING TO MAIN (The Bridge)
+
+Once the staging site has been tested and approved, you must merge the changes to the `main` branch locally before deploying to production. Run these commands on your local development machine:
+
+```bash
+git checkout main
+git merge staging
+git push origin main
+```
+
+---
+
+## 3. MAIN PRODUCTION DEPLOYMENT (Live Environment)
 
 Use these exact commands to deploy the `main` branch to the live production server (`72.62.5.218`).
 
@@ -90,7 +102,7 @@ Use these exact commands to deploy the `main` branch to the live production serv
 
 ---
 
-## 3. Post-Deployment Operations
+## 4. Post-Deployment Operations
 
 ### Generating New Exam Access Codes
 To generate new batches of access codes for the live site, SSH into the backend server and run the python generation script.
