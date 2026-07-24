@@ -23,7 +23,28 @@ function ExamLayout({
   const { examId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const examData = examLibrary[examId] || examLibrary["14001-fnd"];
+  const rawExamData = examLibrary[examId] || examLibrary["14001-fnd"];
+
+  const examData = React.useMemo(() => {
+    if (!rawExamData) return null;
+    const questions = (rawExamData.questions || []).map(q => {
+      // Normalize options to object format: { text: string, correct: boolean }
+      if (q.options && q.options.length > 0 && typeof q.options[0] === 'string') {
+        return {
+          ...q,
+          options: q.options.map((optStr, idx) => ({
+            text: optStr,
+            correct: idx === q.answer
+          }))
+        };
+      }
+      return q;
+    });
+    return {
+      ...rawExamData,
+      questions
+    };
+  }, [rawExamData]);
 
   const [finalScore, setFinalScore] = useState(0);
   const [failedCats, setFailedCats] = useState(new Set());
@@ -111,17 +132,25 @@ function ExamLayout({
 
     const totalScore = (assignedLayout && assignedLayout.length > 0) ? assignedLayout.length : 20;
     const percent = totalScore > 0 ? ((score / totalScore) * 100).toFixed(1) + "%" : "0.0%";
-    const passed = totalScore > 0 && (score / totalScore) >= 0.7;
+    const passThreshold = (examData && examData.passing_score_percent) ? (examData.passing_score_percent / 100) : 0.7;
+    const passed = totalScore > 0 && (score / totalScore) >= passThreshold;
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
       await fetch(`${apiUrl}/complete-exam`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: accessCode, studentEmail, score, totalScore, percent, passed, cheating_events: [] })
+        body: JSON.stringify({
+          student_email: studentEmail,
+          exam_id: examId,
+          score: score,
+          total_questions: totalScore,
+          passed: passed,
+          category_breakdown: catScores
+        })
       });
     } catch (e) {
-      console.error("Failed to commit completion to vault.", e);
+      console.error("Failed to post score via API/Webhook", e);
     }
 
     // Unmount the QuizEngine naturally by navigating
@@ -142,7 +171,7 @@ function ExamLayout({
   return (
     <>
       <Routes>
-        <Route path="instructions" element={<Instructions onStartExam={handleStartPreFlight} onLogout={handleLogout} />} />
+        <Route path="instructions" element={<Instructions examData={examData} onStartExam={handleStartPreFlight} onLogout={handleLogout} />} />
         <Route path="preflight" element={<PreFlightCheck onReady={handleStartExam} onCancel={() => navigate(`/exam/${examId}/instructions`)} />} />
         <Route path="assessment" element={<QuizEngine onFinish={finishExam} onBurnNetwork={executeVaultBurn} onSyncNetwork={executeVaultSync} examData={examData} isVaultBurned={isVaultBurned} recoveredState={recoveredState} accessCode={accessCode} />} />
         {/* Epic 2.1: Pass assignedLayout + userAnswers so ResultsScreen can render per-question review */}
@@ -201,6 +230,7 @@ function App() {
 
   const inAssessment = location.pathname.includes('/assessment');
 
+
   return (
     <div className="min-h-screen flex flex-col relative bg-slate-50">
       <div className="fixed inset-0 pointer-events-none z-0 flex items-center justify-center opacity-10 mix-blend-multiply select-none">
@@ -229,7 +259,7 @@ function App() {
         </div>
       </header>
 
-      <main className="flex-grow container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-4xl relative">
+      <main className={`flex-grow container mx-auto px-3 md:px-6 py-4 md:py-8 transition-all duration-300 relative ${inAssessment ? 'max-w-7xl xl:max-w-[1440px]' : 'max-w-4xl'}`}>
         <Routes>
           <Route path="/" element={<LoginScreen onLogin={handleLogin} />} />
           <Route path="/exam/:examId/*" element={

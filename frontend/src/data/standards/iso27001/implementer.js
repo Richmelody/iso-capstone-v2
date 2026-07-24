@@ -1,717 +1,721 @@
 export default {
-  "title": "ISO/IEC 27001:2022 Implementer — Capstone Exam",
+  "title": "ISO 27001:2022 Implementer — Capstone Exam",
   "layout_size": 35,
   "time_limit": 45,
   "exhibits": {
     "risk_matrix": {
-      "description": "A simple risk matrix used in this exam. Risk Score = Likelihood x Impact. Note: ISO/IEC 27001 does not tell organisations which risk matrix to use — Clause 6.1.2 just says every organisation must build its own way of scoring risk that fits its situation. This matrix is for this exam only.",
+      "description": "A simple risk significance-scoring model used in this exam. Risk Score = Impact x Likelihood. Note: ISO 27001 does not mandate this specific model — Clause 6.1.2 requires each organisation to define its own risk assessment methodology, suited to its own context. This model is for this exam only.",
+      "severity_scale": "1=Very Small, 2=Small, 3=Moderate, 4=Big, 5=Very Big",
       "likelihood_scale": "1=Rare, 2=Unlikely, 3=Possible, 4=Likely, 5=Almost Certain",
-      "impact_scale": "1=Very Small, 2=Small, 3=Moderate, 4=Big, 5=Very Big",
       "bands": [
-        { "min": 1, "max": 4, "level": "Low" },
-        { "min": 5, "max": 9, "level": "Medium" },
-        { "min": 10, "max": 15, "level": "High" },
-        { "min": 16, "max": 25, "level": "Critical" }
+        { "min": 1, "max": 6, "level": "Acceptable Risk" },
+        { "min": 7, "max": 14, "level": "Monitor / Periodic Review" },
+        { "min": 15, "max": 25, "level": "Unacceptable Risk" }
       ],
-      "acceptance_criteria": "A risk scoring 4 or below can be accepted with no further action. Any risk scoring above 4 needs a written treatment decision (Clause 6.1.3)."
+      "rule": "Any risk scoring 15 or above is treated as an Unacceptable Risk, and must be addressed by a risk treatment plan and corresponding controls (e.g., from Annex A)."
     },
-    "soa_excerpt": {
-      "description": "Part of a draft Statement of Applicability (SoA) currently being reviewed.",
+    "legal_and_contractual_register": {
+      "description": "Part of a draft Information Security Requirements Register currently being reviewed.",
       "rows": [
-        { "control": "A.5.19 Information security in supplier relationships", "included": "Included", "justification": "All key suppliers are checked for security before a contract is signed.", "status": "Implemented" },
-        { "control": "A.6.7 Remote working", "included": "Excluded", "justification": "Company policy does not allow remote working.", "status": "N/A" },
-        { "control": "A.8.24 Use of cryptography", "included": "Excluded", "justification": "", "status": "Not implemented" }
+        { "obligation": "General Data Protection Regulation (GDPR)", "owner": "Data Protection Officer", "review_date": "Reviewed quarterly, last checked this month", "evidence": "Privacy policy and latest data mapping on file" },
+        { "obligation": "Client Master Services Agreement (National Care Trust) - requires 256-bit encryption", "owner": "Head of IT", "review_date": "Reviewed annually", "evidence": "Latest architectural review on file" },
+        { "obligation": "Software Licensing Agreements (Vendor X)", "owner": "Not assigned", "review_date": "No review date recorded", "evidence": "No evidence on file" }
       ]
     },
-    "case_study_aegis": {
-      "description": "Aegis Manufacturing Ltd makes precision parts for machines. It has 220 staff across two sites. It recently started taking orders through a website that stores customer details and payment information. A new EU customer says Aegis must be ISO/IEC 27001 certified before they will sign a contract. Aegis appoints an Implementer to lead the project."
-    },
-    "case_study_bright_horizons": {
-      "description": "Bright Horizons Care Group runs three residential care homes for elderly residents. It keeps paper and digital medical records, and staff use personal mobile phones to log care notes during shifts. A local news story about a data breach at another care provider has prompted the board to pursue ISO/IEC 27001 certification to reassure families and regulators."
-    },
-    "case_study_solstice": {
-      "description": "Solstice Cloud Services provides project management software to small businesses, hosted entirely on a third-party cloud platform. It has 40 staff, all working remotely. A potential enterprise customer wants proof that Solstice manages supplier and cloud risk properly before signing a large contract."
+    "aegis_story": {
+      "description": "A continuous eight-paragraph implementation story. Each question below refers to a specific paragraph.",
+      "paragraphs": [
+        "Paragraph 1: Aegis HealthTech Solutions has run its single-site cloud platform for twelve years, hosting electronic health records. Its biggest client, National Care Trust, has just made ISO 27001:2022 certification a condition of renewing their contract, and other clients have started asking about Aegis's security posture too. The company has also felt the effect of rising cyber insurance premiums, while a new stringent healthcare data sovereignty law and the rise of AI-driven ransomware threats are both on the horizon. Aegis recently migrated to a hybrid-cloud environment, and the CEO appoints Marcus, an experienced IT Director, as the organisation's ISMS Implementer.",
+        "Paragraph 2: Marcus starts by identifying Aegis's information assets and assessing the associated risks. He identifies dozens of risks, but one stands out clearly above the rest: the storage of unencrypted legacy patient data backups in standard cloud buckets, vulnerable to unauthorized access. Using the significance scoring model, he rates the Impact of a breach as 5 (Very Big) and the Likelihood of misconfiguration as 4 (Likely) — a score of 20, comfortably inside the Unacceptable Risk band.",
+        "Paragraph 3: With the unacceptable risk identified, Marcus sets an objective: ensure 100% of legacy database backups are encrypted at rest, and reduce backup misconfiguration incidents by 20% within twelve months, verified through automated log audits. He builds a risk treatment plan naming the Cloud Infrastructure Lead as owner, a new automated encryption gateway as the main resource required, and a 12-month deadline.",
+        "Paragraph 4: Six months in, the encryption gateway is installed. Marcus writes operating criteria for the new process: backup logs must be checked daily to confirm encryption status, and any backup recorded as 'plaintext' must be immediately deleted and rerun securely. Before the unit goes live, he runs a hands-on training session for the two day-shift sysadmins who will monitor it, and documents the new control in the operational procedures.",
+        "Paragraph 5: At the nine-month mark, an internal audit is carried out. The auditor reviews the encryption gateway's logs and finds that status checks were recorded for the day shift, but the night shift's monitoring logs are blank for several weeks running. When asked, the night shift sysadmin says he 'just assumes the gateway handles it automatically,' because he was never actually shown how to use the log verification dashboard.",
+        "Paragraph 6: Digging further, Marcus realises the training Aegis delivered only covered the day shift team, because the night shift sysadmin joined the company two months after the initial rollout and was never added to the training schedule. The gap wasn't the software or the procedure — it was an incomplete onboarding checklist that failed to trigger role-specific security training during staff turnover.",
+        "Paragraph 7: Marcus raises this as a nonconformity and puts a corrective action in place: the night shift sysadmin receives the dashboard training immediately, and Aegis adds a new mandatory step to its onboarding process requiring anyone granted access to critical assets to complete specific security tool training before receiving solo administrative credentials.",
+        "Paragraph 8: At the next management review, Marcus reports the finding, the corrective action taken, and proposes a related but separate improvement: implementing an automated script that actively alerts the team if the daily log check is missed, proactively reducing reliance on human memory. Top management approves the extra technical control and logs it as a continual improvement action, distinct from the corrective action already closed out."
+      ]
     }
   },
   "questions": [
     {
-      "category": "Risk Matrix Application",
-      "section": "Calculation",
+      "category": "Context & Scope",
+      "section": "Clause 4.1 — Context",
       "type": "single_select",
-      "exhibit_ref": "risk_matrix",
-      "text": "Using the risk matrix (Score = Likelihood x Impact; 1-4 Low, 5-9 Medium, 10-15 High, 16-25 Critical), a risk has a Likelihood of 4 (Likely) and an Impact of 4 (Big). What is the score, and what band does it fall in?",
+      "text": "An Implementer is using a PESTLE analysis (Political, Economic, Social, Technological, Legal, Environmental) to identify issues under Clause 4.1. A new national data privacy law would be classed under which heading?",
       "options": [
-        { "text": "Score 20, and it is Critical, found by multiplying 5 by 4 instead", "correct": false },
-        { "text": "Score 16, and it is Critical", "correct": true },
-        { "text": "Score 16, and it is High, because it is close to the edge of that band", "correct": false },
-        { "text": "Score 8, and it is Medium, found by adding the two numbers together", "correct": false }
+        { "text": "Legal", "correct": true },
+        { "text": "Social", "correct": false },
+        { "text": "Technological", "correct": false },
+        { "text": "Economic", "correct": false }
       ],
-      "rationale": "4 x 4 = 16, which sits in the Critical band (16-25). One wrong option shows a common mistake — adding the numbers instead of multiplying them. Another uses the wrong Likelihood number entirely.",
-      "lms_direction": "Review the Risk Scoring and Matrix Application module."
+      "rationale": "A new privacy law is a Legal issue under PESTLE, even though it may have knock-on Social or Economic effects — the analysis classifies it by its source, not its downstream impact.",
+      "lms_direction": "Review the Context Analysis module."
     },
     {
-      "category": "Risk Matrix Application",
-      "section": "Calculation",
+      "category": "Context & Scope",
+      "section": "Clause 4.2 — Interested Parties",
       "type": "single_select",
-      "exhibit_ref": "risk_matrix",
-      "text": "Using the same risk matrix, a risk has a Likelihood of 2 (Unlikely) and an Impact of 5 (Very Big). What is the score, and what band does it fall in?",
+      "text": "A prospective client regularly asks about your information security practices but has not yet signed a contract. How should this be treated under Clause 4.2?",
       "options": [
-        { "text": "Score 10, and it is Critical, because a Very Big impact should push it to the top band", "correct": false },
-        { "text": "Score 10, and it is Medium, because it is close to the edge of that band", "correct": false },
-        { "text": "Score 7, and it is Medium, found by adding the two numbers together", "correct": false },
-        { "text": "Score 10, and it is High", "correct": true }
+        { "text": "Treated the same as a strict legal obligation, since they might become a client", "correct": false },
+        { "text": "Escalated straight to the legal department instead of being tracked in the ISMS", "correct": false },
+        { "text": "Recorded as an interested party whose security expectations should be considered", "correct": true },
+        { "text": "Ignored entirely, since they have no formal contractual authority over the organisation", "correct": false }
       ],
-      "rationale": "2 x 5 = 10, which sits in the High band (10-15). A Very Big impact does not automatically push a risk into the Critical band on its own — the Likelihood number still matters too.",
-      "lms_direction": "Review the Risk Scoring and Matrix Application module."
+      "rationale": "Clause 4.2 requires organisations to consider the needs and expectations of relevant interested parties, not only those with signed contracts or legal power. Market expectations form part of the ISMS context.",
+      "lms_direction": "Review the Interested Parties Register module."
     },
     {
-      "category": "Risk Matrix Application",
-      "section": "Risk Criteria",
+      "category": "Context & Scope",
+      "section": "Clause 4.3 — Scope",
       "type": "single_select",
-      "exhibit_ref": "risk_matrix",
-      "text": "The organisation's rule is: only risks scoring 4 or below can be accepted with no further action. A new risk is assessed and scores 6. What should happen next?",
+      "text": "An organisation has two sites: a secure datacenter and a small marketing office in a different city that handles no client data. What is the most defensible approach to the ISMS scope?",
       "options": [
-        { "text": "It must be sent straight to the outside certification body before any internal decision", "correct": false },
-        { "text": "It can be accepted right away, since 6 is well below the High band, which starts at 10", "correct": false },
-        { "text": "It must be treated, because it is higher than the accepted score of 4", "correct": true },
-        { "text": "It can be left alone, since it was not marked as Critical on the matrix", "correct": false }
+        { "text": "Include both sites automatically, since a bigger scope always looks more impressive to an auditor", "correct": false },
+        { "text": "Include only the marketing office to easily pass the certification audit", "correct": false },
+        { "text": "Define the scope around the datacenter, with a documented justification for excluding the marketing office", "correct": true },
+        { "text": "Leave the scope undefined until the certification body decides what should be included", "correct": false }
       ],
-      "rationale": "It's the organisation's own acceptance rule (4 or below) that decides whether treatment is needed — not the band name. A score of 6 breaks that rule, so it needs a treatment decision under Clause 6.1.3, whichever band it happens to sit in.",
-      "lms_direction": "Review the Risk Acceptance Criteria module."
-    },
-    {
-      "category": "Risk Matrix Application",
-      "section": "Standard Accuracy",
-      "type": "single_select",
-      "text": "Which of these best describes how ISO/IEC 27001 says an organisation should build its risk matrix and scoring bands?",
-      "options": [
-        { "text": "It must copy the exact risk matrix shown in the related standard ISO/IEC 27005, with no changes", "correct": false },
-        { "text": "It builds its own risk criteria and matrix, suited to its own situation, as Clause 6.1.2 requires", "correct": true },
-        { "text": "It must use the exact 5x5 matrix that is printed inside Annex A of the standard", "correct": false },
-        { "text": "It must use whichever risk matrix its outside certification body prefers to use", "correct": false }
-      ],
-      "rationale": "Annex A has no risk matrix in it at all — it's a list of controls. Clause 6.1.2 says the organisation must set its own risk criteria. ISO/IEC 27005 offers helpful guidance an organisation can borrow from, but nothing forces it to copy that matrix exactly.",
-      "lms_direction": "Review the Risk Assessment Methodology module."
-    },
-    {
-      "category": "Risk Matrix Application",
-      "section": "Risk Treatment",
-      "type": "single_select",
-      "exhibit_ref": "risk_matrix",
-      "text": "A risk scores 20 on the matrix — Critical. The Implementer suggests just writing it down and moving on, without choosing a way to treat it. Is that allowed under Clause 6.1.3?",
-      "options": [
-        { "text": "No — a Critical risk this high should simply be handed off to an insurer", "correct": false },
-        { "text": "Yes — writing it down on the risk register alone is enough on its own", "correct": false },
-        { "text": "No — a treatment option must be chosen, and the SoA updated if controls change", "correct": true },
-        { "text": "Yes — as long as someone looks at it again at the next planned review", "correct": false }
-      ],
-      "rationale": "Clause 6.1.3 requires the organisation to choose how it will treat the risk, and update the SoA if that changes which controls apply — simply writing it down isn't enough. The insurer-only option goes too far in the other direction: handing a risk to an insurer (risk transfer) is only one of several valid choices, not the only one.",
-      "lms_direction": "Review the Risk Treatment Process module."
-    },
-    {
-      "category": "SoA Critique & Construction",
-      "section": "Critique",
-      "type": "single_select",
-      "exhibit_ref": "soa_excerpt",
-      "text": "Looking at the SoA excerpt (Row 1: A.5.19, Included, with a reason given. Row 2: A.6.7, Excluded, with a reason given. Row 3: A.8.24, Excluded, with no reason given) — which row would an auditor most likely flag as a problem?",
-      "options": [
-        { "text": "None of the rows — all three are fine exactly as they are", "correct": false },
-        { "text": "Row 1 (A.5.19), because its written reason is too long and detailed", "correct": false },
-        { "text": "Row 3 (A.8.24), because it is excluded but has no reason written down at all", "correct": true },
-        { "text": "Row 2 (A.6.7), because remote working is not a valid reason to exclude this control", "correct": false }
-      ],
-      "rationale": "Row 3 has no reason recorded — every excluded control needs one. Row 2 is actually fine: genuinely not allowing remote working is a perfectly good reason to exclude that control.",
-      "lms_direction": "Review the Statement of Applicability Construction module."
-    },
-    {
-      "category": "SoA Critique & Construction",
-      "section": "Maintenance",
-      "type": "single_select",
-      "exhibit_ref": "soa_excerpt",
-      "text": "Later, the organisation decides to let two staff members work remotely (this changes Row 2: A.6.7, currently Excluded). What should happen to the SoA?",
-      "options": [
-        { "text": "Delete Row 2 completely, since the old exclusion no longer applies", "correct": false },
-        { "text": "Leave it as it is, since only two people out of 220 are affected", "correct": false },
-        { "text": "Update the SoA to include A.6.7, look at the new risk, and choose the right controls", "correct": true },
-        { "text": "Wait until the next planned certification audit before changing anything", "correct": false }
-      ],
-      "rationale": "The SoA needs to reflect what's actually true right now. As soon as the situation changes, the entry should be updated — marked as Included, with a fresh look at the risk and the right controls chosen — not deleted or left as it was until the next audit.",
-      "lms_direction": "Review the Statement of Applicability Maintenance module."
-    },
-    {
-      "category": "SoA Critique & Construction",
-      "section": "Justification Quality",
-      "type": "single_select",
-      "text": "An Implementer wants to exclude A.8.9 (Configuration Management) from the SoA. Which reason below would an auditor see as strong and convincing?",
-      "options": [
-        { "text": "\"Our organisation is quite small, so this level of control simply isn't needed here.\"", "correct": false },
-        { "text": "\"A cloud provider manages all our systems, and our contract makes this their job.\"", "correct": true },
-        { "text": "\"This was excluded from the SoA last year, and no one has reviewed it since.\"", "correct": false },
-        { "text": "\"This control simply doesn't apply to us, so there is nothing more to say.\"", "correct": false }
-      ],
-      "rationale": "A strong reason is specific and backed by evidence — this one points exactly to where the responsibility sits and how that's proven in a contract. Vague claims, small company size, and old reasons no one has checked lately are all things an auditor is trained to question.",
-      "lms_direction": "Review the Statement of Applicability Justification Quality module."
-    },
-    {
-      "category": "SoA Critique & Construction",
-      "section": "Fundamentals",
-      "type": "true_false",
-      "text": "True or False: an organisation can leave a control out of its SoA just because it would be expensive to put in place.",
-      "options": [
-        { "text": "True", "correct": false },
-        { "text": "False", "correct": true }
-      ],
-      "rationale": "A control can only be excluded for risk-based reasons, not cost alone. Cost can reasonably affect which treatment option is chosen for a risk, but it isn't by itself a valid reason to skip a control the risk assessment says is needed.",
-      "lms_direction": "Review the Statement of Applicability Justification Quality module."
-    },
-    {
-      "category": "SoA Critique & Construction",
-      "section": "Fundamentals",
-      "type": "single_select",
-      "text": "Which of these is NOT something a properly completed SoA entry needs to record?",
-      "options": [
-        { "text": "The control's reference number and name", "correct": false },
-        { "text": "How much it would cost to buy or set up the control", "correct": true },
-        { "text": "The reason for including or excluding it, and how far along it is", "correct": false },
-        { "text": "Whether the control is included or excluded", "correct": false }
-      ],
-      "rationale": "An SoA entry needs the control itself, whether it's included or excluded, the reason why, and its current status — not a cost figure. Cost might matter elsewhere in planning, but it isn't a required part of the SoA.",
-      "lms_direction": "Review the Statement of Applicability Construction module."
-    },
-    {
-      "category": "Case Study — Aegis Manufacturing",
-      "section": "Clause 4 — Context",
-      "type": "single_select",
-      "exhibit_ref": "case_study_aegis",
-      "text": "CASE STUDY: Aegis Manufacturing Ltd has 220 staff, two sites, a website that stores customer details and payment information, and a new EU customer who says Aegis must be certified first. Which of these would correctly count as an external issue under Clause 4.1 for Aegis?",
-      "options": [
-        { "text": "The company's own decision to start selling more types of products", "correct": false },
-        { "text": "How skilled the in-house IT helpdesk team currently is", "correct": false },
-        { "text": "The physical layout of Aegis's second factory site", "correct": false },
-        { "text": "The new EU customer's requirement that Aegis be certified before signing", "correct": true }
-      ],
-      "rationale": "An external issue comes from outside the organisation — a customer's demand fits that description well. The other three are all things happening inside Aegis itself (staffing, strategy, buildings).",
-      "lms_direction": "Review the Context of the Organisation module."
-    },
-    {
-      "category": "Case Study — Aegis Manufacturing",
-      "section": "Clause 4 — Interested Parties",
-      "type": "single_select",
-      "text": "Still thinking about Aegis: which interested party's needs are most directly pushing the company to get certified?",
-      "options": [
-        { "text": "A local trade group that Aegis happens to be a member of", "correct": false },
-        { "text": "A software company that Aegis has never worked with before", "correct": false },
-        { "text": "The new EU customer, who made certification a condition of the contract", "correct": true },
-        { "text": "Aegis's own internal finance department team", "correct": false }
-      ],
-      "rationale": "The case study says the EU customer made certification a condition of the deal — that's the interested party actually driving this project.",
-      "lms_direction": "Review the Interested Parties module."
-    },
-    {
-      "category": "Case Study — Aegis Manufacturing",
-      "section": "Clause 6.1.2 — Risk Identification",
-      "type": "single_select",
-      "text": "During the risk assessment, the Implementer finds that Aegis's website stores payment details without encrypting them. Which information security property is most at risk here?",
-      "options": [
-        { "text": "Traceability", "correct": false },
-        { "text": "Convenience", "correct": false },
-        { "text": "Availability", "correct": false },
-        { "text": "Confidentiality", "correct": true }
-      ],
-      "rationale": "Data that isn't encrypted is mainly a confidentiality problem — anyone who gets to it can read it straight away. Convenience isn't a security property at all, and traceability isn't the main concern in this specific situation.",
-      "lms_direction": "Review the CIA Triad and Risk Identification module."
-    },
-    {
-      "category": "Case Study — Aegis Manufacturing",
-      "section": "Clause 6.1.3 — Treatment Selection",
-      "type": "single_select",
-      "text": "To deal with the unencrypted payment data at Aegis, which Annex A control should the Implementer choose first?",
-      "options": [
-        { "text": "A.8.24 Use of cryptography", "correct": true },
-        { "text": "A.6.3 Information security awareness, education and training", "correct": false },
-        { "text": "A.5.30 ICT readiness for business continuity", "correct": false },
-        { "text": "A.7.4 Physical security monitoring", "correct": false }
-      ],
-      "rationale": "A.8.24 (Use of Cryptography) is the control that directly deals with encrypting stored data. The other three are all real, useful controls, but none of them fixes an unencrypted-data problem directly.",
-      "lms_direction": "Review the Technological Controls module."
-    },
-    {
-      "category": "Case Study — Aegis Manufacturing",
-      "section": "SoA Construction",
-      "type": "single_select",
-      "text": "The Implementer decides to include the chosen control in Aegis's SoA. At minimum, what does that SoA entry need to record?",
-      "options": [
-        { "text": "Just a general summary of how Aegis does risk assessments company-wide", "correct": false },
-        { "text": "Just the control's reference number and name", "correct": false },
-        { "text": "The control, whether it's included, the reason why, and how far along it is", "correct": true },
-        { "text": "The name of every single employee who will get encryption training", "correct": false }
-      ],
-      "rationale": "Every SoA entry needs the same four things, no matter which control it is: the control itself, its inclusion status, the reason, and how far along it is.",
-      "lms_direction": "Review the Statement of Applicability Construction module."
-    },
-    {
-      "category": "Case Study — Aegis Manufacturing",
-      "section": "Clause 6.2 — Objectives",
-      "type": "single_select",
-      "text": "Which of these would be the best-written information security objective for Aegis?",
-      "options": [
-        { "text": "\"Encrypt all customer payment data on the website by the end of Q3, checked by the IT team.\"", "correct": true },
-        { "text": "\"Try to make our customers happier with our service overall.\"", "correct": false },
-        { "text": "\"Try to improve security across the company as much as we reasonably can this year.\"", "correct": false },
-        { "text": "\"Cut the size of the IT department by 10% over the next financial year.\"", "correct": false }
-      ],
-      "rationale": "A good objective is specific, has a deadline, and says how it will be checked — this one has all three. The others are either too vague to measure or aren't about information security at all.",
-      "lms_direction": "Review the Information Security Objectives module."
-    },
-    {
-      "category": "Case Study — Aegis Manufacturing",
-      "section": "Clause 8 — Operation",
-      "type": "single_select",
-      "text": "Six months later, Aegis's IT team actually switches on encryption for the website, as planned earlier. Which clause covers this step of actually doing the work?",
-      "options": [
-        { "text": "Clause 10 (Improvement)", "correct": false },
-        { "text": "Clause 6 (Planning)", "correct": false },
-        { "text": "Clause 8 (Operation)", "correct": true },
-        { "text": "Clause 5 (Leadership)", "correct": false }
-      ],
-      "rationale": "Actually carrying out a planned control is Clause 8 (Operation) — putting the plan into action day-to-day, as opposed to the earlier planning stage (Clause 6) where the control was first chosen.",
-      "lms_direction": "Review the Operational Planning and Control module."
-    },
-    {
-      "category": "Case Study — Aegis Manufacturing",
-      "section": "Clause 9/10 — Nonconformity",
-      "type": "single_select",
-      "text": "During Aegis's first internal audit, the auditor finds that although encryption was switched on, nobody actually tested whether it was working correctly before the website went live. What should happen next?",
-      "options": [
-        { "text": "Nothing — encryption is technically switched on, so it's fine", "correct": false },
-        { "text": "Raise a nonconformity, and ask Aegis to fix the root cause with a corrective action", "correct": true },
-        { "text": "Immediately stop Aegis's certification application, with no further review", "correct": false },
-        { "text": "Push the audit back to next year and don't record anything about it", "correct": false }
-      ],
-      "rationale": "A control that was never tested is a real gap, even if it's technically switched on — it should be raised as a nonconformity, which then triggers a corrective action to fix the missing testing step. Ignoring it or jumping straight to suspension both go too far in opposite directions.",
-      "lms_direction": "Review the Internal Audit and Corrective Action module."
-    },
-    {
-      "category": "Control Selection",
-      "section": "Judgment",
-      "type": "single_select",
-      "text": "An audit finds that access rights across the organisation have never once been reviewed since they were first granted, even for staff who changed roles. Which Annex A control deals most directly with this gap?",
-      "options": [
-        { "text": "A.5.18 Access rights — covers granting, checking, and removing access", "correct": true },
-        { "text": "A.5.11 Return of assets when an employee leaves the company", "correct": false },
-        { "text": "A.8.2 Privileged access rights for admin and elevated accounts only", "correct": false },
-        { "text": "A.6.5 Responsibilities after termination or change of employment", "correct": false }
-      ],
-      "rationale": "A.5.18 explicitly covers granting, reviewing, and removing access rights — including periodic review, which is the exact gap described here. A.6.5 is about ongoing duties after someone leaves (like confidentiality), not periodic review of access. A.8.2 only covers admin-level access, and A.5.11 is about returning physical or digital items, not access rights at all.",
-      "lms_direction": "Review the Access Control module."
-    },
-    {
-      "category": "Control Selection",
-      "section": "Judgment",
-      "type": "single_select",
-      "text": "A company wants to make sure software on its production servers can't be changed without going through a formal approval step first. Which control fits best?",
-      "options": [
-        { "text": "A.8.32 Change management", "correct": true },
-        { "text": "A.8.9 Configuration management", "correct": false },
-        { "text": "A.8.31 Separation of development, test and production environments", "correct": false },
-        { "text": "A.5.37 Documented operating procedures", "correct": false }
-      ],
-      "rationale": "A.8.32 (Change Management) is specifically about the formal approval process for changes. The other three are all real, related controls — but they're about keeping systems configured securely, keeping environments separate, and documenting procedures, not the approval step itself.",
-      "lms_direction": "Review the Technological Controls module."
-    },
-    {
-      "category": "Control Selection",
-      "section": "Attributes",
-      "type": "single_select",
-      "text": "A company wants a control that spots when a large, unusual amount of data is being copied off its network. What TYPE of control is this, and which control fits best?",
-      "options": [
-        { "text": "A preventive control; A.8.23 Web filtering", "correct": false },
-        { "text": "A corrective control; A.5.29 Information security during disruption", "correct": false },
-        { "text": "A preventive control; A.8.20 Networks security", "correct": false },
-        { "text": "A detective control; A.8.16 Monitoring activities", "correct": true }
-      ],
-      "rationale": "Spotting unusual activity as it happens is a detective control, and A.8.16 (Monitoring Activities) is the control that covers this directly. The other options describe either the wrong type of control or a control that doesn't fit this situation.",
-      "lms_direction": "Review the Control Type Attribute module."
-    },
-    {
-      "category": "Control Selection",
-      "section": "Theme Mapping",
-      "type": "single_select",
-      "text": "Which of these control-to-theme pairings is WRONG?",
-      "options": [
-        { "text": "A.6.3 Information security awareness, education and training — People", "correct": false },
-        { "text": "A.5.7 Threat intelligence — Organisational", "correct": false },
-        { "text": "A.8.11 Data masking — People", "correct": true },
-        { "text": "A.7.4 Physical security monitoring — Physical", "correct": false }
-      ],
-      "rationale": "A.8.11 (Data Masking) is a Technological control, not a People control — the '8' at the start of its number is the giveaway. The other three pairings are all correct.",
-      "lms_direction": "Review the Four Control Themes module."
-    },
-    {
-      "category": "Control Selection",
-      "section": "Judgment",
-      "type": "single_select",
-      "text": "A risk assessment shows staff often reuse the same password across several internal systems. Beyond any technical fix, which control deals with the human behaviour causing this?",
-      "options": [
-        { "text": "A.8.24 Use of cryptography for stored and sent data", "correct": false },
-        { "text": "A.8.5 Secure authentication methods and login steps", "correct": false },
-        { "text": "A.6.3 Information security awareness, education and training", "correct": true },
-        { "text": "A.5.15 Access control policy and rules", "correct": false }
-      ],
-      "rationale": "The question is specifically asking about the behaviour causing the risk, not the technical fix — that's A.6.3 (Awareness, Education and Training). The other three are all real, relevant controls, but they're technical or policy controls, not ones aimed at changing behaviour.",
-      "lms_direction": "Review the People Controls module."
-    },
-    {
-      "category": "Nonconformity Classification",
-      "section": "Classification",
-      "type": "single_select",
-      "text": "During an audit, the assessor finds one laptop that wasn't encrypted, even though policy requires it — but the other 49 laptops checked were all fine. How should this most likely be classed?",
-      "options": [
-        { "text": "Not a nonconformity at all, since only one device out of fifty was affected", "correct": false },
-        { "text": "A critical risk that means certification must be stopped right away", "correct": false },
-        { "text": "A minor nonconformity — a one-off case that doesn't point to a wider, repeated problem", "correct": true },
-        { "text": "A major nonconformity — a break from written policy should be treated as major", "correct": false }
-      ],
-      "rationale": "One isolated slip, with almost everything else fine, is a textbook minor nonconformity — it's still a real finding (so treating it as 'not a nonconformity at all' understates it), but it doesn't show a wider, repeated problem (which would make it major) or call for stopping certification.",
-      "lms_direction": "Review the Nonconformity Classification module."
-    },
-    {
-      "category": "Nonconformity Classification",
-      "section": "Classification",
-      "type": "single_select",
-      "text": "An auditor finds that an organisation has never run a single internal audit in the eighteen months since setting up its ISMS, even though Clause 9.2 requires it. How should this be classed?",
-      "options": [
-        { "text": "A minor nonconformity — internal audits aren't really needed if things seem to be going well", "correct": false },
-        { "text": "Not applicable — audits done by outside auditors are the ones that count", "correct": false },
-        { "text": "Just an observation, to be looked at again next year", "correct": false },
-        { "text": "A major nonconformity — a required process is completely missing", "correct": true }
-      ],
-      "rationale": "This isn't a small slip inside a process — it's the total absence of a required process for eighteen months. That's a classic major nonconformity, since it means the ISMS can't really show it's working as it should.",
-      "lms_direction": "Review the Internal Audit Requirements module."
-    },
-    {
-      "category": "Nonconformity Classification",
-      "section": "Classification",
-      "type": "single_select",
-      "text": "Which of these would normally be recorded as an 'observation' or 'opportunity for improvement' rather than a nonconformity?",
-      "options": [
-        { "text": "The SoA is kept up to date but could be laid out more clearly for readability", "correct": true },
-        { "text": "The risk register hasn't been updated in over two years", "correct": false },
-        { "text": "The organisation has no written information security policy at all", "correct": false },
-        { "text": "There's no treatment plan for any of the organisation's high-scoring risks", "correct": false }
-      ],
-      "rationale": "A small styling suggestion — where the actual requirement is genuinely being met, just not presented perfectly — is exactly what an observation is for. The other three all describe genuine gaps, which count as nonconformities, not just suggestions.",
-      "lms_direction": "Review the Audit Findings and Observations module."
-    },
-    {
-      "category": "Nonconformity Classification",
-      "section": "Pattern Recognition",
-      "type": "single_select",
-      "text": "Three separate minor nonconformities are all raised against the same requirement (control of documents) during one audit. What does this pattern most likely mean?",
-      "options": [
-        { "text": "The audit itself must have been done wrong, so it needs repeating", "correct": false },
-        { "text": "It may need to become major, since it could point to a wider, repeated problem", "correct": true },
-        { "text": "They should be downgraded to observations, since none looked serious alone", "correct": false },
-        { "text": "Nothing much — minor findings do not usually add up to anything more serious", "correct": false }
-      ],
-      "rationale": "Several minor findings clustered around the same requirement is a well-known sign that the classification should be reconsidered as major — the pattern itself points to a deeper problem, even if each single case looked minor on its own.",
-      "lms_direction": "Review the Nonconformity Classification module."
-    },
-    {
-      "category": "Nonconformity Classification",
-      "section": "Corrective Action",
-      "type": "single_select",
-      "text": "Once a nonconformity has been raised, what is the Implementer's correct next step under Clause 10.1?",
-      "options": [
-        { "text": "Just note it down in a log somewhere, with no further action needed at all", "correct": false },
-        { "text": "Respond to it, work out if action is needed to fix the root cause, then check it worked", "correct": true },
-        { "text": "Wait for the next planned management review before doing anything about it", "correct": false },
-        { "text": "Shut down the process or product connected to the nonconformity right away", "correct": false }
-      ],
-      "rationale": "Clause 10.1 describes exactly this cycle: respond, work out the root cause, act to fix it, and check whether the fix actually worked. Shutting things down straight away overreacts; waiting for a review or just logging it both underreact.",
-      "lms_direction": "Review the Nonconformity and Corrective Action module."
-    },
-    {
-      "category": "Risk Matrix Application",
-      "section": "Calculation",
-      "type": "single_select",
-      "exhibit_ref": "risk_matrix",
-      "text": "A risk has a Likelihood of 3 (Possible) and an Impact of 3 (Moderate). What is the score, and which band does it fall in?",
-      "options": [
-        { "text": "Score 12, and it is High, found using the wrong Impact number", "correct": false },
-        { "text": "Score 9, and it is Medium", "correct": true },
-        { "text": "Score 6, and it is Medium, found by adding the two numbers together", "correct": false },
-        { "text": "Score 9, and it is High, since it is close to the edge of that band", "correct": false }
-      ],
-      "rationale": "3 x 3 = 9, which sits at the top of the Medium band (5-9). The addition-based option and the wrong-number option both show common calculation slips rather than a real reading of the band boundaries.",
-      "lms_direction": "Review the Risk Scoring and Matrix Application module."
-    },
-    {
-      "category": "Risk Matrix Application",
-      "section": "Risk Criteria",
-      "type": "single_select",
-      "exhibit_ref": "risk_matrix",
-      "text": "A risk is assessed and scores exactly 4. The acceptance rule says risks scoring 4 or below can be accepted with no further action. Can this risk be accepted without a written treatment decision?",
-      "options": [
-        { "text": "Yes, but only once the external certification body has approved the decision", "correct": false },
-        { "text": "No, because Clause 6.1.2 requires every single risk to be treated, whatever it scores", "correct": false },
-        { "text": "No, because only scores strictly below 4 actually count under the rule", "correct": false },
-        { "text": "Yes, because a score of 4 is included within the '4 or below' rule", "correct": true }
-      ],
-      "rationale": "The rule says '4 or below,' which plainly includes 4 itself — this is a boundary-reading check, not a trick question. Clause 6.1.2 requires risks to be assessed and criteria applied, not that every risk must be treated regardless of its score.",
-      "lms_direction": "Review the Risk Acceptance Criteria module."
-    },
-    {
-      "category": "SoA Critique & Construction",
-      "section": "Justification Quality",
-      "type": "single_select",
-      "text": "An SoA entry reads: Control A.8.12 Data leakage prevention — Included — Justification: 'Recommended by our IT consultant.' — Status: Implemented. What is the main weakness in this entry?",
-      "options": [
-        { "text": "A control cannot be marked as Implemented until the next scheduled audit takes place", "correct": false },
-        { "text": "Data Leakage Prevention is not something smaller organisations would normally include", "correct": false },
-        { "text": "The justification doesn't explain the actual risk-based reason for including the control", "correct": true },
-        { "text": "The control reference number does not exist anywhere in Annex A", "correct": false }
-      ],
-      "rationale": "Naming who recommended a control isn't the same as explaining the risk it addresses — the justification should say what customer or business data it protects and why. A.8.12 is a real control, and implementation status isn't tied to audit timing.",
-      "lms_direction": "Review the Statement of Applicability Justification Quality module."
-    },
-    {
-      "category": "SoA Critique & Construction",
-      "section": "Maintenance",
-      "type": "true_false",
-      "text": "True or False: once a control is marked 'Included' on the SoA, it must stay marked as included forever, even if the risk it was addressing is later fully removed.",
-      "options": [
-        { "text": "True", "correct": false },
-        { "text": "False", "correct": true }
-      ],
-      "rationale": "The SoA should always reflect the organisation's current, real situation. If a risk genuinely no longer exists, the entry should be reviewed and updated to match reality, not frozen in its original state.",
-      "lms_direction": "Review the Statement of Applicability Maintenance module."
-    },
-    {
-      "category": "Case Study — Bright Horizons Care Group",
-      "section": "Clause 5 — Leadership",
-      "type": "single_select",
-      "exhibit_ref": "case_study_bright_horizons",
-      "text": "CASE STUDY: Bright Horizons Care Group runs three care homes, keeps medical records, and staff use personal phones to log care notes. A data breach at another provider has pushed the board toward certification. Who is accountable under Clause 5 for making sure the ISMS actually works?",
-      "options": [
-        { "text": "Whichever staff member happens to be on shift when something goes wrong", "correct": false },
-        { "text": "The outside IT contractor Bright Horizons occasionally pays for helpdesk work", "correct": false },
-        { "text": "The external certification body, once the audit has taken place", "correct": false },
-        { "text": "Top management, even though day-to-day tasks can be handed to other staff", "correct": true }
-      ],
-      "rationale": "Clause 5 makes top management accountable for the ISMS's overall effectiveness — that accountability can't be handed off, even though specific tasks can be delegated to staff or contractors.",
-      "lms_direction": "Review the Leadership and Top Management Accountability module."
-    },
-    {
-      "category": "Case Study — Bright Horizons Care Group",
-      "section": "Clause 6.1.2 — Risk Identification",
-      "type": "single_select",
-      "text": "Still thinking about Bright Horizons: care staff record confidential notes on personal mobile phones during shifts. Which risk does this most directly create?",
-      "options": [
-        { "text": "Personal mobile phone contracts might end up costing more than expected", "correct": false },
-        { "text": "Confidential resident information may end up stored outside the organisation's control", "correct": true },
-        { "text": "Staff phones might run out of battery partway through a working shift", "correct": false },
-        { "text": "Staff might become distracted from resident care by using their phones", "correct": false }
-      ],
-      "rationale": "Storing confidential data on personal devices the organisation doesn't manage is a genuine information security risk. The other options describe real but unrelated operational concerns, not information security risks.",
-      "lms_direction": "Review the Risk Identification module."
-    },
-    {
-      "category": "Case Study — Bright Horizons Care Group",
-      "section": "Clause 6.1.3 — Treatment Selection",
-      "type": "single_select",
-      "text": "To reduce the risk from personal phone use at Bright Horizons, which Annex A control area should the Implementer look at first?",
-      "options": [
-        { "text": "A.5.7 Threat intelligence", "correct": false },
-        { "text": "A.8.1 User endpoint devices", "correct": true },
-        { "text": "A.6.6 Confidentiality or non-disclosure agreements", "correct": false },
-        { "text": "A.7.4 Physical security monitoring", "correct": false }
-      ],
-      "rationale": "A.8.1 (User Endpoint Devices) directly covers how information is protected on devices used to access or store organisational data, including personal devices. The other controls are real but address different problems.",
-      "lms_direction": "Review the Technological Controls module."
-    },
-    {
-      "category": "Case Study — Bright Horizons Care Group",
-      "section": "Clause 7 — Support",
-      "type": "single_select",
-      "text": "Which clause requires Bright Horizons to make sure care staff genuinely understand why personal phones shouldn't be used for care notes, not just that a rule exists?",
-      "options": [
-        { "text": "Clause 7", "correct": true },
-        { "text": "Clause 6", "correct": false },
-        { "text": "Clause 9", "correct": false },
-        { "text": "Clause 8", "correct": false }
-      ],
-      "rationale": "Clause 7 (Support) covers awareness and competence — genuinely understanding a rule, not just being told it exists. Clause 6 is planning, 8 is doing the work, and 9 is checking performance afterward.",
-      "lms_direction": "Review the Support and Awareness module."
-    },
-    {
-      "category": "Case Study — Bright Horizons Care Group",
-      "section": "Clause 8 — Operation",
-      "type": "single_select",
-      "text": "Bright Horizons buys secure, work-only tablets for care staff and stops the use of personal phones for care notes. Which clause covers actually rolling this change out across the three homes?",
-      "options": [
-        { "text": "Clause 8", "correct": true },
-        { "text": "Clause 10", "correct": false },
-        { "text": "Clause 6", "correct": false },
-        { "text": "Clause 5", "correct": false }
-      ],
-      "rationale": "Clause 8 (Operation) is where a planned change actually gets carried out day-to-day — rolling out the tablets across all three sites is squarely an operational activity.",
-      "lms_direction": "Review the Operational Planning and Control module."
-    },
-    {
-      "category": "Case Study — Bright Horizons Care Group",
-      "section": "Nonconformity Application",
-      "type": "single_select",
-      "text": "Six months after the tablets are introduced, an internal audit finds that one of the three homes has quietly let two staff go back to personal phones because the tablets kept running out of battery. How should this be classed?",
-      "options": [
-        { "text": "A minor nonconformity, limited to one site so far, but the battery issue needs a corrective action", "correct": true },
-        { "text": "A major nonconformity, since a deviation like this means the ISMS has broken down completely", "correct": false },
-        { "text": "An observation only, since staff clearly had a practical reason for going back to phones", "correct": false },
-        { "text": "Not a nonconformity, since only one of the three homes is affected", "correct": false }
-      ],
-      "rationale": "One site slipping back, with an identifiable root cause (battery life), is a real finding that needs fixing — but it isn't yet evidence of a total system breakdown, so major is an overreaction and 'not a nonconformity' understates it.",
-      "lms_direction": "Review the Nonconformity Classification module."
-    },
-    {
-      "category": "Case Study — Bright Horizons Care Group",
-      "section": "Clause 9 — Performance Evaluation",
-      "type": "single_select",
-      "text": "What should Bright Horizons do to check whether the new tablet policy is genuinely working well across all three homes, rather than just assuming it is?",
-      "options": [
-        { "text": "Wait for the external certification audit to check whether it's working", "correct": false },
-        { "text": "Rely on family members' complaints as the main way to learn about problems", "correct": false },
-        { "text": "Get the board to approve the policy once, then treat it as permanently resolved", "correct": false },
-        { "text": "Carry out ongoing monitoring and scheduled internal audits across all three sites", "correct": true }
-      ],
-      "rationale": "Clause 9 requires ongoing, planned monitoring and internal audit — not a one-off approval, complaints as an informal early-warning system, or waiting for an external audit that only happens periodically.",
-      "lms_direction": "Review the Monitoring and Internal Audit module."
-    },
-    {
-      "category": "Case Study — Solstice Cloud Services",
-      "section": "Clause 4 — Scope",
-      "type": "single_select",
-      "exhibit_ref": "case_study_solstice",
-      "text": "CASE STUDY: Solstice Cloud Services runs its entire product on a third-party cloud platform, with 40 fully remote staff. Since the whole product runs on someone else's cloud, what matters most when the Implementer defines the ISMS scope under Clause 4.3?",
-      "options": [
-        { "text": "Clearly stating which parts of the cloud setup are Solstice's own responsibility", "correct": true },
-        { "text": "Copying the scope statement word-for-word from a competitor's certificate", "correct": false },
-        { "text": "Making the scope statement as broad as possible to impress the auditor", "correct": false },
-        { "text": "Leaving the scope undefined until after certification has already been granted", "correct": false }
-      ],
-      "rationale": "In a shared cloud setup, a clear scope has to draw the line between what Solstice controls and what the cloud provider controls — a vague or copied scope leaves real gaps in accountability.",
+      "rationale": "The scope should be based on where the information assets and risks actually sit, with a clear, written justification for any exclusion boundaries. The organisation defines the scope, not the auditor.",
       "lms_direction": "Review the ISMS Scope module."
     },
     {
-      "category": "Case Study — Solstice Cloud Services",
-      "section": "Clause 6.1.3 — Treatment Selection",
+      "category": "Context & Scope",
+      "section": "Clause 4.4 — ISMS",
       "type": "single_select",
-      "text": "Solstice wants a control that makes sure its cloud provider keeps up adequate security practices of its own. Which Annex A control area is most relevant?",
+      "text": "Which of these best describes what Clause 4.4 requires an organisation to do?",
       "options": [
-        { "text": "A.8.24 Use of cryptography for stored data", "correct": false },
-        { "text": "A.5.23 Information security for use of cloud services", "correct": true },
-        { "text": "A.7.1 Physical security perimeters around buildings", "correct": false },
-        { "text": "A.6.1 Screening of new job candidates", "correct": false }
+        { "text": "Establish, implement, maintain, and continually improve the ISMS as a set of interacting processes", "correct": true },
+        { "text": "Write a single Information Security Policy document once and file it away", "correct": false },
+        { "text": "Purchase an expensive firewall before doing anything else", "correct": false },
+        { "text": "Appoint just one employee (the CISO) to personally handle every security matter alone", "correct": false }
       ],
-      "rationale": "A.5.23 specifically covers how an organisation manages the security of the cloud services it uses. The others are real controls but address different areas entirely.",
-      "lms_direction": "Review the Organisational Controls module."
+      "rationale": "Clause 4.4 is the foundational requirement to build and operate an ISMS as an integrated system of processes. A policy, a firewall, or a single appointed person are just components of that system.",
+      "lms_direction": "Review the Information Security Management System Overview module."
     },
     {
-      "category": "Case Study — Solstice Cloud Services",
-      "section": "Clause 6.1.3 — Supplier Risk",
+      "category": "Leadership",
+      "section": "Clause 5.1 — Leadership",
       "type": "single_select",
-      "text": "Before signing on a new sub-processor that will handle customer data, which control should Solstice apply?",
+      "text": "Who is ultimately accountable under Clause 5.1 for ensuring the ISMS achieves its intended outcomes?",
       "options": [
-        { "text": "A.8.9 Configuration management of servers and network devices", "correct": false },
-        { "text": "A.6.4 Disciplinary process for staff rule-breaking", "correct": false },
-        { "text": "A.5.12 Classification of information by sensitivity level", "correct": false },
-        { "text": "A.5.20 Addressing information security within supplier agreements", "correct": true }
+        { "text": "Whichever employee is assigned as the IT Manager", "correct": false },
+        { "text": "The external cybersecurity consultant hired to help set up the ISMS", "correct": false },
+        { "text": "The external certification body once the audit is complete", "correct": false },
+        { "text": "Top management", "correct": true }
       ],
-      "rationale": "A.5.20 covers building security requirements directly into supplier agreements — exactly what's needed before bringing on a new sub-processor. The others are real controls, but none addresses supplier agreements specifically.",
-      "lms_direction": "Review the Supplier Relationships module."
+      "rationale": "Clause 5.1 makes top management accountable for the effectiveness of the ISMS. While daily tasks can be delegated to an IT Manager or CISO, ultimate accountability remains with leadership.",
+      "lms_direction": "Review the Leadership and Accountability module."
     },
     {
-      "category": "Case Study — Solstice Cloud Services",
-      "section": "SoA Justification Quality",
+      "category": "Leadership",
+      "section": "Clause 5.2 — Policy",
       "type": "single_select",
-      "text": "Solstice includes A.5.23 in its SoA. The Implementer writes the justification as: 'Our cloud provider is a big, well-known company.' Is this a strong justification?",
+      "text": "An Implementer drafts a one-line Information Security Policy that reads only: 'We care about data privacy.' What is the primary deficiency of this draft?",
       "options": [
-        { "text": "No — it doesn't explain what security requirements were actually checked with the provider", "correct": true },
-        { "text": "Yes — SoA justifications generally only need to name the supplier involved", "correct": false },
-        { "text": "No — because Solstice should not depend on any outside cloud provider at all", "correct": false },
-        { "text": "Yes — a well-known provider's size is generally proof enough of its security", "correct": false }
+        { "text": "It lacks commitments to satisfy applicable requirements and to continually improve the ISMS", "correct": true },
+        { "text": "It does not list the name of every software vendor the organisation uses", "correct": false },
+        { "text": "It does not detail the specific encryption algorithms used on the servers", "correct": false },
+        { "text": "It is too short to be printed on official company letterhead", "correct": false }
       ],
-      "rationale": "A strong justification points to specific, checkable evidence — a contract clause, an audit report, a certification the provider holds — not just brand recognition. Solstice isn't wrong to use a cloud provider; the justification is just too vague.",
-      "lms_direction": "Review the Statement of Applicability Justification Quality module."
+      "rationale": "A compliant policy must include explicit commitments to satisfy applicable requirements related to information security and to continual improvement. Technical details and vendor lists belong in procedures or registers, not the overarching policy.",
+      "lms_direction": "Review the Information Security Policy module."
     },
     {
-      "category": "Case Study — Solstice Cloud Services",
-      "section": "Clause 9 — Performance Evaluation",
+      "category": "Leadership",
+      "section": "Clause 5.3 — Roles",
       "type": "single_select",
-      "text": "All 40 of Solstice's staff work remotely, with no physical office. Which of these would most directly help satisfy Clause 9's monitoring requirements?",
+      "text": "At a small SaaS company, everyone assumes someone else is responsible for reviewing access logs, resulting in logs not being checked for months. What does Clause 5.3 require to prevent this?",
       "options": [
-        { "text": "Assuming remote staff pose no meaningful risk since there is no office to secure", "correct": false },
-        { "text": "Skipping internal audits altogether, since there's no single site to visit", "correct": false },
-        { "text": "Relying only on staff to self-report any problems they happen to notice", "correct": false },
-        { "text": "Setting up regular, scheduled reviews of security logs and remote access records", "correct": true }
+        { "text": "Logs should only be reviewed when an external audit is scheduled", "correct": false },
+        { "text": "The task should dynamically rotate to whoever has the most free time", "correct": false },
+        { "text": "Roles and responsibilities relevant to information security must be clearly assigned and communicated", "correct": true },
+        { "text": "The CEO must personally review all access logs every week", "correct": false }
       ],
-      "rationale": "Clause 9 requires planned, ongoing monitoring — a fully remote setup still generates logs and records that can and should be reviewed regularly. A lack of a physical office doesn't remove the need for monitoring or internal audit.",
-      "lms_direction": "Review the Monitoring and Internal Audit module."
+      "rationale": "Clause 5.3 requires that responsibilities relevant to information security are explicitly assigned and communicated. Ambiguity leads to failure; the solution is clear ownership, not centralizing everything to the CEO or relying on free time.",
+      "lms_direction": "Review the Roles, Responsibilities and Authorities module."
     },
     {
-      "category": "Case Study — Solstice Cloud Services",
-      "section": "Nonconformity Application",
-      "type": "single_select",
-      "text": "During Solstice's first internal audit, the SoA lists 15 sub-processors as 'Included' with security agreements in place, but only 9 of those agreements can actually be produced when asked. How should this most likely be classed?",
+      "category": "Leadership",
+      "section": "Clause 5.3 — Roles",
+      "type": "true_false",
+      "text": "True or False: Under Clause 5.1, top management must ensure that the resources needed for the ISMS are available.",
       "options": [
-        { "text": "Not a nonconformity at all, since the missing agreements were probably just misplaced somewhere", "correct": false },
-        { "text": "A minor nonconformity only, since a good number of agreements were still found", "correct": false },
-        { "text": "Just an observation, since paperwork issues aren't really considered part of an ISMS audit", "correct": false },
-        { "text": "A major nonconformity, since it affects a large share of the agreements listed", "correct": true }
+        { "text": "True", "correct": true },
+        { "text": "False", "correct": false }
       ],
-      "rationale": "Six of fifteen agreements missing is a substantial gap between what the SoA claims and what can actually be shown — that undermines confidence in the whole supplier control area, which is a major finding, not a minor one or a mere paperwork observation.",
+      "rationale": "Clause 5.1 explicitly requires top management to ensure the integration of ISMS requirements into processes and that the resources needed for the ISMS are available.",
+      "lms_direction": "Review the Leadership and Accountability module."
+    },
+    {
+      "category": "Risk Assessment & Treatment",
+      "section": "Calculation",
+      "type": "single_select",
+      "exhibit_ref": "risk_matrix",
+      "text": "Using the significance model (Score = Impact x Likelihood; 1-6 Acceptable, 7-14 Monitor, 15-25 Unacceptable), a risk has an Impact of 5 (Very Big) and a Likelihood of 3 (Possible). What is the score, and its classification?",
+      "options": [
+        { "text": "Score 15, and it is an Unacceptable Risk", "correct": true },
+        { "text": "Score 15, and it is a Monitor level risk, since it is close to the edge", "correct": false },
+        { "text": "Score 20, and it is an Unacceptable Risk, found by multiplying 5 by 4 instead", "correct": false },
+        { "text": "Score 8, and it is a Monitor level risk, found by adding the numbers together", "correct": false }
+      ],
+      "rationale": "5 x 3 = 15, which meets the threshold for Unacceptable Risk (15-25). Addition is not the formula provided, and 15 does not fall into the Monitor band.",
+      "lms_direction": "Review the Information Security Risk Assessment module."
+    },
+    {
+      "category": "Risk Assessment & Treatment",
+      "section": "Calculation",
+      "type": "single_select",
+      "exhibit_ref": "risk_matrix",
+      "text": "A risk has an Impact of 2 (Small) and a Likelihood of 4 (Likely). What is the score, and which band does it fall into?",
+      "options": [
+        { "text": "Score 8, and it falls in the Unacceptable Risk band, because 'Likely' automatically triggers treatment", "correct": false },
+        { "text": "Score 8, and it falls in the Acceptable Risk band, since 2 is a low impact", "correct": false },
+        { "text": "Score 8, and it falls in the Monitor / Periodic Review band", "correct": true },
+        { "text": "Score 6, and it falls in the Acceptable Risk band, found by adding the numbers", "correct": false }
+      ],
+      "rationale": "2 x 4 = 8, which sits inside the Monitor band (7-14). A high likelihood does not automatically make a risk 'Unacceptable' if the impact is exceptionally low; both variables matter.",
+      "lms_direction": "Review the Information Security Risk Assessment module."
+    },
+    {
+      "category": "Risk Assessment & Treatment",
+      "section": "Standard Accuracy",
+      "type": "single_select",
+      "text": "Which of these best describes how ISO 27001 requires an organisation to conduct risk assessments?",
+      "options": [
+        { "text": "It must adopt whatever risk methodology its external auditor prefers", "correct": false },
+        { "text": "It establishes its own consistent, valid risk criteria and methodology, suited to its context", "correct": true },
+        { "text": "It must use the exact 5x5 matrix published in the ISO 27001 standard", "correct": false },
+        { "text": "It must treat every single identified vulnerability with maximum severity", "correct": false }
+      ],
+      "rationale": "ISO 27001 (Clause 6.1.2) requires the organisation to define its own risk assessment methodology and criteria that produce consistent, valid, and comparable results. There is no prescribed 5x5 matrix in the standard itself.",
+      "lms_direction": "Review the Information Security Risk Assessment module."
+    },
+    {
+      "category": "Risk Assessment & Treatment",
+      "section": "Risk Ownership",
+      "type": "single_select",
+      "text": "During risk identification, a vulnerability is found. According to Clause 6.1.2, what must be associated with this identified information security risk?",
+      "options": [
+        { "text": "A public press release", "correct": false },
+        { "text": "A designated risk owner", "correct": true },
+        { "text": "An immediate disciplinary hearing", "correct": false },
+        { "text": "A detailed financial cost-benefit analysis before any further step", "correct": false }
+      ],
+      "rationale": "Clause 6.1.2 explicitly requires the organisation to identify the risk owners for the identified information security risks.",
+      "lms_direction": "Review the Risk Identification and Ownership module."
+    },
+    {
+      "category": "Risk Assessment & Treatment",
+      "section": "Statement of Applicability",
+      "type": "single_select",
+      "text": "After determining necessary controls during risk treatment, what mandatory document must the organisation produce under Clause 6.1.3?",
+      "options": [
+        { "text": "A generic marketing brochure about security", "correct": false },
+        { "text": "A Statement of Applicability (SoA) listing which Annex A controls are included or excluded", "correct": true },
+        { "text": "A source code review log", "correct": false },
+        { "text": "A list of all employee home addresses for physical security tracking", "correct": false }
+      ],
+      "rationale": "Clause 6.1.3 requires the production of a Statement of Applicability that contains the necessary controls, justification for their inclusion, whether they are implemented, and justification for excluding any Annex A controls.",
+      "lms_direction": "Review the Risk Treatment and Statement of Applicability module."
+    },
+    {
+      "category": "Information Security Requirements",
+      "section": "Critique",
+      "type": "single_select",
+      "exhibit_ref": "legal_and_contractual_register",
+      "text": "Looking at the legal and contractual register (Row 1: GDPR, owned, reviewed, evidence on file. Row 2: Client MSA, owned, reviewed, evidence on file. Row 3: Software Licensing, no owner, no review date, no evidence) — which row represents a nonconformity?",
+      "options": [
+        { "text": "Row 3, since it lacks an assigned owner, review date, and evidence of compliance tracking", "correct": true },
+        { "text": "Row 1, since GDPR should never be reviewed quarterly", "correct": false },
+        { "text": "Row 2, since client contracts are not part of an ISMS", "correct": false },
+        { "text": "None, a register does not require owners", "correct": false }
+      ],
+      "rationale": "Row 3 is unmanaged. Identifying a requirement without assigning ownership or tracking compliance fails the intent of managing information security requirements. Client contracts (Row 2) are absolutely part of ISMS requirements.",
+      "lms_direction": "Review the Legal and Contractual Requirements module."
+    },
+    {
+      "category": "Information Security Requirements",
+      "section": "Fundamentals",
+      "type": "single_select",
+      "text": "Which of these would correctly count as an information security requirement relevant to the ISMS (Clause 4.2c)?",
+      "options": [
+        { "text": "A competitor's internal firewall configuration manual", "correct": false },
+        { "text": "An internal memo suggesting staff use longer passwords if they want to", "correct": false },
+        { "text": "A general IT magazine article about best practices", "correct": false },
+        { "text": "A binding Non-Disclosure Agreement (NDA) signed with a major partner", "correct": true }
+      ],
+      "rationale": "A signed NDA is a binding legal/contractual requirement related to information security. Magazine articles and informal suggestions are not formal requirements the ISMS must comply with.",
+      "lms_direction": "Review the Interested Parties and Requirements module."
+    },
+    {
+      "category": "Information Security Requirements",
+      "section": "Maintenance",
+      "type": "single_select",
+      "text": "A new cybersecurity regulation is passed that affects how the organisation must encrypt user data. How should the ISMS respond?",
+      "options": [
+        { "text": "The entire ISMS must be rebuilt from scratch", "correct": false },
+        { "text": "The regulation should be handled informally outside the ISMS", "correct": false },
+        { "text": "Wait until the certification body issues a nonconformity before acting", "correct": false },
+        { "text": "Identify it as a new requirement, assess its impact, and update policies and controls accordingly", "correct": true }
+      ],
+      "rationale": "The ISMS must adapt to changes in context and legal requirements. The new regulation must be tracked, assessed, and implemented through standard ISMS processes.",
+      "lms_direction": "Review the Context and Legal Requirements module."
+    },
+    {
+      "category": "Information Security Requirements",
+      "section": "Evaluation",
+      "type": "true_false",
+      "text": "True or False: An organisation can legitimately decide to ignore a statutory data protection law if implementing the required controls would be too expensive.",
+      "options": [
+        { "text": "True", "correct": false },
+        { "text": "False", "correct": true }
+      ],
+      "rationale": "Statutory and regulatory requirements cannot be bypassed via internal risk acceptance. While cost influences *how* a control is implemented, ignoring a binding legal obligation entirely is a failure to meet ISMS requirements.",
+      "lms_direction": "Review the Legal and Statutory Requirements module."
+    },
+    {
+      "category": "Objectives & Planning",
+      "section": "Clause 6.2 — Objectives",
+      "type": "single_select",
+      "text": "Which of these is the best-written information security objective?",
+      "options": [
+        { "text": "\"Try to make our servers more secure this year.\"", "correct": false },
+        { "text": "\"Achieve 100% endpoint encryption across all company laptops by Q3, tracked via MDM reports.\"", "correct": true },
+        { "text": "\"Ensure everyone feels confident about cybersecurity.\"", "correct": false },
+        { "text": "\"Buy a new antivirus software.\"", "correct": false }
+      ],
+      "rationale": "Clause 6.2 requires objectives to be measurable, monitored, and updated. The endpoint encryption objective is specific, has a deadline, and states how it will be measured. 'Buy a software' is an action, not an objective.",
+      "lms_direction": "Review the Information Security Objectives module."
+    },
+    {
+      "category": "Objectives & Planning",
+      "section": "Clause 6.1.1 — Risks and Opportunities",
+      "type": "single_select",
+      "text": "Which of the following represents an 'opportunity' for the ISMS under Clause 6.1.1?",
+      "options": [
+        { "text": "A critical zero-day vulnerability in the web application", "correct": false },
+        { "text": "A server rack losing power", "correct": false },
+        { "text": "Automating access reviews to reduce administrative errors and improve audit readiness", "correct": true },
+        { "text": "An employee clicking on a phishing link", "correct": false }
+      ],
+      "rationale": "Clause 6.1.1 addresses both risks and opportunities. Automating access reviews is an opportunity that enhances the ISMS effectiveness and reduces human error. The others are threats/incidents.",
+      "lms_direction": "Review the Risks and Opportunities module."
+    },
+    {
+      "category": "Objectives & Planning",
+      "section": "Planning Actions",
+      "type": "single_select",
+      "text": "An objective is set to \"Reduce phishing click rates to below 2%.\" What must the accompanying plan to achieve this include?",
+      "options": [
+        { "text": "A comparison against a competitor's click rate", "correct": false },
+        { "text": "Just assigning it to the HR department without further detail", "correct": false },
+        { "text": "What will be done, resources required, who is responsible, when it will be completed, and how results are evaluated", "correct": true },
+        { "text": "A general statement that staff will be told not to click bad links", "correct": false }
+      ],
+      "rationale": "Clause 6.2 requires that when planning how to achieve objectives, the organisation must determine what will be done, what resources are required, who will be responsible, when it will be completed, and how the results will be evaluated.",
+      "lms_direction": "Review the Information Security Objectives module."
+    },
+    {
+      "category": "Objectives & Planning",
+      "section": "Integration",
+      "type": "single_select",
+      "text": "How should information security objectives relate to the broader organisation?",
+      "options": [
+        { "text": "They must be kept entirely secret from all employees", "correct": false },
+        { "text": "They should be consistent with the information security policy", "correct": true },
+        { "text": "They must focus exclusively on physical security guard patrols", "correct": false },
+        { "text": "They are only relevant to the IT support desk", "correct": false }
+      ],
+      "rationale": "Clause 6.2 explicitly mandates that information security objectives must be consistent with the information security policy.",
+      "lms_direction": "Review the Information Security Objectives module."
+    },
+    {
+      "category": "Support Tools",
+      "section": "Clause 7.2 — Competence",
+      "type": "single_select",
+      "text": "An internal audit reveals that developers configuring the cloud environment lack training on secure cloud architecture. Under Clause 7.2, what is the appropriate action?",
+      "options": [
+        { "text": "Take actions to acquire the necessary competence (e.g., training) and retain documented information as evidence", "correct": true },
+        { "text": "Fire the developers immediately", "correct": false },
+        { "text": "Wait until a data breach occurs to justify the training budget", "correct": false },
+        { "text": "Assume they will learn it eventually through trial and error", "correct": false }
+      ],
+      "rationale": "Clause 7.2 requires the organisation to ensure persons are competent, take actions to acquire competence where applicable, and retain appropriate documented information as evidence of competence.",
+      "lms_direction": "Review the Competence module."
+    },
+    {
+      "category": "Support Tools",
+      "section": "Clause 7.3 — Awareness",
+      "type": "single_select",
+      "text": "Which of these best demonstrates that employees meet the Awareness requirements of Clause 7.3?",
+      "options": [
+        { "text": "Employees have signed an NDA upon hiring and never looked at it again", "correct": false },
+        { "text": "Employees can recite the ISO 27001 standard word-for-word", "correct": false },
+        { "text": "Employees understand the security policy, their contribution to ISMS effectiveness, and the implications of not conforming", "correct": true },
+        { "text": "Employees know the exact IP address of the main firewall", "correct": false }
+      ],
+      "rationale": "Awareness under Clause 7.3 means persons doing work are aware of the policy, their contribution to the effectiveness of the ISMS, and the implications of not conforming with ISMS requirements.",
+      "lms_direction": "Review the Awareness module."
+    },
+    {
+      "category": "Support Tools",
+      "section": "Clause 7.4 — Communication",
+      "type": "single_select",
+      "text": "A communication plan states: 'Notify users of security updates.' It fails to mention who sends the message or when. What is missing according to Clause 7.4?",
+      "options": [
+        { "text": "When to communicate and who shall communicate", "correct": true },
+        { "text": "The exact font and color scheme of the notification email", "correct": false },
+        { "text": "The approval signature of the external auditor", "correct": false },
+        { "text": "The budget allocated for the email software", "correct": false }
+      ],
+      "rationale": "Clause 7.4 requires the organisation to determine what, when, with whom, who shall communicate, and the processes by which communication shall be effected.",
+      "lms_direction": "Review the Communication module."
+    },
+    {
+      "category": "Support Tools",
+      "section": "Clause 7.5 — Documented Information",
+      "type": "single_select",
+      "text": "During an audit, three different departments are found to be using three different versions of the Incident Response Procedure. What ISMS process has failed?",
+      "options": [
+        { "text": "Control of documented information (version control and distribution)", "correct": true },
+        { "text": "Physical security perimeters", "correct": false },
+        { "text": "Cryptographic controls", "correct": false },
+        { "text": "Network segregation", "correct": false }
+      ],
+      "rationale": "Having conflicting, outdated versions of a procedure in circulation is a failure of Documented Information control (Clause 7.5), specifically regarding distribution, access, and version control.",
+      "lms_direction": "Review the Documented Information module."
+    },
+    {
+      "category": "Support Tools",
+      "section": "Clause 7.5 — Documented Information",
+      "type": "true_false",
+      "text": "True or False: ISO 27001 requires every single daily operational email sent by the IT department to be formally version-controlled and approved by the CISO.",
+      "options": [
+        { "text": "True", "correct": false },
+        { "text": "False", "correct": true }
+      ],
+      "rationale": "Clause 7.5 applies to documented information required by the standard and determined by the organisation as necessary for ISMS effectiveness. It does not mandate formal version control for every routine communication.",
+      "lms_direction": "Review the Documented Information module."
+    },
+    {
+      "category": "Operational Control",
+      "section": "Clause 8.1 — Operational Planning and Control",
+      "type": "single_select",
+      "text": "To implement the actions determined in risk treatment, an organisation must establish what under Clause 8.1?",
+      "options": [
+        { "text": "Criteria for the processes, and implement control of the processes in accordance with the criteria", "correct": true },
+        { "text": "A list of suggestions that staff can choose to follow if they have time", "correct": false },
+        { "text": "A completely new corporate entity to handle security", "correct": false },
+        { "text": "Verbal guidelines passed down only through word of mouth", "correct": false }
+      ],
+      "rationale": "Clause 8.1 states the organisation shall plan, implement and control processes by establishing criteria for the processes and implementing control in accordance with the criteria.",
+      "lms_direction": "Review the Operational Planning and Control module."
+    },
+    {
+      "category": "Operational Control",
+      "section": "Clause 8.1 — Change Management",
+      "type": "single_select",
+      "text": "An organisation plans to migrate its core database to a new cloud provider. Under Clause 8.1, what must they do regarding this change?",
+      "options": [
+        { "text": "Execute the migration immediately and see what breaks", "correct": false },
+        { "text": "Control planned changes and review the consequences of unintended changes, taking action to mitigate adverse effects", "correct": true },
+        { "text": "Inform the certification body before moving any data", "correct": false },
+        { "text": "Skip security reviews because cloud providers are inherently secure", "correct": false }
+      ],
+      "rationale": "Clause 8.1 mandates that the organisation shall control planned changes and review the consequences of unintended changes, taking action to mitigate any adverse effects.",
+      "lms_direction": "Review the Operational Planning and Control module."
+    },
+    {
+      "category": "Operational Control",
+      "section": "Clause 8.2 — Risk Assessment",
+      "type": "single_select",
+      "text": "When must an organisation perform information security risk assessments according to Clause 8.2?",
+      "options": [
+        { "text": "Only once during the initial ISMS setup", "correct": false },
+        { "text": "At planned intervals or when significant changes are proposed or occur", "correct": true },
+        { "text": "Only when the external auditor is on site", "correct": false },
+        { "text": "Whenever a junior employee feels like it", "correct": false }
+      ],
+      "rationale": "Clause 8.2 specifies that the organisation shall perform risk assessments at planned intervals or when significant changes are proposed or occur, taking into account the criteria established.",
+      "lms_direction": "Review the Information Security Risk Assessment module."
+    },
+    {
+      "category": "Operational Control",
+      "section": "Clause 8.3 — Risk Treatment",
+      "type": "single_select",
+      "text": "An organisation executes its risk treatment plan but decides to leave some high risks untreated without management approval. Does this satisfy Clause 8.3?",
+      "options": [
+        { "text": "Yes, treating risks is optional", "correct": false },
+        { "text": "Yes, if the IT department agrees it is too hard to fix", "correct": false },
+        { "text": "No, the organisation must implement the risk treatment plan and retain documented information of the results", "correct": true },
+        { "text": "No, because the standard requires zero residual risk", "correct": false }
+      ],
+      "rationale": "Clause 8.3 requires the organisation to implement the risk treatment plan. Residual risks must be approved by risk owners. Zero residual risk is impossible, but failing to execute the agreed plan is a nonconformity.",
+      "lms_direction": "Review the Information Security Risk Treatment module."
+    },
+    {
+      "category": "Performance Evaluation",
+      "section": "Clause 9.1 — Monitoring",
+      "type": "single_select",
+      "text": "Under Clause 9.1, when determining what needs to be monitored and measured, what else must the organisation determine?",
+      "options": [
+        { "text": "The methods for monitoring, measurement, analysis, and evaluation to ensure valid results", "correct": true },
+        { "text": "The exact cost of the monitoring software", "correct": false },
+        { "text": "Which competitor to spy on", "correct": false },
+        { "text": "How to bypass the monitoring if it impacts server performance", "correct": false }
+      ],
+      "rationale": "Clause 9.1 requires determining what needs to be monitored/measured, the methods for monitoring/measurement/analysis/evaluation to ensure valid results, when monitoring shall be performed, and when results shall be analyzed.",
+      "lms_direction": "Review the Monitoring, Measurement, Analysis and Evaluation module."
+    },
+    {
+      "category": "Performance Evaluation",
+      "section": "Clause 9.2 — Internal Audit",
+      "type": "single_select",
+      "text": "An Implementer is building the internal audit programme. According to Clause 9.2, what must the audit programme take into consideration?",
+      "options": [
+        { "text": "Only the availability of the external auditor", "correct": false },
+        { "text": "The importance of the processes concerned and the results of previous audits", "correct": true },
+        { "text": "A flat schedule where every department gets audited on exactly the same day every year", "correct": false },
+        { "text": "Ensuring auditors always audit their own work to save time", "correct": false }
+      ],
+      "rationale": "Clause 9.2 requires the audit programme to take into consideration the importance of the processes concerned and the results of previous audits. Auditors must also be objective (cannot audit their own work).",
+      "lms_direction": "Review the Internal Audit module."
+    },
+    {
+      "category": "Performance Evaluation",
+      "section": "Clause 9.2 — Objectivity",
+      "type": "true_false",
+      "text": "True or False: Under Clause 9.2, the IT Manager can internally audit the firewall configurations they personally implemented yesterday, provided they promise to be honest.",
+      "options": [
+        { "text": "True", "correct": false },
+        { "text": "False", "correct": true }
+      ],
+      "rationale": "Clause 9.2 mandates selecting auditors and conducting audits that ensure objectivity and the impartiality of the audit process. You cannot objectively audit your own work.",
+      "lms_direction": "Review the Internal Audit module."
+    },
+    {
+      "category": "Performance Evaluation",
+      "section": "Clause 9.3 — Management Review",
+      "type": "single_select",
+      "text": "Ahead of a management review, the Implementer prepares an agenda. Which of the following is a mandatory input for management review under Clause 9.3?",
+      "options": [
+        { "text": "The company's annual holiday party budget", "correct": false },
+        { "text": "Feedback from interested parties, including changes in needs and expectations", "correct": true },
+        { "text": "The personal email logs of the engineering team", "correct": false },
+        { "text": "A list of office supplies needed for the next quarter", "correct": false }
+      ],
+      "rationale": "Clause 9.3 lists specific mandatory inputs, including changes in external/internal issues, feedback from interested parties, risk assessment results, and nonconformities. Budgets and office supplies are not ISMS management review inputs.",
+      "lms_direction": "Review the Management Review module."
+    },
+    {
+      "category": "Performance Evaluation",
+      "section": "Clause 9.3 — Management Review Outputs",
+      "type": "single_select",
+      "text": "What must the outputs of the management review include?",
+      "options": [
+        { "text": "Decisions related to continual improvement opportunities and any needs for changes to the ISMS", "correct": true },
+        { "text": "Just a signed attendance sheet", "correct": false },
+        { "text": "A decision to terminate employees who failed phishing tests", "correct": false },
+        { "text": "A formal press release", "correct": false }
+      ],
+      "rationale": "Clause 9.3 states the outputs of the management review shall include decisions related to continual improvement opportunities and any needs for changes to the ISMS.",
+      "lms_direction": "Review the Management Review module."
+    },
+    {
+      "category": "Improvement",
+      "section": "Clause 10.1 — Continual Improvement",
+      "type": "single_select",
+      "text": "An ISMS manager notices that while access reviews meet current requirements, automating them would make the system more robust and efficient. They implement the automation. This is an example of:",
+      "options": [
+        { "text": "Corrective action (Clause 10.2)", "correct": false },
+        { "text": "Continual improvement (Clause 10.1)", "correct": true },
+        { "text": "Internal auditing (Clause 9.2)", "correct": false },
+        { "text": "Nonconformity (Clause 10.2)", "correct": false }
+      ],
+      "rationale": "Continual improvement (Clause 10.1) is about enhancing the suitability, adequacy, and effectiveness of the ISMS proactively, even when a nonconformity hasn't occurred.",
+      "lms_direction": "Review the Continual Improvement module."
+    },
+    {
+      "category": "Improvement",
+      "section": "Clause 10.2 — Corrective Action",
+      "type": "single_select",
+      "text": "A security breach occurs due to an unpatched server. What is the correct sequence of steps under Clause 10.2?",
+      "options": [
+        { "text": "React to control the breach, evaluate the need to eliminate the root cause (unpatched systems), implement action, and review effectiveness", "correct": true },
+        { "text": "Log the breach, fire the server admin, and close the ticket", "correct": false },
+        { "text": "Wait for the next management review to decide if patching is necessary", "correct": false },
+        { "text": "Hide the breach from management to avoid panic", "correct": false }
+      ],
+      "rationale": "Clause 10.2 dictates reacting to the nonconformity, evaluating the root cause to ensure it does not recur, implementing action, and reviewing effectiveness.",
+      "lms_direction": "Review the Nonconformity and Corrective Action module."
+    },
+    {
+      "category": "Improvement",
+      "section": "Clause 10.2 — Classification",
+      "type": "single_select",
+      "text": "During an audit, it is discovered that one employee out of 500 missed their annual security awareness training by two days. How should this most likely be classed?",
+      "options": [
+        { "text": "A major nonconformity, because training is critical", "correct": false },
+        { "text": "Grounds for certification withdrawal", "correct": false },
+        { "text": "Not a nonconformity, because it was only two days", "correct": false },
+        { "text": "A minor nonconformity, as it is an isolated lapse and not a systemic breakdown of the training program", "correct": true }
+      ],
+      "rationale": "A single isolated lapse in a process that is otherwise functioning effectively is a minor nonconformity. It is a real deviation from requirements, but not a total system failure.",
       "lms_direction": "Review the Nonconformity Classification module."
     },
     {
-      "category": "Control Selection",
-      "section": "Judgment",
-      "type": "single_select",
-      "text": "A company finds that visitors are able to walk unescorted through server rooms during building tours. Which Annex A control deals most directly with this?",
-      "options": [
-        { "text": "A.7.10 Storage media", "correct": false },
-        { "text": "A.7.2 Physical entry", "correct": true },
-        { "text": "A.6.1 Screening", "correct": false },
-        { "text": "A.7.4 Physical security monitoring", "correct": false }
-      ],
-      "rationale": "A.7.2 (Physical Entry) covers controlling who is allowed into secure areas in the first place — the failure here. A.7.4 is about detecting problems after the fact, and the other two address different concerns entirely.",
-      "lms_direction": "Review the Physical Controls module."
+      "category": "Case Study — Aegis HealthTech Solutions (Full Story)",
+      "section": "Paragraph 1 — Clause 4.1",
+      "type": "interactive_tool",
+      "tool_type": "pestle_canvas",
+      "text": "Review Paragraph 1. Drag the following external and internal issues into the correct PESTLE categories (Political, Economic, Social, Technological, Legal, Environmental).",
+      "tool_data": {
+        "items": [
+          { "id": "i1", "text": "Stringent healthcare data sovereignty law on the horizon" },
+          { "id": "i2", "text": "Rising cyber insurance premiums" },
+          { "id": "i3", "text": "Clients asking about Aegis's security posture" },
+          { "id": "i4", "text": "Migration to a hybrid-cloud environment" },
+          { "id": "i5", "text": "Rise of AI-driven ransomware threats" },
+          { "id": "i6", "text": "Vulnerability of physical infrastructure to severe weather events" }
+        ],
+        "categories": ["Political", "Economic", "Social", "Technological", "Legal", "Environmental"]
+      },
+      "expected_payload": {
+        "Political": ["i5"],
+        "Economic": ["i2"],
+        "Social": ["i3"],
+        "Technological": ["i4"],
+        "Legal": ["i1"],
+        "Environmental": ["i6"]
+      },
+      "rationale": "Each item traces to Paragraph 1 context: data sovereignty law (Legal), insurance premiums (Economic), client expectations (Social), cloud migration (Technological). AI threats represent Political/Technological shifts, classified here to balance the canvas. Severe weather is an Environmental context for the physical site.",
+      "lms_direction": "Review the Context Analysis module."
     },
     {
-      "category": "Control Selection",
-      "section": "Judgment",
-      "type": "single_select",
-      "text": "A company wants to make sure sensitive test data used by developers doesn't contain any real customer information. Which control fits best?",
-      "options": [
-        { "text": "A.8.11 Data masking", "correct": true },
-        { "text": "A.8.31 Separation of development, test and production environments", "correct": false },
-        { "text": "A.5.34 Privacy and protection of personal identifiable information (PII)", "correct": false },
-        { "text": "A.8.9 Configuration management", "correct": false }
-      ],
-      "rationale": "A.8.11 (Data Masking) is specifically about hiding or replacing real data with safe substitutes for use in testing. A.8.31 controls where testing happens, not what data is used, and the other two are real but broader controls.",
-      "lms_direction": "Review the Technological Controls module."
+      "category": "Case Study — Aegis HealthTech Solutions (Full Story)",
+      "section": "Paragraph 2 — Clause 6.1.2",
+      "type": "interactive_tool",
+      "tool_type": "policy_editor",
+      "text": "Review Paragraph 2. Click to highlight the specific vulnerability that Marcus identifies as creating the unacceptable risk.",
+      "tool_data": {
+        "sentences": [
+          { "id": "s1", "text": "Developing new features for the electronic health records software." },
+          { "id": "s2", "text": "Authenticating users via a third-party SSO provider." },
+          { "id": "s3", "text": "The storage of unencrypted legacy patient data backups in standard cloud buckets." },
+          { "id": "s4", "text": "Providing customer support through a web portal." }
+        ]
+      },
+      "expected_payload": ["s3"],
+      "rationale": "Paragraph 2 explicitly states that among dozens of risks, the storage of unencrypted legacy patient data backups in standard cloud buckets is the one scoring an Unacceptable Risk.",
+      "lms_direction": "Review the Information Security Risk Assessment module."
     },
     {
-      "category": "Nonconformity Classification",
-      "section": "Classification",
+      "category": "Case Study — Aegis HealthTech Solutions (Full Story)",
+      "section": "Paragraph 2 — Clause 6.1.2",
+      "type": "interactive_tool",
+      "tool_type": "risk_calculator",
+      "text": "Review Paragraph 2. Using the sliders below, set the Impact (Severity) and Likelihood Marcus assigns to the unencrypted backups risk, and confirm the resulting Score.",
+      "tool_data": {
+        "severity_scale": [1, 5],
+        "likelihood_scale": [1, 5]
+      },
+      "expected_payload": { "severity": 5, "likelihood": 4 },
+      "rationale": "Paragraph 2 states: Marcus rates the Impact of a breach as 5 (Very Big) and the Likelihood of misconfiguration as 4 (Likely) — a score of 20.",
+      "lms_direction": "Review the Information Security Risk Assessment module."
+    },
+    {
+      "category": "Case Study — Aegis HealthTech Solutions (Full Story)",
+      "section": "Paragraph 4 — Clause 8.1",
+      "type": "interactive_tool",
+      "tool_type": "communication_matrix",
+      "text": "Review Paragraph 4. Before the encryption gateway goes live, Marcus needs to ensure the sysadmins know the new monitoring procedure. Select the correct options for 'What', 'When', 'With Whom', and 'How'.",
+      "tool_data": {
+        "rows": ["New Operating Criteria"],
+        "columns": [
+          { "id": "what", "label": "What to communicate", "options": ["New log verification procedure", "Company holiday schedule", "New office dress code"] },
+          { "id": "when", "label": "When to communicate", "options": ["Before the gateway goes live", "After the annual audit", "Only if there is a breach"] },
+          { "id": "whom", "label": "With whom", "options": ["Both day-shift sysadmins", "All sales staff", "The CEO only"] },
+          { "id": "how", "label": "How to communicate", "options": ["Hands-on training session", "A poster in the breakroom", "Word of mouth"] }
+        ]
+      },
+      "expected_payload": {
+        "New Operating Criteria": { "what": "New log verification procedure", "when": "Before the gateway goes live", "whom": "Both day-shift sysadmins", "how": "Hands-on training session" }
+      },
+      "rationale": "Paragraph 4 describes Marcus running a hands-on training session for the two day-shift sysadmins before the unit goes live, covering how to check the backup logs.",
+      "lms_direction": "Review the Operational Planning and Control module."
+    },
+    {
+      "category": "Case Study — Aegis HealthTech Solutions (Full Story)",
+      "section": "Paragraph 4 — Clause 8.1",
+      "type": "interactive_tool",
+      "tool_type": "flowchart_arranger",
+      "text": "Review Paragraph 4. Drag the steps below into the correct operational sequence for the new backup process.",
+      "tool_data": {
+        "steps": [
+          { "id": "s3", "text": "Delete plaintext backup and rerun securely" },
+          { "id": "s1", "text": "Database backup process runs" },
+          { "id": "s4", "text": "Backup securely stored" },
+          { "id": "s2", "text": "Check backup log for encryption status" }
+        ]
+      },
+      "expected_payload": ["s1", "s2", "s3", "s4"],
+      "rationale": "The process logic in Paragraph 4 dictates that after a backup runs, the log is checked. If it is unencrypted (plaintext), it is deleted and rerun securely. (The acceptable path leads to secure storage).",
+      "lms_direction": "Review the Operational Planning and Control module."
+    },
+    {
+      "category": "Case Study — Aegis HealthTech Solutions (Full Story)",
+      "section": "Paragraph 5 — Clause 9.2",
+      "type": "interactive_tool",
+      "tool_type": "ncr_generator",
+      "text": "Review Paragraph 5. You are the internal auditor. Complete this Nonconformity Report (NCR) based on the finding from the night shift.",
+      "tool_data": {
+        "findings": "Night shift monitoring logs for the encryption gateway are blank for several weeks.",
+        "classifications": ["Major", "Minor", "Opportunity for Improvement"],
+        "clauses": ["Clause 6.1.2 - Risk Assessment", "Clause 8.1 - Operational Control", "Clause 9.1 - Monitoring", "Clause 9.3 - Management Review"]
+      },
+      "expected_payload": { "classification": "Minor", "clause": "Clause 8.1 - Operational Control" },
+      "rationale": "The documented operating criterion established in 8.1 (checking the logs daily) is not being followed on the night shift. It is a Minor finding because it is isolated to one shift/operator missing a specific procedural control, not a complete failure of the ISMS.",
+      "lms_direction": "Review the Operational Planning and Control module."
+    },
+    {
+      "category": "Case Study — Aegis HealthTech Solutions (Full Story)",
+      "section": "Paragraph 6 — Root Cause",
+      "type": "interactive_tool",
+      "tool_type": "root_cause_tree",
+      "text": "Review Paragraph 6. Complete the 5 Whys analysis to trace the missing logs down to their systemic root cause.",
+      "tool_data": {
+        "levels": [
+          { "id": "why1", "question": "Why were the logs blank?", "options": ["Sysadmin didn't check the dashboard", "System crashed", "Logs deleted by hackers"] },
+          { "id": "why2", "question": "Why didn't the sysadmin check it?", "options": ["Assumed the gateway handled it automatically", "Too busy playing games", "Forgot his password"] },
+          { "id": "why3", "question": "Why did he assume that?", "options": ["Was never trained on the verification dashboard", "Read the wrong manual", "Ignored the instructions"] },
+          { "id": "why4", "question": "Why wasn't he trained?", "options": ["Joined after the initial training session", "Slept through the meeting", "Trainer quit"] },
+          { "id": "why5", "question": "Why did joining late cause a gap?", "options": ["Onboarding checklist didn't trigger role-specific security training during staff turnover", "HR lost his email", "IT manager disliked him"] }
+        ]
+      },
+      "expected_payload": {
+        "why1": "Sysadmin didn't check the dashboard",
+        "why2": "Assumed the gateway handled it automatically",
+        "why3": "Was never trained on the verification dashboard",
+        "why4": "Joined after the initial training session",
+        "why5": "Onboarding checklist didn't trigger role-specific security training during staff turnover"
+      },
+      "rationale": "Paragraph 6 clearly traces the failure from the blank logs to the assumption, the lack of training, the late joining date, and finally the systemic gap: the onboarding checklist didn't trigger role-specific security tool training during staff turnover.",
+      "lms_direction": "Review the Competence and Corrective Action module."
+    },
+    {
+      "category": "Case Study — Aegis HealthTech Solutions (Full Story)",
+      "section": "Paragraph 8 — Clause 10.1",
       "type": "single_select",
-      "text": "An audit finds the risk register is generally well maintained, but three risks rated Critical six months ago have no recorded treatment decision at all. How should this be classed?",
+      "text": "Referring to Paragraph 8: why is the automated log-alert script logged as a continual improvement action, separate from the corrective action already closed?",
       "options": [
-        { "text": "An observation only, since accepting a Critical risk is ultimately the business's own choice to make", "correct": false },
-        { "text": "A major nonconformity, since unresolved risks like this suggest the treatment process isn't working", "correct": true },
-        { "text": "A minor nonconformity only, since most of the rest of the risk register is otherwise fine", "correct": false },
-        { "text": "Not a nonconformity, since the three risks were correctly identified in the first place", "correct": false }
+        { "text": "Continual improvement actions are just corrective actions involving software", "correct": false },
+        { "text": "It is a proactive technical enhancement to the ISMS, not the required fix for the procedural nonconformity that occurred", "correct": true },
+        { "text": "It should have been logged as a preventative action, which is mandatory in ISO 27001:2022", "correct": false },
+        { "text": "Management reviews can only produce continual improvements, not corrective actions", "correct": false }
       ],
-      "rationale": "Identifying a risk is only half the job — leaving Critical risks with no treatment decision for six months points to a real breakdown in the treatment process required by Clause 6.1.3, not a minor slip or an accepted risk (which requires a deliberate, recorded decision, not silence).",
-      "lms_direction": "Review the Risk Treatment Process module."
+      "rationale": "The corrective action (fixing the onboarding process and training the admin) closed the root cause of the nonconformity. The automated script is a proactive enhancement (Clause 10.1) that improves system robustness beyond just fixing the gap.",
+      "lms_direction": "Review the Continual Improvement module."
     }
   ]
 };

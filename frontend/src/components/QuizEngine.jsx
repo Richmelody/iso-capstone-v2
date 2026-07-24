@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import ExhibitViewer from './ExhibitViewer';
+import { PESTLECanvas, PolicyEditor, RiskCalculator, CommunicationMatrix, FlowchartArranger, NCRGenerator, RootCauseTree } from './implementer/InteractiveTools';
+
+function InteractiveToolSwitch({ question, initialPayload, onComplete }) {
+  switch (question.tool_type) {
+    case 'pestle_canvas': return <PESTLECanvas data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    case 'policy_editor': return <PolicyEditor data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    case 'risk_calculator': return <RiskCalculator data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    case 'communication_matrix': return <CommunicationMatrix data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    case 'flowchart_arranger': return <FlowchartArranger data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    case 'ncr_generator': return <NCRGenerator data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    case 'root_cause_tree': return <RootCauseTree data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    default: return <div className="p-4 text-red-500 font-bold">Unknown Tool: {question.tool_type}</div>;
+  }
+}
 
 // ─── Epic 1.3: Named exports so unit tests can import & verify them directly ───
 
@@ -12,21 +26,126 @@ import ExhibitViewer from './ExhibitViewer';
  * optMap  → permutation array mapping display position → original option index
  */
 export function generateLayout(bank, count = 20) {
-  // Build a shuffled copy of all indices, then take the first `count`
-  const indices = Array.from({ length: bank.length }, (_, i) => i);
-  for (let i = indices.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [indices[i], indices[j]] = [indices[j], indices[i]];
+  // Group by category, retaining original indices
+  const categories = [];
+  const categoryMap = new Map();
+
+  bank.forEach((q, originalIdx) => {
+    if (!categoryMap.has(q.category)) {
+      const catObj = { name: q.category, indices: [] };
+      categories.push(catObj);
+      categoryMap.set(q.category, catObj);
+    }
+    categoryMap.get(q.category).indices.push(originalIdx);
+  });
+
+  const totalBankSize = bank.length;
+  let selectedIndices = [];
+
+  // If we need fewer questions than the bank has, select proportionally
+  if (count < totalBankSize) {
+    let targets = [];
+    const caseStudyCats = categories.filter(c => c.name.toLowerCase().includes("case study"));
+    const otherCats = categories.filter(c => !c.name.toLowerCase().includes("case study"));
+    
+    // Force 8 Case Study questions if requested and possible
+    if (caseStudyCats.length > 0 && count >= 35) {
+       const totalCSBankSize = caseStudyCats.reduce((acc, c) => acc + c.indices.length, 0);
+       const csTarget = Math.min(8, totalCSBankSize);
+       const remainingCount = count - csTarget;
+       const totalOtherBankSize = otherCats.reduce((acc, c) => acc + c.indices.length, 0);
+       
+       otherCats.forEach(cat => {
+         cat.target = Math.round((cat.indices.length / totalOtherBankSize) * remainingCount);
+       });
+       
+       let sumOther = otherCats.reduce((acc, c) => acc + c.target, 0);
+       while (sumOther < remainingCount) {
+         const biggest = [...otherCats].sort((a,b) => b.indices.length - a.indices.length)[0];
+         if(biggest) biggest.target++;
+         sumOther++;
+       }
+       while (sumOther > remainingCount) {
+         const biggest = [...otherCats].sort((a,b) => b.indices.length - a.indices.length)[0];
+         if (biggest && biggest.target > 1) {
+           biggest.target--;
+           sumOther--;
+         }
+       }
+
+       // Pro-rate the 8 case study questions across the various case study categories
+       caseStudyCats.forEach(cat => {
+         cat.target = Math.round((cat.indices.length / totalCSBankSize) * csTarget);
+       });
+       let sumCS = caseStudyCats.reduce((acc, c) => acc + c.target, 0);
+       while (sumCS < csTarget) {
+         const biggest = [...caseStudyCats].sort((a,b) => b.indices.length - a.indices.length)[0];
+         if(biggest) biggest.target++;
+         sumCS++;
+       }
+       while (sumCS > csTarget) {
+         const biggest = [...caseStudyCats].sort((a,b) => b.indices.length - a.indices.length)[0];
+         if(biggest && biggest.target > 0) {
+           biggest.target--;
+           sumCS--;
+         }
+       }
+
+       // Maintain original category order
+       targets = categories.map(c => {
+         const csMatch = caseStudyCats.find(cs => cs.name === c.name);
+         return csMatch ? csMatch : otherCats.find(o => o.name === c.name);
+       });
+    } else {
+      // Standard proportional distribution
+      targets = categories.map(cat => ({
+        ...cat,
+        target: Math.round((cat.indices.length / totalBankSize) * count)
+      }));
+      
+      let sum = targets.reduce((acc, curr) => acc + curr.target, 0);
+      while (sum < count) {
+        const biggest = [...targets].sort((a,b) => b.indices.length - a.indices.length)[0];
+        biggest.target++;
+        sum++;
+      }
+      while (sum > count) {
+        const biggest = [...targets].sort((a,b) => b.indices.length - a.indices.length)[0];
+        if (biggest.target > 1) {
+          biggest.target--;
+          sum--;
+        }
+      }
+    }
+
+    // Now select `target` random questions from each category
+    targets.forEach(cat => {
+      // Shuffle the category's indices
+      const catIndices = [...cat.indices];
+      for (let i = catIndices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [catIndices[i], catIndices[j]] = [catIndices[j], catIndices[i]];
+      }
+      // Shuffle is WITHIN the section. We append them directly in category order.
+      selectedIndices.push(...catIndices.slice(0, cat.target));
+    });
+
+  } else {
+    // If count >= totalBankSize, just shuffle within each category
+    categories.forEach(cat => {
+      const catIndices = [...cat.indices];
+      for (let i = catIndices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [catIndices[i], catIndices[j]] = [catIndices[j], catIndices[i]];
+      }
+      selectedIndices.push(...catIndices);
+    });
+    selectedIndices = selectedIndices.slice(0, count);
   }
-  
-  // SORT the randomly selected indices so they appear in their original bank order.
-  // Since the banks are structured from Recall (Easy) -> Application (Hard),
-  // this guarantees the exam always gets harder progressively, while still being random!
-  const selectedIndices = indices.slice(0, count).sort((a, b) => a - b);
-  
+
   return selectedIndices.map((qIdx) => ({
     qIdx,
-    optMap: shuffleOptions(bank[qIdx].options),
+    optMap: bank[qIdx].options ? shuffleOptions(bank[qIdx].options) : null,
   }));
 }
 
@@ -97,6 +216,7 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showExhibitModal, setShowExhibitModal] = useState(false);
   const [lockoutMessage, setLockoutMessage] = useState(null);
+  const [showSkipModal, setShowSkipModal] = useState(false);
   
   const [showImplementerOnboarding, setShowImplementerOnboarding] = useState(() => {
     const isImp = examData?.title?.toLowerCase().includes('implementer') || (accessCode && accessCode.includes('-IMP-'));
@@ -120,6 +240,21 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
     }
   };
   
+  // Case Study Reading Screen State
+  const [hasReadCaseStudy, setHasReadCaseStudy] = useState(() => {
+    if (VAULT_KEY) {
+      try { return localStorage.getItem(VAULT_KEY + "_read_cs") === "true"; } catch (e) {}
+    }
+    return false;
+  });
+
+  const dismissCaseStudyScreen = () => {
+    setHasReadCaseStudy(true);
+    if (VAULT_KEY) {
+      try { localStorage.setItem(VAULT_KEY + "_read_cs", "true"); } catch (e) {}
+    }
+  };
+  
   const hasTrippedRef = React.useRef(false);
   const isSubmittingRef = React.useRef(false); // Add ref to track legitimate submissions
 
@@ -137,17 +272,38 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
   const [timeLeft, setTimeLeft] = useState(recoveredState ? recoveredState.timeLeft : initialTime);
   const MathRef = React.useRef(Date.now() + (recoveredState ? recoveredState.timeLeft : initialTime) * 1000);
 
+  const deepEqual = (obj1, obj2) => {
+    if (obj1 === obj2) return true;
+    if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || obj1 == null || obj2 == null) return false;
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+    if (keys1.length !== keys2.length) return false;
+    for (let key of keys1) {
+      if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) return false;
+    }
+    return true;
+  };
+
   const calculateFinals = (answers) => {
     let finalScore = 0;
     const cats = new Set();
-    // Epic 5.1: Grade against the ORIGINAL option index (answers already store
-    // the original index via optMap mapping — see handleSelectOption below).
+    // Epic 5.1: Grade against the ORIGINAL option index, or deep-check PBT payloads.
     activeQuestions.forEach((q, displayIdx) => {
-      const originalIdx = answers[displayIdx];
-      if (originalIdx !== undefined && q.options[originalIdx] && q.options[originalIdx].correct) {
-        finalScore++;
+      const ans = answers[displayIdx];
+      
+      if (q.type === 'interactive_tool') {
+        if (ans !== undefined && deepEqual(ans, q.expected_payload)) {
+          finalScore++;
+        } else {
+          cats.add(q.category);
+        }
       } else {
-        cats.add(q.category);
+        const originalIdx = ans;
+        if (originalIdx !== undefined && q.options[originalIdx] && q.options[originalIdx].correct) {
+          finalScore++;
+        } else {
+          cats.add(q.category);
+        }
       }
     });
     return { finalScore, failedCats: cats };
@@ -261,13 +417,26 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
   const q = activeQuestions[currentIdx] || questionBank[0];
   const currentlySelected = userAnswers[currentIdx];
 
-  const currentExhibitRef = q.exhibit_ref;
+  const isCaseStudySection = q.category?.toLowerCase().includes("case study");
+  // If it's a Case Study question, implicitly link the ferrow_story exhibit even if the JSON omitted it
+  const currentExhibitRef = q.exhibit_ref || (isCaseStudySection ? 'ferrow_story' : null);
   const currentExhibitData = currentExhibitRef && examData.exhibits ? examData.exhibits[currentExhibitRef] : null;
 
-  const handleSelectOption = (displayIdx) => {
+  // Check if it's the inline Ferrow Story
+  const isFerrowStory = currentExhibitRef === 'ferrow_story';
+  const showSideExhibit = currentExhibitData && !isFerrowStory;
+
+  const handleSelectOption = (displayIdxOrPayload) => {
+    // If it's an interactive tool, the argument is the raw payload, not an index
+    if (q.type === 'interactive_tool') {
+      setUserAnswers(prev => ({ ...prev, [currentIdx]: displayIdxOrPayload }));
+      return;
+    }
+
     // Epic 5.1 GRADING FAILSAFE: translate the display position the user clicked
     // back to the ORIGINAL option index using optMap before saving.
     // This ensures grading logic always works against the original bank order.
+    const displayIdx = displayIdxOrPayload;
     const originalIdx = layoutItem.optMap ? layoutItem.optMap[displayIdx] : displayIdx;
     const nextAnswers = { ...userAnswers, [currentIdx]: originalIdx };
     setUserAnswers(nextAnswers);
@@ -357,6 +526,8 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
   const answeredCount = Object.keys(userAnswers).length;
   const totalQuestions = activeQuestions.length;
 
+  const showReadingScreen = isCaseStudySection && !hasReadCaseStudy && currentExhibitData?.paragraphs;
+
   return (
     <div className="page-container relative">
       {timerTarget ? createPortal(timerContent, timerTarget) : timerContent}
@@ -390,7 +561,7 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
       </div>
 
       {/* Exhibit Mobile Toggle Button */}
-      {currentExhibitData && (
+      {showSideExhibit && (
         <div className="lg:hidden w-full mb-4 mt-2">
           <button 
             onClick={() => setShowExhibitModal(true)}
@@ -402,66 +573,119 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
       )}
 
       {/* Main Split Container */}
-      <div className={`flex flex-col ${currentExhibitData ? 'lg:flex-row lg:gap-6' : ''}`}>
-        
-        {/* Exhibit Viewer (Desktop Left Pane) */}
-        {currentExhibitData && (
-          <div className="hidden lg:block lg:w-1/2 mb-6 lg:mb-0">
-            <ExhibitViewer exhibitData={currentExhibitData} />
+      {showReadingScreen ? (
+        <div className="bg-white rounded-2xl shadow-xl border flex flex-col w-full relative z-10 transition-all duration-300 mt-2">
+          <div className="bg-slate-800 text-white p-6 border-b-4 border-brand-gold rounded-t-2xl">
+            <h2 className="text-xl md:text-2xl font-black uppercase tracking-widest"><i className="fa-solid fa-book-open text-brand-gold mr-3"></i> {q.category}</h2>
+            <p className="text-slate-300 font-bold mt-2 text-sm">Please read the entire scenario before proceeding to the questions.</p>
           </div>
-        )}
+          <div className="p-8 flex-grow overflow-y-auto bg-slate-50">
+             <div className="max-w-4xl mx-auto space-y-6">
+                {currentExhibitData.paragraphs.map((para, idx) => (
+                  <p key={idx} className="text-sm md:text-base text-gray-800 leading-relaxed">
+                    <span className="font-bold text-brand-primary mr-2">Para {idx + 1}.</span>
+                    {para.replace(/^Paragraph \d+:\s*/, '')}
+                  </p>
+                ))}
+             </div>
+          </div>
+          <div className="p-6 bg-white border-t border-gray-200 rounded-b-2xl flex justify-center">
+             <button 
+                onClick={dismissCaseStudyScreen}
+                className="bg-brand-primary hover:bg-emerald-600 text-white font-black uppercase tracking-widest px-8 py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1"
+             >
+                I have read the scenario, proceed to questions <i className="fa-solid fa-arrow-right ml-2"></i>
+             </button>
+          </div>
+        </div>
+      ) : (
+        <div className={`flex flex-col ${showSideExhibit ? 'lg:flex-row lg:gap-8' : ''}`}>
+          
+          {/* Exhibit Viewer (Desktop Left Pane) */}
+          {showSideExhibit && (
+            <div className="hidden lg:block lg:w-1/2 mb-6 lg:mb-0 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] overflow-y-auto rounded-2xl shadow-xl border bg-white">
+              <ExhibitViewer exhibitData={currentExhibitData} />
+            </div>
+          )}
 
         {/* Main Question Card (Right Pane or Full Width) */}
-        <div id="question-card" className={`bg-white rounded-2xl shadow-xl border flex flex-col min-h-[420px] md:min-h-[550px] relative z-10 transition-all duration-300 ${currentExhibitData ? 'lg:w-1/2' : 'w-full'}`}>
+        <div id="question-card" className={`bg-white rounded-2xl shadow-xl border flex flex-col min-h-[420px] md:min-h-[550px] relative z-10 transition-all duration-300 ${showSideExhibit ? 'lg:w-1/2' : 'w-full'}`}>
           <div className="bg-slate-50 p-8 border-b rounded-t-2xl">
             <div className="bg-brand-dark text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded inline-block mb-4 shadow-sm">
               Assessment Task #{currentIdx + 1}
             </div>
-            <p className="text-gray-800 text-xl leading-relaxed font-bold italic">{q.text}</p>
+            {isFerrowStory && currentExhibitData?.paragraphs && (() => {
+              // Extract paragraph number from section, e.g. "Paragraph 1 — Clause 4/5"
+              const match = q.section.match(/Paragraph\s+(\d+)/i);
+              if (match) {
+                 const paraIdx = parseInt(match[1], 10) - 1;
+                 const paragraphText = currentExhibitData.paragraphs[paraIdx];
+                 if (paragraphText) {
+                    return (
+                      <div className="bg-blue-50 border-l-4 border-blue-400 p-5 mb-6 rounded-r-xl shadow-sm">
+                        <h4 className="text-[10px] font-black uppercase text-blue-800 tracking-widest mb-2"><i className="fa-solid fa-book-open-reader mr-2"></i>Reference Paragraph</h4>
+                        <p className="text-sm font-semibold text-blue-900 leading-relaxed italic">"{paragraphText.replace(/^Paragraph \d+:\s*/, '')}"</p>
+                      </div>
+                    );
+                 }
+              }
+              return null;
+            })()}
+            <p className="text-gray-800 text-xl leading-relaxed font-bold">{q.text}</p>
           </div>
         
         <div className="p-8 flex-grow">
-          <div className="space-y-3">
-            {/* Epic 1.3: Render options in SHUFFLED order via optMap.
-                displayIdx = position user sees (0,1,2,3)
-                originalIdx = optMap[displayIdx] = position in the original bank
-                handleSelectOption maps displayIdx → originalIdx before saving */}
-            {(layoutItem.optMap || [0,1,2,3]).map((originalIdx, displayIdx) => {
-              const opt = q.options[originalIdx];
-              if (!opt) return null;
-              // A user answer is stored as the ORIGINAL index — compare to originalIdx
-              const isSelected = currentlySelected === originalIdx;
+          {q.type === 'interactive_tool' ? (
+            <div className="w-full">
+              <InteractiveToolSwitch 
+                question={q} 
+                initialPayload={currentlySelected} 
+                onComplete={handleSelectOption} 
+              />
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {/* Epic 1.3: Render options in SHUFFLED order via optMap.
+                  displayIdx = position user sees (0,1,2,3)
+                  originalIdx = optMap[displayIdx] = position in the original bank
+                  handleSelectOption maps displayIdx → originalIdx before saving */}
+              {(layoutItem.optMap || [0,1,2,3]).map((originalIdx, displayIdx) => {
+                const opt = q.options[originalIdx];
+                if (!opt) return null;
+                // A user answer is stored as the ORIGINAL index — compare to originalIdx
+                const isSelected = currentlySelected === originalIdx;
 
-              let cardClass = "p-5 rounded-xl border-2 flex items-center cursor-pointer transition-all duration-200 hover:shadow-md ";
-              if (isSelected) {
-                cardClass += "bg-brand-primary/5 border-brand-primary";
-              } else {
-                cardClass += "bg-white border-gray-100 hover:border-brand-primary/40";
-              }
+                let cardClass = "p-5 rounded-xl border-2 flex items-center cursor-pointer transition-all duration-200 hover:shadow-md ";
+                if (isSelected) {
+                  cardClass += "bg-brand-primary/5 border-brand-primary";
+                } else {
+                  cardClass += "bg-white border-gray-100 hover:border-brand-primary/40";
+                }
 
-              return (
-                <div
-                  key={displayIdx}
-                  role="button"
-                  tabIndex={0}
-                  aria-pressed={isSelected}
-                  className={cardClass}
-                  onClick={() => handleSelectOption(displayIdx)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      handleSelectOption(displayIdx);
-                    }
-                  }}
-                >
-                  <div className={`w-5 h-5 rounded-full flex-shrink-0 mr-4 flex items-center justify-center transition-colors shadow-inner ${isSelected ? 'bg-brand-primary border-4 border-brand-gold' : 'bg-gray-100 border border-gray-300'}`}>
-                    {isSelected && <div className="w-2 h-2 rounded-full bg-white"></div>}
+                return (
+                  <div
+                    key={displayIdx}
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={isSelected}
+                    className={cardClass}
+                    onClick={() => handleSelectOption(displayIdx)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleSelectOption(displayIdx);
+                      }
+                    }}
+                  >
+                    <div className={`w-5 h-5 rounded-full flex-shrink-0 mr-4 flex items-center justify-center transition-colors shadow-inner ${isSelected ? 'bg-brand-primary border-4 border-brand-gold' : 'bg-gray-100 border border-gray-300'}`}>
+                      {isSelected && <div className="w-2 h-2 rounded-full bg-white"></div>}
+                    </div>
+                    <span className={`text-sm ${isSelected ? 'font-black text-brand-dark' : 'font-semibold text-gray-600'}`}>{opt.text}</span>
                   </div>
-                  <span className={`text-sm ${isSelected ? 'font-black text-brand-dark' : 'font-semibold text-gray-600'}`}>{opt.text}</span>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Action Bar — Smart Dynamic Button */}
@@ -476,25 +700,32 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
                 <span className="hidden sm:inline">Previous</span><span className="sm:hidden">Prev</span>
               </button>
 
-              {/* SMART NEXT BUTTON: skip if nothing selected, commit if selection made */}
+              {/* Skip Button */}
               <button
-                onClick={currentlySelected !== undefined ? handleCommitAnswer : handleSkip}
+                onClick={() => setShowSkipModal(true)}
+                className="flex-[0.8] py-4 md:py-5 flex items-center justify-center text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-500 hover:bg-gray-100 transition border-r border-gray-200"
+              >
+                <span className="hidden sm:inline">Skip Question</span><span className="sm:hidden">Skip</span>
+                <i className="fa-solid fa-forward ml-1 md:ml-2"></i>
+              </button>
+
+              {/* Commit & Continue Button */}
+              <button
+                onClick={handleCommitAnswer}
+                disabled={currentlySelected === undefined}
                 className={`flex-[1.5] py-4 md:py-5 flex items-center justify-center text-[9px] md:text-[10px] font-black uppercase tracking-widest transition ${
                   currentlySelected !== undefined
                     ? 'bg-brand-primary text-white hover:bg-emerald-600 shadow-inner'
-                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-300 cursor-not-allowed opacity-60'
                 }`}
               >
-                {currentlySelected !== undefined ? (
-                  <><span className="hidden sm:inline">Commit & Continue</span><span className="sm:hidden">Commit</span> <i className="fa-solid fa-floppy-disk ml-1 md:ml-2"></i></>
-                ) : (
-                  <><span className="hidden sm:inline">Skip Question</span><span className="sm:hidden">Skip</span> <i className="fa-solid fa-forward ml-1 md:ml-2"></i></>
-                )}
+                <span className="hidden sm:inline">Commit & Continue</span><span className="sm:hidden">Commit</span> <i className="fa-solid fa-floppy-disk ml-1 md:ml-2"></i>
               </button>
            </div>
         </div>
       </div>
       </div>
+      )}
 
       {/* Slide-out Review Drawer */}
       {showReviewDrawer && (
@@ -613,8 +844,41 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
         </div>
       )}
 
+      {/* Skip Confirmation Modal */}
+      {showSkipModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="bg-white max-w-sm w-full rounded-3xl shadow-2xl overflow-hidden transform animate-in zoom-in-95 duration-200">
+             <div className="p-6 text-center bg-slate-50 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-amber-400"></div>
+                <i className="fa-solid fa-forward-step text-4xl mb-4 text-amber-500 drop-shadow-sm"></i>
+                <h3 className="text-xl font-black text-brand-dark uppercase tracking-tighter leading-none mb-2">Skip Question?</h3>
+                <p className="text-gray-500 text-xs font-bold leading-relaxed px-4">
+                  Are you sure you want to skip this question without committing an answer? You can always review and return to it later.
+                </p>
+             </div>
+             <div className="p-6 bg-white border-t border-gray-100 flex space-x-3">
+               <button 
+                  onClick={() => setShowSkipModal(false)}
+                  className="flex-1 py-3 text-xs font-black text-gray-500 bg-gray-100 hover:bg-gray-200 rounded-xl uppercase tracking-widest transition"
+               >
+                 Cancel
+               </button>
+               <button
+                  onClick={() => {
+                    setShowSkipModal(false);
+                    handleSkip();
+                  }}
+                  className="flex-1 py-3 text-xs font-black text-white bg-amber-500 hover:bg-amber-600 rounded-xl uppercase tracking-widest transition shadow"
+               >
+                 Yes, Skip
+               </button>
+             </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Exhibit Modal */}
-      {showExhibitModal && currentExhibitData && (
+      {showExhibitModal && showSideExhibit && (
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-slate-900/80 backdrop-blur-sm p-4 lg:hidden" onClick={() => setShowExhibitModal(false)}>
           <div className="bg-white w-full h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center p-4 bg-slate-800 text-white border-b-4 border-brand-gold">

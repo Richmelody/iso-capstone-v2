@@ -56,6 +56,7 @@ describe('QuizEngine Component - Standard User Flows', () => {
     expect(screen.getByText(/Option A/i)).toBeInTheDocument();
     expect(screen.getByText(/Option B/i)).toBeInTheDocument();
     expect(screen.getByText("Skip Question")).toBeInTheDocument();
+    expect(screen.getByText("Commit & Continue")).toBeInTheDocument();
   });
 
   it('allows a user to select an option, sync to the network, and advance to the next question', () => {
@@ -73,11 +74,25 @@ describe('QuizEngine Component - Standard User Flows', () => {
     expect(screen.getByText(/What represents top management\?/i)).toBeInTheDocument();
   });
 
-  it('allows a user to skip a question without answering', () => {
+  it('displays both Skip and Commit buttons, and prompts a confirmation modal when skipping', () => {
     render(<QuizEngine examData={mockExamData} onFinish={mockOnFinish} onSyncNetwork={mockOnSync} recoveredState={PINNED_RECOVERED_STATE} />);
     
-    const skipBtn = screen.getByText(/Skip Question/i);
+    const skipBtn = screen.getByText(/Skip Question/i).closest('button');
+    const commitBtn = screen.getByText(/Commit & Continue/i).closest('button');
+    
+    expect(skipBtn).toBeInTheDocument();
+    expect(commitBtn).toBeInTheDocument();
+    expect(commitBtn).toBeDisabled(); // Commit should be disabled initially
+
+    // Click skip
     fireEvent.click(skipBtn);
+
+    // Verify modal appears
+    expect(screen.getByText(/Are you sure you want to skip/i)).toBeInTheDocument();
+
+    // Click confirm skip
+    const confirmSkipBtn = screen.getByText(/Yes, Skip/i);
+    fireEvent.click(confirmSkipBtn);
 
     expect(screen.getByText(/Assessment Task #2/i)).toBeInTheDocument();
   });
@@ -171,6 +186,8 @@ describe('QuizEngine Component - Exhibit Hybrid UI', () => {
     
     // Click skip to go to Q2 (which has no exhibit)
     fireEvent.click(screen.getByText("Skip Question"));
+    // Acknowledge the skip modal
+    fireEvent.click(screen.getByText("Yes, Skip"));
     
     expect(screen.queryByText('This is a test exhibit.')).not.toBeInTheDocument();
     expect(screen.queryByText(/View Attached Exhibit/i)).not.toBeInTheDocument();

@@ -94,8 +94,28 @@ describe('generateLayout() — Randomization Logic', () => {
       expect(item).toHaveProperty('qIdx');
       expect(item).toHaveProperty('optMap');
       expect(typeof item.qIdx).toBe('number');
-      expect(Array.isArray(item.optMap)).toBe(true);
+      // optMap can be null for interactive tools
+      if (item.optMap !== null) {
+        expect(Array.isArray(item.optMap)).toBe(true);
+      }
     });
+  });
+
+  it('does not crash when a question has no options (e.g., interactive_tool)', () => {
+    const bankWithTool = [
+      ...FULL_BANK.slice(0, 34),
+      {
+        section: 'Section 34',
+        text: 'Interactive Question',
+        category: 'Case Study',
+        type: 'interactive_tool',
+        // explicitly missing the options array
+      }
+    ];
+    const layout = generateLayout(bankWithTool, 35);
+    const toolItem = layout.find(item => item.qIdx === 34);
+    expect(toolItem).toBeDefined();
+    expect(toolItem.optMap).toBeNull();
   });
 });
 

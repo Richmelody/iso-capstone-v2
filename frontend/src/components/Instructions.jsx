@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Instructions({ onStartExam, onLogout }) {
+export default function Instructions({ examData, onStartExam, onLogout }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showConsentModal, setShowConsentModal] = useState(false);
 
@@ -25,6 +25,40 @@ export default function Instructions({ onStartExam, onLogout }) {
       </div>
 
       <div className="p-8 md:p-12">
+        {/* EXAM METADATA */}
+        {examData?.instrument_notice && (
+          <div className="bg-red-50 border-l-4 border-red-600 p-6 mb-8 rounded-r-xl">
+            <h4 className="font-black text-red-800 uppercase text-sm mb-3 tracking-widest flex items-center">
+              <i className="fa-solid fa-triangle-exclamation text-xl mr-3"></i>
+              Exam Notice
+            </h4>
+            <p className="text-sm text-red-900 leading-relaxed font-semibold mb-2">
+              {examData.instrument_notice}
+            </p>
+            {examData.scoring_note && (
+              <p className="text-xs text-red-800 italic mt-2 border-t border-red-200 pt-2">
+                <strong>Scoring Protocol:</strong> {examData.scoring_note}
+              </p>
+            )}
+          </div>
+        )}
+
+        {examData?.blueprint && (
+          <div className="bg-blue-50 border-l-4 border-blue-600 p-6 mb-8 rounded-r-xl">
+            <h4 className="font-black text-blue-800 uppercase text-sm mb-3 tracking-widest flex items-center">
+              <i className="fa-solid fa-map text-xl mr-3"></i>
+              Exam Blueprint
+            </h4>
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              {Object.entries(examData.blueprint).map(([topic, weight]) => (
+                <React.Fragment key={topic}>
+                  <div className="text-sm font-bold text-blue-900 bg-white p-2 rounded shadow-sm border border-blue-100">{topic}</div>
+                  <div className="text-sm font-black text-blue-700 bg-white p-2 rounded shadow-sm border border-blue-100 text-right">{weight}</div>
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* OBJECTIVE CONTEXT & RULES */}
         <div className="bg-slate-50 border-l-4 border-slate-600 p-6 mb-8 rounded-r-xl">
