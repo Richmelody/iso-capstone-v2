@@ -8,6 +8,9 @@ This document serves as a robust reference guide for manually deploying updates 
 
 ## 1. STAGING DEPLOYMENT (Testing Environment)
 
+**Frontend Browser URL:** `https://iso-demo.chigozieikuru.cloud`
+**Backend API URL:** `https://api-iso-demo.chigozieikuru.cloud`
+
 Use these exact commands to deploy the `staging` branch to the demo/staging server (`147.79.118.135`).
 
 ### Step A: Deploying the Staging Backend
@@ -61,6 +64,9 @@ git push origin main
 ---
 
 ## 3. MAIN PRODUCTION DEPLOYMENT (Live Environment)
+
+**Frontend Browser URL:** `https://exams.astutebusinessprojects.cloud`
+**Backend API URL:** `https://api-exams.astutebusinessprojects.cloud`
 
 Use these exact commands to deploy the `main` branch to the live production server (`72.62.5.218`).
 
