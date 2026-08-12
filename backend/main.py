@@ -225,6 +225,8 @@ class VerifyRequest(BaseModel):
 @app.post("/verify-code")
 def verify_code(req: VerifyRequest):
     try:
+        # Epic 1: Ensure code is uppercase to match database
+        upper_code = req.code.strip().upper()
         with sqlite3.connect(DB_PATH, timeout=15) as conn:
             cur = conn.cursor()
             cur.execute("""
@@ -232,7 +234,7 @@ def verify_code(req: VerifyRequest):
                        saved_score, saved_time_left, saved_question_idx, saved_failed_cats,
                        saved_answers, saved_layout
                 FROM access_codes WHERE code = ?
-            """, (req.code,))
+            """, (upper_code,))
             row = cur.fetchone()
             if not row:
                 raise HTTPException(status_code=400, detail="SECURITY ALERT: Invalid Access Code")

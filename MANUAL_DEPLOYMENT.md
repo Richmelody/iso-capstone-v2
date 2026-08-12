@@ -43,7 +43,7 @@ Use these exact commands to deploy the `staging` branch to the demo/staging serv
    git checkout staging
    git pull origin staging
    npm install
-   npm run build
+   npm run build -- --mode staging
    ```
 
 ---
