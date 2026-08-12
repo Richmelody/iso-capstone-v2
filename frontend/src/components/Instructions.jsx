@@ -21,7 +21,7 @@ export default function Instructions({ examData, onStartExam, onLogout }) {
       )}
       <div className="iso-header-bg pt-16 pb-12 px-12 text-white text-center">
         <h2 className="text-3xl font-black mb-2 uppercase tracking-tighter">Engagement Protocols</h2>
-        <p className="text-emerald-100 italic">Operational briefing for Final EMS Validation.</p>
+        <p className="text-emerald-100 italic">Operational briefing for Final Assessment Validation.</p>
       </div>
 
       <div className="p-8 md:p-12">
