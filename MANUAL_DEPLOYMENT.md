@@ -17,7 +17,7 @@ Use these exact commands to deploy the `staging` branch to the demo/staging serv
 1. **SSH into the server:**
    ```bash
    ssh iso_backend_admin@147.79.118.135
-   # Password: TFniAVtDbcpq9qrQS1gZ
+   # Password: [REDACTED]
    ```
 2. **Pull Code and Restart Server:**
    ```bash
@@ -37,7 +37,7 @@ Use these exact commands to deploy the `staging` branch to the demo/staging serv
 1. **SSH into the server:**
    ```bash
    ssh iso_frontend_admin@147.79.118.135
-   # Password: yCDwMx1VysVx0E7EWtAP
+   # Password: [REDACTED]
    ```
 2. **Pull Code and Build:**
    ```bash
@@ -74,7 +74,7 @@ Use these exact commands to deploy the `main` branch to the live production serv
 1. **SSH into the server:**
    ```bash
    ssh api_capston@72.62.5.218
-   # Password: cdE8N7et6dleeJuHW9mr
+   # Password: [REDACTED]
    ```
 2. **Pull Code and Restart Server:**
    ```bash
@@ -94,7 +94,7 @@ Use these exact commands to deploy the `main` branch to the live production serv
 1. **SSH into the server:**
    ```bash
    ssh exams_capstone@72.62.5.218
-   # Password: qbQeV75DPNJzeOJHq1fZ
+   # Password: [REDACTED]
    ```
 2. **Pull Code and Build:**
    ```bash
@@ -115,7 +115,7 @@ To generate new batches of access codes for the live site, SSH into the backend 
 1. **SSH into the Backend:**
    ```bash
    ssh api_capston@72.62.5.218
-   # Password: cdE8N7et6dleeJuHW9mr
+   # Password: [REDACTED]
    ```
 2. **Run the Generator:**
    ```bash
