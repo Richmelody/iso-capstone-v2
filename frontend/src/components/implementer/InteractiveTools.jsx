@@ -396,3 +396,416 @@ export function RootCauseTree({ data, onComplete, initialPayload }) {
     </ToolContainer>
   );
 }
+
+// 7. Context Sorter
+export function ContextSorter({ data, onComplete, initialPayload }) {
+  const [items, setItems] = useState(data.items);
+  const [categories, setCategories] = useState(
+    data.categories.reduce((acc, cat) => ({ ...acc, [cat]: [] }), {})
+  );
+
+  // Restore initial payload if exists
+  useEffect(() => {
+    if (!initialPayload || Object.keys(initialPayload).length === 0) return;
+
+    // Prevent infinite ping-pong loops by comparing state
+    const currentPayload = {};
+    Object.keys(categories).forEach(k => {
+      currentPayload[k] = categories[k].map(i => i.id);
+    });
+    if (JSON.stringify(currentPayload) === JSON.stringify(initialPayload)) return;
+
+    const restoredCategories = { ...categories };
+    let restoredItems = [...data.items];
+
+    for (const [cat, itemIds] of Object.entries(initialPayload)) {
+      restoredCategories[cat] = itemIds.map(id => data.items.find(i => i.id === id)).filter(Boolean);
+      restoredItems = restoredItems.filter(i => !itemIds.includes(i.id));
+    }
+    setCategories(restoredCategories);
+    setItems(restoredItems);
+  }, [initialPayload]);
+
+  const handleDrop = (itemId, targetCategory) => {
+    const item = data.items.find(i => i.id === itemId);
+    if (!item) return;
+
+    setCategories(prev => {
+      const next = { ...prev };
+      // Remove from any existing category
+      Object.keys(next).forEach(k => {
+        next[k] = next[k].filter(i => i.id !== itemId);
+      });
+      // Add to new category
+      next[targetCategory] = [...next[targetCategory], item];
+      return next;
+    });
+
+    setItems(prev => prev.filter(i => i.id !== itemId));
+  };
+
+  const handleRemove = (itemId, category) => {
+    const item = data.items.find(i => i.id === itemId);
+    if (!item) return;
+    setCategories(prev => ({
+      ...prev,
+      [category]: prev[category].filter(i => i.id !== itemId)
+    }));
+    setItems(prev => [...prev, item]);
+  };
+
+  // Notify parent of changes
+  useEffect(() => {
+    const payload = {};
+    Object.keys(categories).forEach(k => {
+      payload[k] = categories[k].map(i => i.id);
+    });
+    if (onComplete) onComplete(payload);
+  }, [categories]);
+
+  return (
+    <ToolContainer title="Context Sorting Canvas" icon="fa-layer-group">
+      <div className="mb-6 bg-white p-4 rounded-xl border border-dashed border-gray-300">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Unassigned Factors</h4>
+        <div className="flex flex-wrap gap-2">
+          {items.map(item => (
+            <DraggableToken key={item.id} id={item.id} text={item.text} />
+          ))}
+          {items.length === 0 && <span className="text-emerald-500 text-sm font-bold"><i className="fa-solid fa-check-circle mr-1"></i> All factors categorized!</span>}
+        </div>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {data.categories.map(cat => (
+          <DropZone 
+            key={cat} 
+            id={cat} 
+            title={cat} 
+            items={categories[cat]} 
+            onDropItem={handleDrop}
+            onRemoveItem={handleRemove}
+          />
+        ))}
+      </div>
+    </ToolContainer>
+  );
+}
+
+// 8. Document Builder
+export function DocumentBuilder({ data, onComplete, initialPayload }) {
+  const [fragments, setFragments] = useState(data.fragments);
+  const [fields, setFields] = useState(
+    data.fields.reduce((acc, field) => ({ ...acc, [field.id]: [] }), {})
+  );
+
+  useEffect(() => {
+    if (!initialPayload || Object.keys(initialPayload).length === 0) return;
+
+    // Check if same to prevent loop
+    const currentPayload = {};
+    Object.keys(fields).forEach(k => {
+      if (fields[k].length > 0) currentPayload[k] = fields[k][0].id;
+    });
+    if (JSON.stringify(currentPayload) === JSON.stringify(initialPayload)) return;
+
+    const restoredFields = { ...fields };
+    let restoredFragments = [...data.fragments];
+
+    for (const [fieldId, fragId] of Object.entries(initialPayload)) {
+      if (fragId) {
+        const frag = data.fragments.find(f => f.id === fragId);
+        if (frag) {
+          restoredFields[fieldId] = [frag];
+          restoredFragments = restoredFragments.filter(f => f.id !== fragId);
+        }
+      }
+    }
+    setFields(restoredFields);
+    setFragments(restoredFragments);
+  }, [initialPayload]);
+
+  const handleDrop = (itemId, targetFieldId) => {
+    const item = data.fragments.find(i => i.id === itemId);
+    if (!item) return;
+
+    setFields(prev => {
+      const next = { ...prev };
+      
+      let oldItem = null;
+      if (next[targetFieldId].length > 0) {
+          oldItem = next[targetFieldId][0];
+      }
+
+      Object.keys(next).forEach(k => {
+        next[k] = next[k].filter(i => i.id !== itemId);
+      });
+      next[targetFieldId] = [item];
+      
+      if (oldItem && oldItem.id !== itemId) {
+          setFragments(f => [...f.filter(x => x.id !== itemId), oldItem]);
+      } else {
+          setFragments(f => f.filter(i => i.id !== itemId));
+      }
+      
+      return next;
+    });
+  };
+
+  const handleRemove = (itemId, fieldId) => {
+    const item = data.fragments.find(i => i.id === itemId);
+    if (!item) return;
+    setFields(prev => ({
+      ...prev,
+      [fieldId]: prev[fieldId].filter(i => i.id !== itemId)
+    }));
+    setFragments(prev => [...prev, item]);
+  };
+
+  useEffect(() => {
+    const payload = {};
+    Object.keys(fields).forEach(k => {
+      if (fields[k].length > 0) payload[k] = fields[k][0].id;
+    });
+    if (onComplete) onComplete(payload);
+  }, [fields]);
+
+  return (
+    <ToolContainer title="Document Builder" icon="fa-file-contract">
+      <div className="mb-6 bg-white p-4 rounded-xl border border-dashed border-gray-300">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Available Fragments</h4>
+        <div className="flex flex-col gap-2">
+          {fragments.map(item => (
+            <div key={item.id} className="w-full">
+              <DraggableToken id={item.id} text={item.text} />
+            </div>
+          ))}
+          {fragments.length === 0 && <span className="text-emerald-500 text-sm font-bold"><i className="fa-solid fa-check-circle mr-1"></i> All fragments assigned!</span>}
+        </div>
+      </div>
+      <div className="bg-slate-50 p-6 rounded-xl border border-gray-200">
+          <h3 className="text-xl font-black text-brand-dark uppercase mb-4 text-center border-b-2 border-brand-primary pb-2 inline-block">{data.document_type}</h3>
+          <div className="flex flex-col gap-6 mt-4">
+            {data.fields.map(field => (
+              <div key={field.id} className="flex flex-col">
+                <DropZone 
+                  id={field.id} 
+                  title={field.label} 
+                  items={fields[field.id]} 
+                  onDropItem={handleDrop}
+                  onRemoveItem={handleRemove}
+                />
+              </div>
+            ))}
+          </div>
+      </div>
+    </ToolContainer>
+  );
+}
+
+// 9. Audit Checklist
+export function AuditChecklist({ data, onComplete, initialPayload }) {
+  const [selectedFindings, setSelectedFindings] = useState([]);
+  const [evaluations, setEvaluations] = useState(initialPayload || {});
+
+  useEffect(() => {
+    if (data.findings_pool && data.findings_pool.length > 0 && selectedFindings.length === 0) {
+      const pool = [...data.findings_pool];
+      pool.sort(() => Math.random() - 0.5);
+      const selected = pool.slice(0, data.selection_count || 4);
+      setSelectedFindings(selected);
+    }
+  }, [data.findings_pool, data.selection_count, selectedFindings.length]);
+
+  const handleChange = (findingId, field, value) => {
+    setEvaluations(prev => {
+      const currentEval = prev[findingId] || {};
+      const next = { ...prev, [findingId]: { ...currentEval, [field]: value } };
+      if (onComplete) onComplete(next);
+      return next;
+    });
+  };
+
+  return (
+    <ToolContainer title="Audit Findings Checklist" icon="fa-list-check">
+      <div className="space-y-6">
+        {selectedFindings.map((finding, index) => (
+          <div key={finding.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-4">
+             <div className="flex gap-4">
+                <div className="w-8 h-8 rounded-full bg-brand-primary text-white flex items-center justify-center font-black flex-shrink-0">
+                  {index + 1}
+                </div>
+                <p className="text-gray-800 font-medium italic mt-1">"{finding.evidence}"</p>
+             </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-12">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">Classification</label>
+                  <InteractiveSelect 
+                    options={[
+                        { value: "Conformity", label: "Conformity" },
+                        { value: "Opportunity for Improvement", label: "Opportunity for Improvement" },
+                        { value: "Minor Nonconformity", label: "Minor Nonconformity" },
+                        { value: "Major Nonconformity", label: "Major Nonconformity" }
+                    ]}
+                    value={evaluations[finding.id]?.classification || ''}
+                    onChange={(val) => handleChange(finding.id, 'classification', val)}
+                    placeholder="Select classification..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">Clause</label>
+                  <InteractiveSelect 
+                    options={data.available_clauses.map(c => ({ value: c, label: c }))}
+                    value={evaluations[finding.id]?.clause || ''}
+                    onChange={(val) => handleChange(finding.id, 'clause', val)}
+                    placeholder="Select clause..."
+                  />
+                </div>
+             </div>
+          </div>
+        ))}
+      </div>
+    </ToolContainer>
+  );
+}
+
+// 10. Annex A Control Mapper (ISO 27001 specific)
+export function AnnexAMapper({ data, onComplete, initialPayload }) {
+  const [categories, setCategories] = useState(
+    data.themes.reduce((acc, cat) => ({ ...acc, [cat]: [] }), {})
+  );
+  const [items, setItems] = useState(data.items);
+
+  useEffect(() => {
+    if (!initialPayload || Object.keys(initialPayload).length === 0) return;
+    const restoredCategories = { ...categories };
+    let restoredItems = [...data.items];
+
+    for (const [cat, itemIds] of Object.entries(initialPayload)) {
+      if (itemIds && Array.isArray(itemIds)) {
+        restoredCategories[cat] = itemIds.map(id => data.items.find(i => i.id === id)).filter(Boolean);
+        restoredItems = restoredItems.filter(i => !itemIds.includes(i.id));
+      }
+    }
+    setCategories(restoredCategories);
+    setItems(restoredItems);
+  }, [initialPayload]);
+
+  const handleDrop = (itemId, targetCategory) => {
+    const item = data.items.find(i => i.id === itemId);
+    if (!item) return;
+
+    setCategories(prev => {
+      const next = { ...prev };
+      Object.keys(next).forEach(k => {
+        next[k] = next[k].filter(i => i.id !== itemId);
+      });
+      next[targetCategory] = [...next[targetCategory], item];
+      return next;
+    });
+    setItems(prev => prev.filter(i => i.id !== itemId));
+  };
+
+  const handleRemove = (itemId, category) => {
+    const item = data.items.find(i => i.id === itemId);
+    if (!item) return;
+    setCategories(prev => ({
+      ...prev,
+      [category]: prev[category].filter(i => i.id !== itemId)
+    }));
+    setItems(prev => [...prev, item]);
+  };
+
+  useEffect(() => {
+    const payload = {};
+    Object.keys(categories).forEach(k => {
+      payload[k] = categories[k].map(i => i.id);
+    });
+    if (onComplete) onComplete(payload);
+  }, [categories]);
+
+  return (
+    <ToolContainer title="Annex A Control Mapper" icon="fa-shield-halved">
+      <div className="mb-6 bg-slate-800 p-4 rounded-xl border border-dashed border-slate-600 shadow-inner">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3"><i className="fa-solid fa-list-ul mr-2"></i> Unmapped Findings/Controls</h4>
+        <div className="flex flex-wrap gap-2">
+          {items.map(item => (
+            <DraggableToken key={item.id} id={item.id} text={item.text} />
+          ))}
+          {items.length === 0 && <span className="text-emerald-400 text-sm font-bold"><i className="fa-solid fa-check-circle mr-1"></i> All items mapped!</span>}
+        </div>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {data.themes.map(cat => (
+          <DropZone
+            key={cat}
+            id={cat}
+            title={cat}
+            items={categories[cat]}
+            onDropItem={handleDrop}
+            onRemoveItem={handleRemove}
+          />
+        ))}
+      </div>
+    </ToolContainer>
+  );
+}
+
+// 11. Statement of Applicability (SoA) Reviewer
+export function SoAReviewer({ data, onComplete, initialPayload }) {
+  const [evaluations, setEvaluations] = useState(initialPayload || {});
+
+  const handleChange = (controlId, field, value) => {
+    setEvaluations(prev => {
+      const currentEval = prev[controlId] || {};
+      const next = { ...prev, [controlId]: { ...currentEval, [field]: value } };
+      if (onComplete) onComplete(next);
+      return next;
+    });
+  };
+
+  return (
+    <ToolContainer title="Statement of Applicability (SoA) Reviewer" icon="fa-file-shield">
+      <div className="space-y-6">
+        <p className="text-sm text-gray-600 mb-4">{data.instructions}</p>
+        {data.soa_entries.map((entry, index) => (
+          <div key={entry.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-4">
+             <div className="flex gap-4 border-b pb-4">
+                <div className="w-8 h-8 rounded-full bg-slate-700 text-white flex items-center justify-center font-black flex-shrink-0">
+                  {index + 1}
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-800 text-lg">{entry.control_name}</h4>
+                  <p className="text-sm text-gray-500 mt-1">Declared Status: <span className={`font-bold uppercase ${entry.declared_status === 'Included' ? 'text-emerald-600' : 'text-red-600'}`}>{entry.declared_status}</span></p>
+                  <p className="text-sm italic text-gray-700 mt-2 bg-slate-50 p-2 rounded">Justification: "{entry.justification}"</p>
+                </div>
+             </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-12">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">Auditor Verdict</label>
+                  <InteractiveSelect
+                    options={[
+                        { value: "Compliant", label: "Compliant" },
+                        { value: "Noncompliant (Unjustified Exclusion)", label: "Noncompliant (Unjustified Exclusion)" },
+                        { value: "Noncompliant (Missing Control)", label: "Noncompliant (Missing Control)" },
+                        { value: "Opportunity for Improvement", label: "Opportunity for Improvement" }
+                    ]}
+                    value={evaluations[entry.id]?.verdict || ''}
+                    onChange={(val) => handleChange(entry.id, 'verdict', val)}
+                    placeholder="Select verdict..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">Relevant Clause (if noncompliant)</label>
+                  <InteractiveSelect
+                    options={data.clauses.map(c => ({ value: c, label: c }))}
+                    value={evaluations[entry.id]?.clause || ''}
+                    onChange={(val) => handleChange(entry.id, 'clause', val)}
+                    placeholder="Select clause..."
+                  />
+                </div>
+             </div>
+          </div>
+        ))}
+      </div>
+    </ToolContainer>
+  );
+}

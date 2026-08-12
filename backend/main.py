@@ -46,6 +46,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 # Configure CORS - Approved Guest List
 origins = [
     "http://localhost:5173",
+    "http://localhost:5174",
     "http://localhost:3000",
     "https://capstoneasstesting.chigozieikuru.cloud",
     "https://assessments.chigozieikuru.cloud",  # Old Production frontend

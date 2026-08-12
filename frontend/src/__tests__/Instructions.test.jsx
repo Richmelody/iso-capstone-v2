@@ -13,15 +13,6 @@ describe('Instructions Component', () => {
     expect(screen.queryByText('Exam Notice')).not.toBeInTheDocument();
   });
 
-  it('renders ExamNoticeCard when instrument_notice is present in examData', () => {
-    const mockExamData = {
-      instrument_notice: 'This is a strict evaluation of internal auditing skills.'
-    };
-    render(<Instructions examData={mockExamData} onStartExam={vi.fn()} onLogout={vi.fn()} />);
-    expect(screen.getByText('Exam Notice')).toBeInTheDocument();
-    expect(screen.getByText('This is a strict evaluation of internal auditing skills.')).toBeInTheDocument();
-  });
-
   it('renders Blueprint when blueprint data is provided', () => {
     const mockExamData = {
       blueprint: {

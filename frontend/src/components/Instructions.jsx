@@ -25,23 +25,7 @@ export default function Instructions({ examData, onStartExam, onLogout }) {
       </div>
 
       <div className="p-8 md:p-12">
-        {/* EXAM METADATA */}
-        {examData?.instrument_notice && (
-          <div className="bg-red-50 border-l-4 border-red-600 p-6 mb-8 rounded-r-xl">
-            <h4 className="font-black text-red-800 uppercase text-sm mb-3 tracking-widest flex items-center">
-              <i className="fa-solid fa-triangle-exclamation text-xl mr-3"></i>
-              Exam Notice
-            </h4>
-            <p className="text-sm text-red-900 leading-relaxed font-semibold mb-2">
-              {examData.instrument_notice}
-            </p>
-            {examData.scoring_note && (
-              <p className="text-xs text-red-800 italic mt-2 border-t border-red-200 pt-2">
-                <strong>Scoring Protocol:</strong> {examData.scoring_note}
-              </p>
-            )}
-          </div>
-        )}
+
 
         {examData?.blueprint && (
           <div className="bg-blue-50 border-l-4 border-blue-600 p-6 mb-8 rounded-r-xl">

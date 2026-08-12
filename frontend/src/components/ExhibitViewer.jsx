@@ -3,7 +3,7 @@ import React from 'react';
 export default function ExhibitViewer({ exhibitData }) {
   if (!exhibitData) return null;
 
-  const { description, paragraphs, likelihood_scale, impact_scale, bands, acceptance_criteria, rows } = exhibitData;
+  const { description, paragraphs, likelihood_scale, impact_scale, harm_scale, recurrence_scale, bands, acceptance_criteria, rows } = exhibitData;
 
   return (
     <div className="h-full w-full bg-white rounded-2xl shadow-inner border border-gray-200 overflow-hidden flex flex-col">
@@ -45,22 +45,22 @@ export default function ExhibitViewer({ exhibitData }) {
         )}
 
         {/* Risk Matrix Specific UI */}
-        {(likelihood_scale || impact_scale || (bands && bands.length > 0)) && (
+        {(likelihood_scale || impact_scale || harm_scale || recurrence_scale || (bands && bands.length > 0)) && (
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             <div className="bg-slate-100 px-4 py-3 border-b border-gray-200">
                <h4 className="text-xs font-black uppercase text-slate-700 tracking-widest"><i className="fa-solid fa-table-cells mr-2"></i>Risk Assessment Framework</h4>
             </div>
             <div className="p-4 space-y-4">
-              {likelihood_scale && (
+              {(likelihood_scale || recurrence_scale) && (
                 <div>
-                  <span className="text-[10px] font-black uppercase text-gray-500 tracking-widest block mb-1">Likelihood Scale</span>
-                  <p className="text-sm font-bold text-gray-800 bg-gray-50 p-2 rounded border border-gray-100">{likelihood_scale}</p>
+                  <span className="text-[10px] font-black uppercase text-gray-500 tracking-widest block mb-1">{likelihood_scale ? 'Likelihood Scale' : 'Recurrence Scale'}</span>
+                  <p className="text-sm font-bold text-gray-800 bg-gray-50 p-2 rounded border border-gray-100">{likelihood_scale || recurrence_scale}</p>
                 </div>
               )}
-              {impact_scale && (
+              {(impact_scale || harm_scale) && (
                 <div>
-                  <span className="text-[10px] font-black uppercase text-gray-500 tracking-widest block mb-1">Impact Scale</span>
-                  <p className="text-sm font-bold text-gray-800 bg-gray-50 p-2 rounded border border-gray-100">{impact_scale}</p>
+                  <span className="text-[10px] font-black uppercase text-gray-500 tracking-widest block mb-1">{impact_scale ? 'Impact Scale' : 'Harm Scale'}</span>
+                  <p className="text-sm font-bold text-gray-800 bg-gray-50 p-2 rounded border border-gray-100">{impact_scale || harm_scale}</p>
                 </div>
               )}
               

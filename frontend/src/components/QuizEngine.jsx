@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import ExhibitViewer from './ExhibitViewer';
-import { PESTLECanvas, PolicyEditor, RiskCalculator, CommunicationMatrix, FlowchartArranger, NCRGenerator, RootCauseTree } from './implementer/InteractiveTools';
+import { PESTLECanvas, PolicyEditor, RiskCalculator, CommunicationMatrix, FlowchartArranger, NCRGenerator, RootCauseTree, ContextSorter, DocumentBuilder, AuditChecklist, AnnexAMapper, SoAReviewer } from './implementer/InteractiveTools';
 
 function InteractiveToolSwitch({ question, initialPayload, onComplete }) {
   switch (question.tool_type) {
@@ -12,7 +12,12 @@ function InteractiveToolSwitch({ question, initialPayload, onComplete }) {
     case 'flowchart_arranger': return <FlowchartArranger data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
     case 'ncr_generator': return <NCRGenerator data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
     case 'root_cause_tree': return <RootCauseTree data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    default: return <div className="p-4 text-red-500 font-bold">Unknown Tool: {question.tool_type}</div>;
+    case 'context_sorter': return <ContextSorter data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    case 'document_builder': return <DocumentBuilder data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    case 'audit_checklist': return <AuditChecklist data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    case 'annex_a_mapper': return <AnnexAMapper data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    case 'soa_reviewer': return <SoAReviewer data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+    default: return <div className="p-4 bg-red-100 text-red-800 rounded-xl">Unknown tool type: {question.tool_type}</div>;
   }
 }
 
@@ -292,7 +297,25 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
       const ans = answers[displayIdx];
       
       if (q.type === 'interactive_tool') {
-        if (ans !== undefined && deepEqual(ans, q.expected_payload)) {
+        if (q.expected_payload === 'evaluated_at_runtime' && q.tool_type === 'audit_checklist') {
+          if (!ans || Object.keys(ans).length < q.tool_data.selection_count) {
+             cats.add(q.category);
+          } else {
+             let allCorrect = true;
+             for (const [findingId, ev] of Object.entries(ans)) {
+                const finding = q.tool_data.findings_pool.find(f => f.id === findingId);
+                if (!finding || ev.classification !== finding.correct_classification || ev.clause !== finding.correct_clause) {
+                   allCorrect = false;
+                   break;
+                }
+             }
+             if (allCorrect) {
+                 finalScore++;
+             } else {
+                 cats.add(q.category);
+             }
+          }
+        } else if (ans !== undefined && deepEqual(ans, q.expected_payload)) {
           finalScore++;
         } else {
           cats.add(q.category);
@@ -614,7 +637,7 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
             <div className="bg-brand-dark text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded inline-block mb-4 shadow-sm">
               Assessment Task #{currentIdx + 1}
             </div>
-            {isFerrowStory && currentExhibitData?.paragraphs && (() => {
+            {currentExhibitData?.paragraphs && (() => {
               // Extract paragraph number from section, e.g. "Paragraph 1 — Clause 4/5"
               const match = q.section.match(/Paragraph\s+(\d+)/i);
               if (match) {

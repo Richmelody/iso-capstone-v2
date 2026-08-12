@@ -23,7 +23,7 @@ function ExamLayout({
   const { examId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const rawExamData = examLibrary[examId] || examLibrary["14001-fnd"];
+  const rawExamData = examLibrary[examId];
 
   const examData = React.useMemo(() => {
     if (!rawExamData) return null;
@@ -167,6 +167,20 @@ function ExamLayout({
   const handleLogout = () => {
     navigate('/');
   };
+
+  if (!examData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+        <h1 className="text-3xl font-bold text-red-600 mb-4">Exam Not Found</h1>
+        <p className="text-gray-700 max-w-md mb-6">
+          SECURITY ALERT: The exam you are trying to access does not exist or your access code is mapped to an invalid exam ID.
+        </p>
+        <button onClick={handleLogout} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          Return to Login
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>

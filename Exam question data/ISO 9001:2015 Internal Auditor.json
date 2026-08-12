@@ -1,4 +1,4 @@
-export default {
+{
     "title": "ISO 9001:2015 Internal Auditor \u2014 Capstone Exam",
     "instrument_notice": "This is a knowledge-underpinning assessment measuring recognition of correct audit reasoning, not the generative skills of live audit practice.",
     "layout_size": 35,
@@ -1637,4 +1637,4 @@ export default {
             "lms_direction": "Review LMS Activity 10.3."
         }
     ]
-};
+}

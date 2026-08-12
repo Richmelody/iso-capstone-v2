@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { PESTLECanvas, PolicyEditor, RiskCalculator, FlowchartArranger } from '../components/implementer/InteractiveTools';
+import { PESTLECanvas, PolicyEditor, RiskCalculator, FlowchartArranger, ContextSorter } from '../components/implementer/InteractiveTools';
 
 describe('InteractiveTools Components', () => {
   it('RiskCalculator correctly calculates and emits payload', () => {
@@ -105,5 +105,44 @@ describe('InteractiveTools Components', () => {
 
     // Verify it doesn't crash and the item is correctly updated
     expect(screen.getByText('Issue 1')).toBeDefined();
+  });
+
+  it('ContextSorter renders without infinite loop and handles drag-and-drop', () => {
+    const data = {
+      items: [
+        { id: "i1", text: "Factor 1" },
+        { id: "i2", text: "Factor 2" }
+      ],
+      categories: ["Legal", "Economic"]
+    };
+
+    const ParentComponent = () => {
+      const [payload, setPayload] = React.useState({});
+      return <ContextSorter data={data} initialPayload={payload} onComplete={setPayload} />;
+    };
+
+    const { container } = render(<ParentComponent />);
+    
+    // Check initial state
+    expect(screen.getByText('Factor 1')).toBeDefined();
+    expect(screen.getByText('Factor 2')).toBeDefined();
+
+    const factor1 = screen.getByText('Factor 1').closest('div[draggable]');
+    const legalDrop = screen.getByText('Legal').parentElement.parentElement;
+
+    const dataTransfer = {
+      types: ['text/plain'],
+      data: {},
+      setData(format, value) { this.data[format] = value; },
+      getData(format) { return this.data[format]; },
+    };
+
+    // Simulate drag start
+    fireEvent.dragStart(factor1, { dataTransfer });
+    // Simulate drop onto Legal
+    fireEvent.drop(legalDrop, { dataTransfer });
+    
+    // Check if the factor was assigned
+    expect(legalDrop.textContent).toContain('Factor 1');
   });
 });

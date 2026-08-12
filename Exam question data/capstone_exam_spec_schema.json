@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO Capstone Exam Master AI Generator Specification",
+  "version": "2.0.0",
+  "description": "Comprehensive specification, schema template, and AI generation prompt for generating robust 60-question Capstone Exam datasets matching the ISO 45001 Internal Auditor architecture.",
+  "ai_instructions": {
+    "role": "You are a Senior ISO Lead Auditor and Educational Assessment Architect.",
+    "task": "Generate a full 60-question Capstone Exam dataset in valid JSON (or ES Module export default format) according to this exact specification.",
+    "dataset_requirements": [
+      "Total pool size must be exactly 60 questions ('pool_size': 60).",
+      "Layout size presented per sitting is 35 questions ('layout_size': 35).",
+      "Case study category MUST contain 'Case Study' in its key string and contain 15 questions in the pool. The engine hardcodes 8 of these 15 questions into every exam sitting.",
+      "The remaining 45 pool questions are distributed across the standard domain blueprint categories.",
+      "Exhibits MUST include an 8-paragraph realistic audit narrative ('audit_story') and a 3-band 'finding_severity_matrix'.",
+      "Interactive tools MUST be included within the Case Study section using tool_types: 'context_sorter', 'flowchart_arranger', 'ncr_generator', and 'root_cause_tree'.",
+      "All questions MUST include 'category', 'section', 'type', 'text', 'rationale', and 'lms_direction'.",
+      "Options for multiple choice MUST be an array of objects: [{'text': '...', 'correct': true/false}]."
+    ]
+  },
+  "standard_blueprints": {
+    "iso_14001": {
+      "standard": "ISO 14001:2015 Environmental Management Systems",
+      "exam_title": "ISO 14001:2015 Internal Auditor — Capstone Exam",
+      "case_study_name": "Case Study — Verdant Chemical Processing",
+      "blueprint_categories": {
+        "Case Study — Verdant Chemical Processing (8 of 35, hardcoded)": 15,
+        "EMS Context & Environmental Aspects": 7,
+        "Compliance Obligations & Risk Management": 8,
+        "Operational Controls & Emergency Preparedness": 12,
+        "Environmental Fieldwork & Monitoring": 8,
+        "Classification, RCA & Management Review": 10
+      }
+    },
+    "iso_9001": {
+      "standard": "ISO 9001:2015 Quality Management Systems",
+      "exam_title": "ISO 9001:2015 Internal Auditor — Capstone Exam",
+      "case_study_name": "Case Study — Precision Auto Components",
+      "blueprint_categories": {
+        "Case Study — Precision Auto Components (8 of 35, hardcoded)": 15,
+        "Context of the Organisation & Customer Focus": 7,
+        "Quality Objectives, Planning & Risk": 8,
+        "Control of Processes, Products & Services": 12,
+        "Measurement, Traceability & Calibration": 8,
+        "Nonconformity, RCA & Continual Improvement": 10
+      }
+    }
+  },
+  "exam_template_structure": {
+    "title": "ISO [STANDARD_NUMBER]:[YEAR] Internal Auditor — Capstone Exam",
+    "instrument_notice": "This is a knowledge-underpinning assessment measuring recognition of correct audit reasoning, not the generative skills of live audit practice.",
+    "layout_size": 35,
+    "time_limit": 45,
+    "passing_score_percent": 75,
+    "scoring_note": "75% (26/35) is a provisional cut score.",
+    "pool_size": 60,
+    "extraction_note": "This 60-question pool feeds a stratified, category-aware extractor presenting 35 questions per sitting.",
+    "blueprint": {
+      "Case Study — [STORY_TITLE] (8 of 35, hardcoded)": 15,
+      "Category 2": 7,
+      "Category 3": 8,
+      "Category 4": 12,
+      "Category 5": 8,
+      "Category 6": 10
+    },
+    "exhibits": {
+      "audit_story": {
+        "description": "Continuous 8-paragraph scenario.",
+        "paragraphs": [
+          "Paragraph 1: Context, external audit timeframe, recent site changes, regulatory shift...",
+          "Paragraph 2: Initial documentation review (HIRA / Aspect Register / Quality Plan)...",
+          "Paragraph 3: Fieldwork interview with operator/technician revealing procedural gap...",
+          "Paragraph 4: Cross-referencing two independent records revealing discrepancy...",
+          "Paragraph 5: Synthesis of finding (uncontrolled change + untrained personnel)...",
+          "Paragraph 6: Five-Whys root cause trace through organizational handoffs...",
+          "Paragraph 7: Auditee proposed immediate containment vs systemic investigation...",
+          "Paragraph 8: Audit reporting, severity classification, and Management Review prep."
+        ]
+      },
+      "finding_severity_matrix": {
+        "description": "Severity model: Score = Potential Harm x Likelihood of Recurrence.",
+        "harm_scale": "1=Negligible, 2=Minor, 3=Moderate, 4=Serious, 5=Severe/Catastrophic",
+        "recurrence_scale": "1=Rare, 2=Unlikely, 3=Possible, 4=Likely, 5=Almost Certain",
+        "bands": [
+          { "min": 1, "max": 6, "level": "Opportunity for Improvement" },
+          { "min": 7, "max": 14, "level": "Minor Nonconformity" },
+          { "min": 15, "max": 25, "level": "Major Nonconformity" }
+        ]
+      }
+    },
+    "question_type_schemas": {
+      "single_select": {
+        "category": "Category Name",
+        "section": "Paragraph X or Clause Y",
+        "type": "single_select",
+        "exhibit_ref": "audit_story",
+        "text": "Question stem text?",
+        "options": [
+          { "text": "Option A text", "correct": false },
+          { "text": "Option B text (Correct)", "correct": true },
+          { "text": "Option C text", "correct": false },
+          { "text": "Option D text", "correct": false }
+        ],
+        "rationale": "Detailed explanation of audit logic.",
+        "lms_direction": "Review LMS Activity X.Y — Clause Z."
+      },
+      "true_false": {
+        "category": "Category Name",
+        "section": "Paragraph X or Clause Y",
+        "type": "true_false",
+        "exhibit_ref": "audit_story",
+        "text": "True or False statement text...",
+        "options": [
+          { "text": "True", "correct": true },
+          { "text": "False", "correct": false }
+        ],
+        "rationale": "Detailed explanation.",
+        "lms_direction": "Review LMS Activity X.Y."
+      },
+      "interactive_tool_context_sorter": {
+        "category": "Case Study — [TITLE]",
+        "section": "Paragraph 1",
+        "type": "interactive_tool",
+        "tool_type": "context_sorter",
+        "exhibit_ref": "audit_story",
+        "text": "Sort the following context factors into their respective categories under Clause 4.1.",
+        "tool_data": {
+          "items": [
+            { "id": "i1", "text": "Factor 1" },
+            { "id": "i2", "text": "Factor 2" },
+            { "id": "i3", "text": "Factor 3" },
+            { "id": "i4", "text": "Factor 4" }
+          ],
+          "categories": ["Cat 1", "Cat 2", "Cat 3", "Cat 4"]
+        },
+        "expected_payload": {
+          "Cat 1": ["i1"],
+          "Cat 2": ["i2"],
+          "Cat 3": ["i3"],
+          "Cat 4": ["i4"]
+        },
+        "rationale": "Audit explanation...",
+        "lms_direction": "Review LMS Activity X.Y."
+      },
+      "interactive_tool_flowchart_arranger": {
+        "category": "Case Study — [TITLE]",
+        "section": "Paragraph 4",
+        "type": "interactive_tool",
+        "tool_type": "flowchart_arranger",
+        "exhibit_ref": "audit_story",
+        "text": "Arrange the audit steps in chronological order as performed by the auditor.",
+        "tool_data": {
+          "steps": [
+            { "id": "s2", "text": "Step 2 description" },
+            { "id": "s1", "text": "Step 1 description" },
+            { "id": "s3", "text": "Step 3 description" }
+          ]
+        },
+        "expected_payload": ["s1", "s2", "s3"],
+        "rationale": "Step-by-step audit trail sequence explanation.",
+        "lms_direction": "Review LMS Activity X.Y."
+      },
+      "interactive_tool_ncr_generator": {
+        "category": "Case Study — [TITLE]",
+        "section": "Paragraph 5",
+        "type": "interactive_tool",
+        "tool_type": "ncr_generator",
+        "exhibit_ref": "audit_story",
+        "text": "Complete the Nonconformity Report for the observed finding.",
+        "tool_data": {
+          "findings": "Factual audit evidence description.",
+          "classifications": ["Major", "Minor", "Opportunity for Improvement"],
+          "clauses": ["Clause 6.1", "Clause 8.1.3", "Clause 9.2"]
+        },
+        "expected_payload": {
+          "classification": "Minor",
+          "clause": "Clause 8.1.3"
+        },
+        "rationale": "Audit classification and clause selection justification.",
+        "lms_direction": "Review LMS Activity X.Y."
+      },
+      "interactive_tool_root_cause_tree": {
+        "category": "Case Study — [TITLE]",
+        "section": "Paragraph 6",
+        "type": "interactive_tool",
+        "tool_type": "root_cause_tree",
+        "exhibit_ref": "audit_story",
+        "text": "Trace the observed audit failure to its systemic root cause using Five Whys.",
+        "tool_data": {
+          "levels": [
+            {
+              "id": "why1",
+              "question": "Why did the immediate operational failure occur?",
+              "options": ["Correct direct cause", "Distractor 1", "Distractor 2"]
+            },
+            {
+              "id": "why2",
+              "question": "Why did the procedural trigger fail?",
+              "options": ["Correct procedural cause", "Distractor 1", "Distractor 2"]
+            },
+            {
+              "id": "why3",
+              "question": "Why was the systemic handoff missing?",
+              "options": ["Correct root cause", "Distractor 1", "Distractor 2"]
+            }
+          ]
+        },
+        "expected_payload": {
+          "why1": "Correct direct cause",
+          "why2": "Correct procedural cause",
+          "why3": "Correct root cause"
+        },
+        "rationale": "RCA analysis explanation.",
+        "lms_direction": "Review LMS Activity X.Y."
+      }
+    }
+  }
+}

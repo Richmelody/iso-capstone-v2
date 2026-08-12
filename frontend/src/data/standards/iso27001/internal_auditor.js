@@ -1,0 +1,1803 @@
+export default {
+    "title": "ISO/IEC 27001:2022 Internal Auditor — Capstone Exam",
+    "instrument_notice": "This is a knowledge-underpinning assessment measuring recognition of correct audit reasoning, not the generative skills of live audit practice.",
+    "layout_size": 35,
+    "time_limit": 60,
+    "passing_score_percent": 75,
+    "scoring_note": "75% (26/35) is a provisional cut score.",
+    "pool_size": 65,
+    "extraction_note": "This 65-question pool feeds a stratified, category-aware extractor presenting 35 questions per sitting.",
+    "blueprint": {
+        "Case Study — SecureTech Solutions": 15,
+        "ISMS Context & Leadership (Clauses 4 & 5)": 8,
+        "Risk Assessment & Treatment (Clause 6)": 10,
+        "Support & Operation (Clauses 7 & 8)": 7,
+        "Performance Evaluation & Improvement (Clauses 9 & 10)": 10,
+        "Annex A — Organizational & People Controls (Themes 5 & 6)": 8,
+        "Annex A — Physical & Technological Controls (Themes 7 & 8)": 7
+    },
+    "exhibits": {
+        "audit_story": {
+            "description": "Continuous 8-paragraph scenario: SecureTech Solutions Ltd, a PayrollHub SaaS provider, undergoing its first ISO/IEC 27001:2022 internal audit cycle after certification, complicated by a recent acquisition (WageWise Inc.).",
+            "paragraphs": [
+                "Paragraph 1 — Context & Leadership: SecureTech Solutions Ltd is a 220-employee software company headquartered in Austin, Texas, with a development office in Krakow, Poland. Its flagship product, PayrollHub, is a cloud-hosted SaaS platform processing payroll and HR data for over 400 enterprise clients across North America and the EU. Following a near-miss security incident eighteen months ago, the CEO commissioned an ISMS aligned to ISO/IEC 27001:2022, certified nine months ago. The ISMS scope statement, last reviewed at the initial certification audit, defines the boundary as 'all systems and personnel supporting the design, development, hosting, and support of PayrollHub.' During the audit, the internal audit team noted that SecureTech acquired a smaller competitor, WageWise Inc., four months ago, and WageWise's 40-person support team and its separate ticketing system, running on infrastructure WageWise owned before acquisition, have been onboarded into daily operations without any formal update to the ISMS scope document or a documented context review under Clause 4.1.",
+                "Paragraph 2 — Risk Assessment & Treatment: SecureTech's risk assessment methodology, documented in the Information Security Risk Management Procedure, uses a 5x5 likelihood/impact matrix consistent with the finding_severity_matrix model used throughout this exam. The risk register, last updated at the point of certification, lists 34 risks. During interview, the Information Security Manager explained that the WageWise acquisition introduced at least six new risk scenarios — including inherited technical debt in WageWise's authentication service — but conceded these had not yet been formally assessed because 'we've been slammed onboarding the support team and figured we'd catch it at the next scheduled review in four months.' The audit team also found a risk treatment plan for 'Risk 19: Loss of encryption key material,' rated in the Major Nonconformity band at initial assessment, whose treatment owner field lists 'IT Team' rather than a named individual, and whose target closure date of six months ago has passed with no evidence of completion or a documented extension.",
+                "Paragraph 3 — People Security: Interviews with HR revealed that SecureTech's pre-employment screening procedure requires criminal background and reference checks for all engineering hires with production access, consistent with control A.6.1. However, a sample of five WageWise support staff who were granted PayrollHub production database read access as part of onboarding showed no screening records at all — HR explained that WageWise's own pre-acquisition vetting was assumed to be 'good enough' and was never re-verified against SecureTech's own policy. Separately, the audit team sampled the leaver process for three employees who resigned in the last quarter: in one case, a departing senior developer's access to the production AWS account and the company GitHub organization was revoked nine days after his last working day, rather than on the last working day as the Access Control Policy requires.",
+                "Paragraph 4 — Cloud Vendors & Suppliers: PayrollHub is hosted entirely on AWS, with a secondary managed-database vendor, DataVault Cloud, handling encrypted backups. The Supplier Register lists both vendors, and a signed AWS data processing agreement is on file. However, DataVault Cloud's entry in the Supplier Register has no signed information security addendum, no evidence of a security questionnaire or audit report (such as a SOC 2 Type II) ever being requested, and no record of a security review since the vendor relationship began three years ago. When asked how the security posture of DataVault Cloud is monitored, the Head of Infrastructure stated: 'They're a backup vendor, not really in scope — the data's encrypted anyway.' The audit team noted that the SoA marks control A.5.23 (Information security for use of cloud services) as 'Implemented,' citing the AWS relationship only.",
+                "Paragraph 5 — Secure Development: SecureTech's Secure Development Policy mandates a documented secure coding standard, mandatory peer code review, and a static application security testing (SAST) scan gate before any code merges into the main branch, consistent with controls A.8.25 and A.8.28. The audit team reviewed the CI/CD pipeline configuration and confirmed the SAST gate is technically enforced and cannot be bypassed by developers. However, a sample of ten recent pull requests showed that three had been merged using a self-approval workflow exception where the sole reviewer was also the PR's author, and the exception log — required by policy to document any such deviation — contained no entries for any of the three. The Engineering Lead confirmed self-approval is 'technically possible in an emergency' but could not produce a record of any emergency change process being invoked for these three merges.",
+                "Paragraph 6 — Physical Security: While SecureTech's production systems are entirely cloud-hosted, the Krakow office retains a small server closet housing network equipment and a legacy on-premises file server used by finance for archived records predating the PayrollHub migration. The audit team observed that the server closet door was propped open with a fire extinguisher during the site visit, and the access log for the closet's badge reader showed no entries for the preceding six weeks, despite the cleaning contractor confirming the room is entered for cleaning weekly. The visitor log at Krakow reception, required by the Physical Security Procedure, was fully completed for the day of the audit but showed multiple gaps of a week or more over the prior two months.",
+                "Paragraph 7 — Operations & Incident Management: SecureTech operates a Security Information and Event Management (SIEM) tool that aggregates logs from AWS CloudTrail, the production database, and the corporate identity provider, and the Security Operations runbook specifies that alerts of 'High' severity must be triaged within four hours. The audit team sampled the SIEM alert history and found a 'High' severity alert — multiple failed privileged login attempts against a production database account outside business hours — that was generated eleven days ago and remained in an 'Open, Untriaged' state at the time of the audit, with no evidence any analyst had reviewed it. Separately, the Incident Response Log showed one confirmed incident in the last six months, a phishing email that led to a compromised support-staff mailbox; the incident record included containment steps but no documented root cause analysis or evidence that the lessons learned were fed back into the security awareness training content, which SecureTech last updated fourteen months ago.",
+                "Paragraph 8 — Performance Evaluation & Improvement: SecureTech's most recent Management Review, held five weeks before the audit, covered all agenda inputs required by Clause 9.3, including internal audit results, and the meeting minutes recorded twelve action items. Of those twelve, the audit team found that four remained open past their assigned due date with no evidence of escalation, including an action item to formally close Risk 19 from Paragraph 2 above. SecureTech's internal audit programme, reviewed for the last two cycles, showed that the same internal auditor conducted the audit of the Information Security Management function in both cycles, despite that auditor reporting directly to the Information Security Manager whose own department was the subject of both audits. When the audit team asked the ISO 27001 Lead Implementer how corrective actions are verified for effectiveness, she explained that a corrective action is marked 'Closed' as soon as the immediate fix is applied, with no separate step to confirm the fix actually prevented recurrence."
+            ]
+        },
+        "finding_severity_matrix": {
+            "description": "Severity model: Score = Business Impact x Likelihood.",
+            "harm_scale": "1=Negligible, 2=Minor, 3=Moderate, 4=Major, 5=Critical",
+            "recurrence_scale": "1=Rare, 2=Unlikely, 3=Possible, 4=Likely, 5=Almost Certain",
+            "bands": [
+                {
+                    "min": 1,
+                    "max": 6,
+                    "level": "Opportunity for Improvement"
+                },
+                {
+                    "min": 7,
+                    "max": 14,
+                    "level": "Minor Nonconformity"
+                },
+                {
+                    "min": 15,
+                    "max": 25,
+                    "level": "Major Nonconformity"
+                }
+            ]
+        }
+    },
+    "questions": [
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 1",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "The ISMS scope statement has not been updated since certification, despite the WageWise acquisition bringing new personnel, systems, and infrastructure into daily PayrollHub operations. What is the most defensible audit finding here, and against which clause?",
+            "options": [
+                {
+                    "text": "A Minor Nonconformity against Clause 7.5, since this is really just a document version-control problem that a routine update would resolve.",
+                    "correct": false
+                },
+                {
+                    "text": "An Opportunity for Improvement, since acquisitions are normal business events that fall outside what an ISMS scope statement is expected to control.",
+                    "correct": false
+                },
+                {
+                    "text": "Likely a Nonconformity against Clause 4.3 — the documented scope no longer reflects the ISMS's actual boundary, and unscoped infrastructure may now process in-scope data.",
+                    "correct": true
+                },
+                {
+                    "text": "No finding — Clause 4.3 sets an annual review cycle for scope statements, and only nine months have elapsed since certification.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Clause 4.3 requires the scope to reflect the actual boundary and interfaces of the ISMS and to be kept current when context materially changes — not just reviewed on a fixed calendar. Unscoped infrastructure potentially handling in-scope data is a genuine boundary failure, not a simple documentation lag, and not something acquisitions exempt an ISMS from addressing.",
+            "lms_direction": "Review LMS Activity 4.3 — Determining and Maintaining ISMS Scope."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 1",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "As the internal auditor, what is the single most important next step regarding the WageWise scope finding, before it is finalized in the audit report?",
+            "options": [
+                {
+                    "text": "Close the finding as an Opportunity for Improvement, since leadership has already verbally committed to addressing it at the next scope review.",
+                    "correct": false
+                },
+                {
+                    "text": "Verify whether WageWise's inherited systems actually process PayrollHub data, since that determines whether this is a real boundary failure or just a documentation lag.",
+                    "correct": true
+                },
+                {
+                    "text": "Recommend that management immediately decommission all WageWise systems until a full security assessment can be completed and documented.",
+                    "correct": false
+                },
+                {
+                    "text": "Escalate the finding directly to the certification body, since scope failures found during acquisitions typically require external notification before anything else can reasonably happen.",
+                    "correct": false
+                }
+            ],
+            "rationale": "The auditor's role is evidence-based classification, not prescribing remedies or assuming facts not yet verified. Bypassing the normal 'no surprises' escalation path to SecureTech's own management before any external escalation also violates standard audit protocol.",
+            "lms_direction": "Review LMS Activity 4.1 — Understanding the Organization and Its Context."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 2",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "Risk 19 (loss of encryption key material) sits in the Major Nonconformity band on the exhibited severity matrix, has an owner field of 'IT Team' rather than a named individual, and its target closure date has passed with no evidence of extension. Which Clause 6.1.3 requirement is most clearly not being met?",
+            "options": [
+                {
+                    "text": "6.1.1 — determining risks and opportunities, since the underlying problem is that this risk was never properly identified in the first place.",
+                    "correct": false
+                },
+                {
+                    "text": "6.1.3(a) — selecting appropriate risk treatment options, since a vague owner suggests the wrong treatment option was chosen for this risk.",
+                    "correct": false
+                },
+                {
+                    "text": "6.1.2(a) — establishing risk acceptance criteria, since the real issue is that this risk should have been formally accepted outright instead of assigned for ongoing, continued treatment.",
+                    "correct": false
+                },
+                {
+                    "text": "6.1.3(e) — retaining documented information about risk treatment, including clear ownership and current, accurate status; a plan exists, but accountability is not being tracked.",
+                    "correct": true
+                }
+            ],
+            "rationale": "A treatment option was clearly selected — a plan exists. The actual gap is in ownership accountability and current documented status: a vague owner and a lapsed, unextended target date are exactly the documented-information and accountability failures 6.1.3(e) exists to prevent.",
+            "lms_direction": "Review LMS Activity 6.1.3 — Risk Treatment Plan Ownership and Status."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 2",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "The Information Security Manager says the six new risk scenarios from the WageWise acquisition will be assessed 'at the next scheduled review in four months.' As an auditor, how should this statement be evaluated?",
+            "options": [
+                {
+                    "text": "Proof the ISMS is functioning well, since a review is already scheduled and the risk has therefore not been ignored, lost, or forgotten about.",
+                    "correct": false
+                },
+                {
+                    "text": "Irrelevant to the audit, since deciding exactly when to schedule a risk assessment is entirely a management prerogative outside ISMS requirements.",
+                    "correct": false
+                },
+                {
+                    "text": "Acceptable, since ISO 27001 requires risk assessments to be performed only once during each three-year certification cycle, regardless of any business changes that occur.",
+                    "correct": false
+                },
+                {
+                    "text": "As a potential finding on its own — 6.1.2/8.2 require risk assessment when significant changes occur, not only on a fixed schedule, so this gap needs justification.",
+                    "correct": true
+                }
+            ],
+            "rationale": "The standard requires risk assessment both at planned intervals AND when significant changes occur. Relying solely on the next calendar-scheduled review after a material change is itself the nonconformity pattern the audit should probe, not evidence of good practice.",
+            "lms_direction": "Review LMS Activity 8.2 — Risk Assessment Triggers Beyond the Planned Cycle."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 3",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "Five WageWise support staff were granted PayrollHub production database read access without SecureTech's own background screening being performed, because HR assumed WageWise's pre-acquisition vetting was 'good enough.' What is the correct audit classification approach?",
+            "options": [
+                {
+                    "text": "An Opportunity for Improvement only, since screening is a People-theme control with no real bearing on production system security or data access.",
+                    "correct": false
+                },
+                {
+                    "text": "A Nonconformity against A.6.1 and A.5.15 — access was granted without verifying screening met SecureTech's own criteria; severity depends on data sensitivity and whether the gap is isolated.",
+                    "correct": true
+                },
+                {
+                    "text": "A Major Nonconformity limited strictly to Clause 7, since the issue concerns incomplete competence and training records rather than access control.",
+                    "correct": false
+                },
+                {
+                    "text": "No finding, since WageWise's own employees were already screened by their previous employer before SecureTech's acquisition took place last quarter of the year.",
+                    "correct": false
+                }
+            ],
+            "rationale": "'Good enough' is an assumption, not verified conformance to the organization's own documented screening criteria. The correct answer models evaluating severity from pattern and data sensitivity rather than asserting a fixed label, which is the higher-order skill this exam is designed to test.",
+            "lms_direction": "Review LMS Activity A.6.1 — Screening in Mergers & Acquisitions."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 3",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "A departing senior developer's production AWS and GitHub access was revoked nine days after his last working day rather than on it, as the Access Control Policy requires. Which is the strongest audit conclusion?",
+            "options": [
+                {
+                    "text": "Automatically a Major Nonconformity, since any delay whatsoever in revoking a leaver's access is inherently a severe security failure requiring escalation.",
+                    "correct": false
+                },
+                {
+                    "text": "Not a valid finding unless there is proof the ex-employee actually misused the access during the nine-day delay window before it was revoked.",
+                    "correct": false
+                },
+                {
+                    "text": "Outside the scope of an information security audit entirely, since employee offboarding timing is fundamentally an HR administrative matter, not a security-relevant one at all in any meaningful sense.",
+                    "correct": false
+                },
+                {
+                    "text": "Objective evidence of a nonconformity against the Access Control Policy; sample additional recent leavers to determine whether this is isolated or a systemic deprovisioning gap.",
+                    "correct": true
+                }
+            ],
+            "rationale": "A finding requires non-fulfilment of a requirement, not proven harm. Access termination is core ISMS territory, not purely an HR matter. Severity should follow evaluated pattern and impact, not an assumed fixed label for any deprovisioning delay.",
+            "lms_direction": "Review LMS Activity A.6.5 — Termination of Access Rights."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 4",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "DataVault Cloud, a backup vendor with access to encrypted PayrollHub backups, has no signed security addendum, no security questionnaire or audit report ever requested, and no review in three years — yet the SoA marks A.5.23 as 'Implemented,' citing only the AWS relationship. What is the audit team's strongest finding?",
+            "options": [
+                {
+                    "text": "Not assessable by an internal auditor, since a vendor's own security posture is legally that vendor's responsibility, not something SecureTech itself controls.",
+                    "correct": false
+                },
+                {
+                    "text": "No finding, since DataVault Cloud only handles encrypted backups, and encryption at rest fully satisfies all supplier due-diligence obligations under the standard exactly as written.",
+                    "correct": false
+                },
+                {
+                    "text": "A Minor Nonconformity confined to the Supplier Register's paperwork, unrelated to the accuracy of the SoA's own separately declared status.",
+                    "correct": false
+                },
+                {
+                    "text": "The SoA's 'Implemented' status for A.5.23 isn't supported by the evidence — a second cloud supplier with no oversight isn't reflected in the justification, a 6.1.3(d) nonconformity.",
+                    "correct": true
+                }
+            ],
+            "rationale": "Encryption does not discharge supplier due-diligence obligations — a common misconception this question specifically targets. The organization remains accountable for outsourced processes under Clause 8.1 and A.5.19–A.5.21 regardless of what the vendor itself does.",
+            "lms_direction": "Review LMS Activity A.5.23 — Information Security for Use of Cloud Services."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 4",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "The Head of Infrastructure states DataVault Cloud is 'not really in scope' because it is 'just a backup vendor.' As an auditor, what is the correct response to this statement?",
+            "options": [
+                {
+                    "text": "Challenge the premise directly — any supplier touching in-scope data is subject to supplier security requirements, and this comment may reveal a wider staff understanding gap.",
+                    "correct": true
+                },
+                {
+                    "text": "Accept the explanation, since backup vendors are conventionally treated as outside ISMS scope across most certified organizations' standard practice and typical auditor expectations industry-wide.",
+                    "correct": false
+                },
+                {
+                    "text": "Note the quote for the report but take no further action, since a personal opinion stated in an interview carries no evidentiary weight at all.",
+                    "correct": false
+                },
+                {
+                    "text": "Recommend switching to a different backup vendor immediately, since DataVault Cloud has already demonstrated through this comment that it cannot be trusted.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Backup vendors are not conventionally exempt — if they touch in-scope data, they're in scope. Dismissing the statement as 'just an opinion' undersells its value as evidence of a systemic understanding gap. Recommending a specific remedy would be consulting, not auditing.",
+            "lms_direction": "Review LMS Activity 4.3 — Probing Unverified Scope Assumptions."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 5",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "Three of ten sampled pull requests were merged using a self-approval exception with no corresponding entry in the required exception log, though the SAST scan gate itself could not be bypassed. How should the auditor weigh the fact that the SAST gate was technically enforced?",
+            "options": [
+                {
+                    "text": "As proof the Secure Development Policy itself is poorly designed and should be substantially rewritten before the next major release cycle begins.",
+                    "correct": false
+                },
+                {
+                    "text": "As a partial mitigation, not a resolution — SAST and peer review serve different purposes, and the missing exception-log entries mean no risk-based decision was ever documented.",
+                    "correct": true
+                },
+                {
+                    "text": "As irrelevant, since CI/CD pipeline configuration falls outside what a Clause 8 operational controls review is meant to examine during an internal audit.",
+                    "correct": false
+                },
+                {
+                    "text": "As full mitigation, since SAST scanning catches the actual security risk in the code, making the missing human review essentially immaterial to the organization's overall security posture.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Automated scanning and human peer review are distinct controls with different objectives — SAST catches known vulnerability patterns, while peer review catches logic/design flaws and enforces accountability. Rewriting the policy is consulting, not auditing.",
+            "lms_direction": "Review LMS Activity A.8.28 — Secure Coding and Peer Review Controls."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 5",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "What audit technique would most effectively determine whether the missing exception-log entries represent an isolated documentation lapse or a broader pattern of undocumented self-approval?",
+            "options": [
+                {
+                    "text": "Ask the Engineering Lead to give a verbal estimate of how often self-approval happens without requesting any further supporting records.",
+                    "correct": false
+                },
+                {
+                    "text": "Conclude the practice is systemic from the current sample alone, since three exceptions out of ten is already a high proportion.",
+                    "correct": false
+                },
+                {
+                    "text": "Expand the sample across a longer period and multiple repositories, cross-referencing merges against exception-log entries and reviewer identity, rather than relying on ten pull requests.",
+                    "correct": true
+                },
+                {
+                    "text": "Close the finding immediately as Major, since any gap found in a secure development control is automatically classified at that severity under standard practice.",
+                    "correct": false
+                }
+            ],
+            "rationale": "This tests the sampling-representativeness principle from ISO 19011: verbal assurance without cross-referenced evidence is weak, and drawing a systemic conclusion from an unverified small sample outruns the evidence.",
+            "lms_direction": "Review LMS Activity 9.2 — Audit Sampling and Evidence Sufficiency."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 6",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "The server closet door was found propped open with a fire extinguisher, the badge reader log showed no entries for six weeks despite weekly cleaning access, and the visitor log had multiple week-long gaps. Taken together, what does this evidence most strongly suggest?",
+            "options": [
+                {
+                    "text": "That this is purely a facilities management matter with no ISMS relevance, since the closet is a legacy space entirely unrelated to the cloud infrastructure that hosts PayrollHub.",
+                    "correct": false
+                },
+                {
+                    "text": "That the badge system itself may not reliably capture entries at all, since cleaning staff access weekly yet the log shows none — a deeper issue than the propped door alone.",
+                    "correct": true
+                },
+                {
+                    "text": "That the propped-open door is the only real issue here, since digital access logs are inherently far more reliable than direct physical observation of the space.",
+                    "correct": false
+                },
+                {
+                    "text": "That no further evidence is required, since a single photograph of the propped door is already sufficient on its own to close this finding.",
+                    "correct": false
+                }
+            ],
+            "rationale": "This tests synthesis of multiple evidence points into a root-cause-level finding rather than fixating on the most visually obvious symptom. Whether the closet is genuinely out of scope needs verification against the scope statement, not assumption — especially given Paragraph 1's own scope-currency finding.",
+            "lms_direction": "Review LMS Activity A.7.2 — Physical Entry Control Reliability."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 6",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "Which Annex A control(s) does this physical security evidence most directly relate to?",
+            "options": [
+                {
+                    "text": "A.7.2 (Physical entry) and A.7.4 (Physical security monitoring) — entry controls exist on paper but aren't being enforced or reliably monitored in practice.",
+                    "correct": true
+                },
+                {
+                    "text": "A.5.1 (Policies for information security) only, since a procedure clearly exists and this is simply a one-time lapse in following it.",
+                    "correct": false
+                },
+                {
+                    "text": "A.8.16 (Monitoring activities) only, since the core issue here is entirely about the reliability of a digital log system.",
+                    "correct": false
+                },
+                {
+                    "text": "No Annex A control applies here, since Annex A's coverage is limited to digital and technological information assets only.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Annex A explicitly includes a full Physical theme — a common misconception this question is designed to catch. Reducing the finding to 'a policy exists but wasn't followed once' understates a pattern of evidence showing operational and monitoring failure, not a one-off lapse.",
+            "lms_direction": "Review LMS Activity A.7 — Physical Controls Theme Overview."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 7",
+            "type": "single_select",
+            "exhibit_ref": "finding_severity_matrix",
+            "text": "A 'High' severity SIEM alert for repeated failed privileged login attempts sat untriaged for eleven days against a documented 4-hour SLA. Using the exhibited severity matrix, what is the most defensible classification, and why?",
+            "options": [
+                {
+                    "text": "Likely Major — the potential impact of an undetected privileged-account compromise is high, and an eleven-day SLA breach suggests the triage process itself isn't working reliably.",
+                    "correct": true
+                },
+                {
+                    "text": "Cannot be classified at all without first confirming whether the underlying login attempts actually succeeded in compromising the account in question.",
+                    "correct": false
+                },
+                {
+                    "text": "An Opportunity for Improvement, since the SIEM tool itself generated the alert correctly and exactly as it was designed to, with no technical malfunction involved anywhere at all.",
+                    "correct": false
+                },
+                {
+                    "text": "Automatically Minor, since the sample only turned up a single untriaged alert during the entire audit period reviewed, out of many alerts generated overall.",
+                    "correct": false
+                }
+            ],
+            "rationale": "This applies the severity matrix's harm x likelihood logic explicitly rather than a fixed rule. Classifying the CONTROL failure does not require knowing the attacker's ultimate success — the finding is about the ISMS process, not the outcome.",
+            "lms_direction": "Review LMS Activity 9.1 — Applying the Severity Matrix to Monitoring Failures."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 7",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "The only confirmed incident in six months had containment steps recorded but no root cause analysis, and its lessons were never fed into security awareness training, last updated fourteen months ago. Which requirement is most directly unmet?",
+            "options": [
+                {
+                    "text": "A.6.3 alone, since this is simply a training-content freshness problem that happens to be unrelated to the incident itself.",
+                    "correct": false
+                },
+                {
+                    "text": "Clause 10.1 / A.5.27 — using incident information to improve the ISMS; containment addressed the symptom but the improvement loop itself never actually closed.",
+                    "correct": true
+                },
+                {
+                    "text": "Clause 9.1, because the true root cause here is that monitoring and measurement of the SIEM tool itself broke down.",
+                    "correct": false
+                },
+                {
+                    "text": "No requirement is unmet here, since the incident was contained successfully and no further customer data loss occurred afterward or was ever separately reported.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Successful containment is a correction, not a corrective action. Treating the stale training as an isolated freshness issue misses the systemic link: the incident's lessons were never captured or applied anywhere, squarely a Clause 10.1 improvement-loop failure.",
+            "lms_direction": "Review LMS Activity 10.1 — Correction vs. Corrective Action."
+        },
+        {
+            "category": "Case Study — SecureTech Solutions",
+            "section": "Paragraph 8",
+            "type": "single_select",
+            "exhibit_ref": "audit_story",
+            "text": "The same internal auditor conducted the audit of the Information Security Management function for two consecutive cycles, despite reporting directly to the Information Security Manager whose department was being audited both times. What ISO 19011 principle is most directly compromised?",
+            "options": [
+                {
+                    "text": "Competence, since an auditor who repeats the same audit twice in a row likely lacks adequate ISMS-specific training to do the job properly.",
+                    "correct": false
+                },
+                {
+                    "text": "Independence and impartiality of the audit process (ISO 19011 principles, echoed in 9.2.2(c)) — a reporting-line conflict compromises this regardless of the auditor's competence.",
+                    "correct": true
+                },
+                {
+                    "text": "Nothing significant — ISO 27001 doesn't use the specific word 'rotation,' so no formal requirement is technically being violated by this arrangement.",
+                    "correct": false
+                },
+                {
+                    "text": "Confidentiality, since the auditor's reporting line creates a strong risk that sensitive findings were improperly disclosed to their own direct manager well before the report was finalized.",
+                    "correct": false
+                }
+            ],
+            "rationale": "9.2.2(c) requires the audit programme to ensure objectivity and impartiality, including in auditor selection — exactly what a same-auditor/same-reporting-line pattern violates, irrespective of whether the standard uses the specific word 'rotation.'",
+            "lms_direction": "Review LMS Activity 9.2.2(c) — Objectivity and Impartiality of the Audit Process."
+        },
+        {
+            "category": "ISMS Context & Leadership (Clauses 4 & 5)",
+            "section": "Clause 5.1",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "During an audit, top management states that information security is 'IT's job' and that they personally have not been involved in setting security objectives. Which requirement is most clearly at risk?",
+            "options": [
+                {
+                    "text": "Clause 5.1 — demonstrating leadership and commitment, including ensuring information security objectives are compatible with the organization's strategic direction, not simply delegated away.",
+                    "correct": true
+                },
+                {
+                    "text": "Clause 7.2, since the real problem is that top management likely lacks the technical competence needed to engage meaningfully with day-to-day security decisions.",
+                    "correct": false
+                },
+                {
+                    "text": "Nothing — Clause 5.1's leadership requirements are written to apply specifically to the ISMS Manager role, not to the CEO personally.",
+                    "correct": false
+                },
+                {
+                    "text": "Clause 5.3, since assigning information security work to IT is a normal and expected part of defining organizational roles.",
+                    "correct": false
+                }
+            ],
+            "rationale": "5.1 explicitly requires TOP MANAGEMENT to demonstrate leadership, not delegate it entirely. Delegating operational roles is normal and expected; abdicating leadership accountability is not the same thing. Leadership commitment does not require personal technical expertise.",
+            "lms_direction": "Review LMS Activity 5.1 — Leadership and Commitment."
+        },
+        {
+            "category": "ISMS Context & Leadership (Clauses 4 & 5)",
+            "section": "Clause 5.2",
+            "type": "true_false",
+            "exhibit_ref": "none",
+            "text": "An organization can satisfy Clause 5.2 by publishing an information security policy that is identical to a generic template downloaded from the internet, as long as it is approved by top management and communicated to staff.",
+            "options": [
+                {
+                    "text": "True",
+                    "correct": false
+                },
+                {
+                    "text": "False",
+                    "correct": true
+                }
+            ],
+            "rationale": "5.2 requires the policy to be appropriate to the purpose of the organization and include commitments to satisfy applicable requirements and continual improvement. A generic, untailored template fails the appropriateness test even if formally approved and communicated.",
+            "lms_direction": "Review LMS Activity 5.2 — Information Security Policy Content Requirements."
+        },
+        {
+            "category": "ISMS Context & Leadership (Clauses 4 & 5)",
+            "section": "Clause 4.2",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An auditor is evaluating whether an organization's determination of 'interested parties' (Clause 4.2) is adequate. Which evidence would provide the strongest assurance?",
+            "options": [
+                {
+                    "text": "A documented list of interested parties that explicitly links each party's requirements to specific ISMS controls or contractual/legal obligations being actively tracked.",
+                    "correct": true
+                },
+                {
+                    "text": "A general statement noting that customers, regulators, and employees are all considered interested parties of the organization.",
+                    "correct": false
+                },
+                {
+                    "text": "Verbal confirmation from the ISMS Manager that interested parties were generally considered during the initial ISMS gap analysis conducted last year.",
+                    "correct": false
+                },
+                {
+                    "text": "A list of interested parties named briefly in the introduction section of the organization's overall ISMS manual document.",
+                    "correct": false
+                }
+            ],
+            "rationale": "The higher-order distinction is between merely naming interested parties or claiming they were 'considered' (unverifiable) versus objective evidence that their requirements are actually traced through to specific controls or obligations being tracked and managed.",
+            "lms_direction": "Review LMS Activity 4.2 — Needs and Expectations of Interested Parties."
+        },
+        {
+            "category": "ISMS Context & Leadership (Clauses 4 & 5)",
+            "section": "Clause 4.3",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "Which scenario represents the clearest nonconformity against Clause 4.3 (Determining the scope of the ISMS)?",
+            "options": [
+                {
+                    "text": "The ISMS scope includes more business units than current client contracts strictly require the organization to certify at this time, though nothing suggests this creates any actual coverage gap worth noting.",
+                    "correct": false
+                },
+                {
+                    "text": "The scope was last formally reviewed ten months ago, slightly later than the internal cadence the organization aims for.",
+                    "correct": false
+                },
+                {
+                    "text": "The ISMS scope document excludes a customer-facing mobile application that processes the same personal data as the in-scope web platform, with no documented justification for the exclusion.",
+                    "correct": true
+                },
+                {
+                    "text": "The scope document runs twelve pages and includes background narrative about the company's founding history and its early growth.",
+                    "correct": false
+                }
+            ],
+            "rationale": "A genuine boundary/interface failure — data flowing across the ISMS boundary without justification — is the core test of 4.3. Over-scoping may be inefficient but isn't typically a nonconformity; document length and a ten-month review gap alone are non-issues absent a defined, missed review cycle.",
+            "lms_direction": "Review LMS Activity 4.3 — Determining and Maintaining ISMS Scope."
+        },
+        {
+            "category": "ISMS Context & Leadership (Clauses 4 & 5)",
+            "section": "Clause 6.2",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An auditor asks the Information Security Manager to explain how the organization determined its information security objectives (Clause 6.2). The manager responds: 'Corporate just told us to reduce our number of security incidents by 20% this year.' What is the most significant gap this response reveals?",
+            "options": [
+                {
+                    "text": "No gap exists here, since any numerical target automatically satisfies Clause 6.2's full requirement for measurable objectives, regardless of its origin or exactly how it came to be set.",
+                    "correct": false
+                },
+                {
+                    "text": "The objective should be rejected outright, since a 20% reduction target is not an ambitious enough goal to set for a full year.",
+                    "correct": false
+                },
+                {
+                    "text": "The objective is invalid on its face, since it did not originate from within the Information Security Manager's own department or team.",
+                    "correct": false
+                },
+                {
+                    "text": "No visible evidence the objective is monitored, communicated, or tied to the policy or risk assessment results — it reads as externally imposed rather than derived from the ISMS itself.",
+                    "correct": true
+                }
+            ],
+            "rationale": "'Measurable' is necessary but not sufficient — 6.2 has multiple additional requirements: consistency with policy, accounting for applicable requirements and risk assessment/treatment results, and being monitored, communicated, and updated.",
+            "lms_direction": "Review LMS Activity 6.2 — Information Security Objectives and Planning."
+        },
+        {
+            "category": "ISMS Context & Leadership (Clauses 4 & 5)",
+            "section": "Clause 5.3",
+            "type": "true_false",
+            "exhibit_ref": "none",
+            "text": "Clause 5.3 permits top management to assign day-to-day operational responsibility for the ISMS to an Information Security Officer or similar role, provided this delegation and its scope of authority are clearly communicated within the organization.",
+            "options": [
+                {
+                    "text": "False",
+                    "correct": false
+                },
+                {
+                    "text": "True",
+                    "correct": true
+                }
+            ],
+            "rationale": "5.3 explicitly permits and expects operational responsibility to be assigned to relevant roles, provided this is communicated. The important nuance is that such delegation does not relieve top management of its own separate Clause 5.1 leadership and Clause 9.3 management review obligations — delegation of operations is normal, not itself a finding.",
+            "lms_direction": "Review LMS Activity 5.3 — Organizational Roles, Responsibilities and Authorities."
+        },
+        {
+            "category": "ISMS Context & Leadership (Clauses 4 & 5)",
+            "section": "Clause 4.2 / A.5.31",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "During the opening meeting, an auditee's Legal Counsel states that all statutory, regulatory, and contractual information security requirements are 'handled by Legal separately' and are not documented anywhere the ISMS team can access. What is the correct audit approach?",
+            "options": [
+                {
+                    "text": "Accept the explanation as reasonable, since legal and information security are typically managed by entirely separate departments in most companies of this size and structure.",
+                    "correct": false
+                },
+                {
+                    "text": "Treat this as a potential nonconformity against A.5.31 and Clause 4.2, and request evidence the ISMS still accounts for those requirements despite the access barrier.",
+                    "correct": true
+                },
+                {
+                    "text": "Classify this immediately as a Major Nonconformity, since any statement that Legal withholds information from the ISMS team is inherently severe.",
+                    "correct": false
+                },
+                {
+                    "text": "Disregard the comment entirely, since Clause 4.2 is concerned only with customer and regulator interests, not internal legal requirements.",
+                    "correct": false
+                }
+            ],
+            "rationale": "4.2 explicitly requires determining interested parties' requirements, including legal/regulatory ones, and A.5.31 addresses this directly. Accepting an organizational silo as an excuse skips verifying the ISMS still functionally accounts for those requirements, and jumping straight to Major without gathering evidence violates the evidence-based approach.",
+            "lms_direction": "Review LMS Activity A.5.31 — Legal, Statutory, Regulatory and Contractual Requirements."
+        },
+        {
+            "category": "ISMS Context & Leadership (Clauses 4 & 5)",
+            "section": "Clause 5.1",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "Which of the following would be the strongest objective evidence that leadership commitment (Clause 5.1) is more than a paper exercise?",
+            "options": [
+                {
+                    "text": "Budget records showing resources were allocated for a control a risk assessment flagged as necessary, and minutes showing leadership actively questioned treatment decisions in review.",
+                    "correct": true
+                },
+                {
+                    "text": "A mission statement that includes a line declaring that security is everyone's shared responsibility across the whole organization and its partners.",
+                    "correct": false
+                },
+                {
+                    "text": "An organizational chart showing the Information Security Manager reports directly to the Chief Technology Officer within the overall company reporting structure.",
+                    "correct": false
+                },
+                {
+                    "text": "A signed information security policy that is displayed prominently on the company's internal intranet homepage for every employee to see.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Genuine evidence of commitment is resourcing and engaged decision-making, not documentation existing, reporting structure alone, or aspirational language — the same 'framed policy on the wall vs. real resourcing' distinction that applies across every management-system standard.",
+            "lms_direction": "Review LMS Activity 5.1 — Evidencing Leadership Commitment Beyond Policy."
+        },
+        {
+            "category": "Risk Assessment & Treatment (Clause 6)",
+            "section": "Clause 6.1.2",
+            "type": "single_select",
+            "exhibit_ref": "finding_severity_matrix",
+            "text": "An organization's risk assessment methodology assigns risk levels using Impact x Likelihood, consistent with the severity model used in this exam. During review, the auditor notices a risk rated 'Major Nonconformity' band eight months ago has since been re-scored as 'Opportunity for Improvement' band with no supporting evidence of what changed. What is the correct audit response?",
+            "options": [
+                {
+                    "text": "Request objective evidence for the re-scoring — a completed treatment, a control test result, or a genuine threat change — since an unexplained downward shift is itself a documentation concern.",
+                    "correct": true
+                },
+                {
+                    "text": "Restore the original Major rating immediately, since the auditor's own judgment should override whatever the risk owner has separately assessed.",
+                    "correct": false
+                },
+                {
+                    "text": "Accept the re-scoring without question, since risk owners are fully entitled to revise their own ratings at any time without needing to explain why the change was made.",
+                    "correct": false
+                },
+                {
+                    "text": "Ignore the change entirely, since adjusting a risk's score is ultimately a business decision that sits outside the scope of any audit.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Risk-owner authority is not unlimited or unaccountable. Equally, it is not the auditor's role to set the rating themselves — only to test whether the process and evidence behind it are sound. Risk management is core, in-scope ISMS territory.",
+            "lms_direction": "Review LMS Activity 6.1.2 — Risk Assessment Consistency and Evidence."
+        },
+        {
+            "category": "Risk Assessment & Treatment (Clause 6)",
+            "section": "Clause 6.1.3(d)",
+            "type": "true_false",
+            "exhibit_ref": "none",
+            "text": "Under Clause 6.1.3, an organization may exclude a control from Annex A in its Statement of Applicability simply because it is not currently implemented, without further justification, as long as the SoA lists all 93 controls.",
+            "options": [
+                {
+                    "text": "True",
+                    "correct": false
+                },
+                {
+                    "text": "False",
+                    "correct": true
+                }
+            ],
+            "rationale": "6.1.3(d) requires the SoA to include justification for exclusions, not merely a status marker. Listing all 93 controls with a status is necessary but the justification for any exclusion must be documented, defensible, and tied to the risk assessment.",
+            "lms_direction": "Review LMS Activity 6.1.3 — Statement of Applicability Justification Standards."
+        },
+        {
+            "category": "Risk Assessment & Treatment (Clause 6)",
+            "section": "Clause 6.1.3 / 8.3",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "A risk treatment plan lists 'reduce likelihood of phishing success' as its objective, with the selected treatment being 'purchase a new email filtering tool.' The tool was purchased and installed as planned. Is the risk treatment complete?",
+            "options": [
+                {
+                    "text": "Not necessarily — 6.1.3 and 8.3 require evaluating whether the treatment achieves its actual objective, and installing a tool is an implementation milestone, not proof of effectiveness.",
+                    "correct": true
+                },
+                {
+                    "text": "Yes, because the specific treatment action written into the plan was executed exactly and completely as described, with no deviation from the original plan at all.",
+                    "correct": false
+                },
+                {
+                    "text": "Yes, as long as the tool's own vendor separately confirms in writing that the product is functioning correctly on their end.",
+                    "correct": false
+                },
+                {
+                    "text": "No — the treatment plan should have specified an entirely different type of control from the very start, given the risk involved.",
+                    "correct": false
+                }
+            ],
+            "rationale": "This tests the classic implementation-vs-effectiveness distinction, the same one that applies to corrective actions. Activity completion and vendor assurance are both being mistaken for outcome verification. The choice of control itself isn't in question — only whether its effectiveness was verified.",
+            "lms_direction": "Review LMS Activity 8.3 — Risk Treatment Implementation vs. Effectiveness."
+        },
+        {
+            "category": "Risk Assessment & Treatment (Clause 6)",
+            "section": "Clause 6.1.2(a)",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "During interview, a Risk Owner explains that a particular risk was accepted 'because fixing it would be too expensive.' What is missing that the auditor should specifically probe for?",
+            "options": [
+                {
+                    "text": "Nothing — a cost-benefit judgment made in good faith is always sufficient justification for accepting a risk under ISO 27001, regardless of severity.",
+                    "correct": false
+                },
+                {
+                    "text": "Evidence that the risk was separately covered by a third-party insurance policy purchased specifically to offset the potential financial loss involved in the scenario.",
+                    "correct": false
+                },
+                {
+                    "text": "Evidence the acceptance was measured against documented risk acceptance criteria and formally authorized by someone with the authority to accept that level of risk.",
+                    "correct": true
+                },
+                {
+                    "text": "Confirmation that this particular Risk Owner personally holds final authority to accept any level of risk in the company, no matter how severe.",
+                    "correct": false
+                }
+            ],
+            "rationale": "An informal cost judgment is not automatically sufficient — it must be measured against pre-established criteria. High-severity risks typically require higher-level authorization, which the auditor should verify rather than assume any risk owner has unlimited acceptance authority.",
+            "lms_direction": "Review LMS Activity 6.1.2(a) — Risk Acceptance Criteria."
+        },
+        {
+            "category": "Risk Assessment & Treatment (Clause 6)",
+            "section": "Clause 6.1.3 — Statement of Applicability",
+            "type": "interactive_tool",
+            "tool_type": "soa_reviewer",
+            "exhibit_ref": "none",
+            "text": "Review the following excerpt from SecureTech's Statement of Applicability (SoA) and determine whether each entry's declared status and justification comply with Clause 6.1.3.",
+            "tool_data": {
+                "instructions": "Evaluate the justification for the declared status of each control based on standard ISMS practices and the requirement that exclusions/inclusions be evidence-based and risk-informed.",
+                "clauses": [
+                    "Clause 6.1.3(d) — Justification required",
+                    "Clause 6.1.3 — Compliant",
+                    "Insufficient evidence"
+                ],
+                "soa_entries": [
+                    {
+                        "id": "soa1",
+                        "control_name": "A.5.23 Information security for use of cloud services",
+                        "declared_status": "Implemented",
+                        "justification": "AWS is our cloud provider and has ISO 27001 certification.",
+                        "correct_evaluation": "Non-compliant — justification does not address DataVault Cloud, a second cloud supplier with no security oversight; the SoA justification must reflect the full scope of cloud services in use, not just the primary vendor."
+                    },
+                    {
+                        "id": "soa2",
+                        "control_name": "A.8.24 Use of cryptography",
+                        "declared_status": "Implemented",
+                        "justification": "All data is encrypted at rest and in transit using AES-256 and TLS 1.2+, per our Cryptographic Control Policy.",
+                        "correct_evaluation": "Compliant — justification is specific, policy-referenced, and technically substantive."
+                    },
+                    {
+                        "id": "soa3",
+                        "control_name": "A.5.30 ICT readiness for business continuity",
+                        "declared_status": "Excluded",
+                        "justification": "We have never had a major outage so this isn't a priority.",
+                        "correct_evaluation": "Non-compliant — absence of past incidents is not a valid risk-based justification for exclusion; 6.1.3 requires justification tied to risk assessment/applicability, not historical luck."
+                    }
+                ]
+            },
+            "expected_payload": "evaluated_at_runtime",
+            "rationale": "An accurate SoA requires each declared status to be tested against actual evidence and against the applicability rationale — vendor certification, absence of past incidents, and blanket statements are common but insufficient justifications auditors must probe.",
+            "lms_direction": "Review LMS Activity 6.1.3 — Statement of Applicability Justification Standards."
+        },
+        {
+            "category": "Risk Assessment & Treatment (Clause 6)",
+            "section": "Clause 6.1.2",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An organization's risk assessment consistently rates 'insider threat from a malicious employee' as Likelihood = 1 (Rare) for every department, despite the organization having experienced two confirmed cases of employee data theft in the past eighteen months, both included in the Incident Log. What is the most significant concern?",
+            "options": [
+                {
+                    "text": "The risk assessment looks disconnected from actual incident history, which undermines confidence in every likelihood rating in the register, not just this one entry.",
+                    "correct": true
+                },
+                {
+                    "text": "The auditor should personally recalculate the correct likelihood score and update the entry directly in the risk register before the audit concludes.",
+                    "correct": false
+                },
+                {
+                    "text": "This is acceptable, since malicious insider behavior is inherently unpredictable and therefore cannot be reliably rated by any scoring method currently available to auditors.",
+                    "correct": false
+                },
+                {
+                    "text": "This concerns only the one specific risk entry in question and carries no implications for the reliability of the rest of the register.",
+                    "correct": false
+                }
+            ],
+            "rationale": "This captures the higher-order insight: a systemic credibility issue affecting the whole register, not an isolated data point. It is not the auditor's job to fix the register — only to identify that the process producing it is unreliable.",
+            "lms_direction": "Review LMS Activity 6.1.2 — Grounding Risk Ratings in Evidence."
+        },
+        {
+            "category": "Risk Assessment & Treatment (Clause 6)",
+            "section": "Clause 6.1",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "Which of the following is the clearest example of confusing risk treatment with risk assessment?",
+            "options": [
+                {
+                    "text": "A treatment plan carrying a named owner, a target date, and a status field cross-referenced to its originating risk entry.",
+                    "correct": false
+                },
+                {
+                    "text": "A risk entry where the current risk level field is left blank because 'we already decided to buy a firewall,' with no likelihood or impact scored.",
+                    "correct": true
+                },
+                {
+                    "text": "A risk entry with a fully scored current level, a chosen treatment option, and a separate residual score calculated after treatment.",
+                    "correct": false
+                },
+                {
+                    "text": "A risk acceptance record signed by an authorized owner that references the organization's own documented acceptance criteria directly and in full.",
+                    "correct": false
+                }
+            ],
+            "rationale": "This is the only option where the ASSESSMENT step has been skipped entirely because a TREATMENT decision was jumped to — testing whether the learner can spot the sequence being violated, versus the other options which each show the process followed correctly at different stages.",
+            "lms_direction": "Review LMS Activity 6.1 — The Risk Management Process Sequence."
+        },
+        {
+            "category": "Risk Assessment & Treatment (Clause 6)",
+            "section": "Clause 6.1.3",
+            "type": "true_false",
+            "exhibit_ref": "none",
+            "text": "If an organization's risk assessment identifies a risk as acceptable without any treatment (i.e., 'accept' is the chosen treatment option), Clause 6.1.3 still requires that risk to be reflected in the Statement of Applicability process if it maps to an Annex A control.",
+            "options": [
+                {
+                    "text": "False",
+                    "correct": false
+                },
+                {
+                    "text": "True",
+                    "correct": true
+                }
+            ],
+            "rationale": "The SoA must reflect determinations about all Annex A controls' applicability, including where a related risk was accepted rather than treated with that control. 'Accept' as a treatment decision doesn't remove the control from needing an applicability determination if it's relevant to the organization's risk landscape.",
+            "lms_direction": "Review LMS Activity 6.1.3 — SoA Coverage of Accepted Risks."
+        },
+        {
+            "category": "Risk Assessment & Treatment (Clause 6)",
+            "section": "Clause 8.3",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "A Risk Treatment Plan for 'unauthorized access to source code repositories' lists the treatment as 'implement multi-factor authentication (MFA) on the code repository platform.' Six months later, the auditor finds MFA is enabled for all users except three contractors who were granted an exception 'temporarily' by IT, with no documented end date or approval record for the exception. What does this best illustrate?",
+            "options": [
+                {
+                    "text": "A partial implementation gap undermining an otherwise sound treatment — the design may be adequate, but undocumented, open-ended exceptions are themselves a control weakness.",
+                    "correct": true
+                },
+                {
+                    "text": "No finding here, since three contractors out of the full user base represents only a small percentage of total accounts overall.",
+                    "correct": false
+                },
+                {
+                    "text": "Full nonconformity of the entire MFA treatment, since the presence of any exception at all invalidates the whole control regardless of scope or duration.",
+                    "correct": false
+                },
+                {
+                    "text": "Evidence that MFA itself was the wrong treatment choice from the start and should be replaced with a completely different control.",
+                    "correct": false
+                }
+            ],
+            "rationale": "The correct answer captures nuanced 'partially effective control' reasoning. A small NUMBER of exceptions doesn't mean small RISK if those contractors have elevated or equally sensitive access. The treatment choice itself isn't in question — only its operation.",
+            "lms_direction": "Review LMS Activity 8.3 — Evaluating Partially Implemented Treatments."
+        },
+        {
+            "category": "Risk Assessment & Treatment (Clause 6)",
+            "section": "Clause 6.1 / 9.1",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "Which scenario provides the strongest evidence that an organization's risk treatment process, not just individual risk decisions, is operating effectively across the ISMS?",
+            "options": [
+                {
+                    "text": "A sample across departments and categories showing consistent named owners, realistic dates, evidence-based closure, and traceability back to the originating risk assessment entries.",
+                    "correct": true
+                },
+                {
+                    "text": "The Information Security Manager states plainly that risk treatment is considered a top organizational priority going forward, following several recent leadership discussions on the matter.",
+                    "correct": false
+                },
+                {
+                    "text": "One high-profile risk was treated quickly after a near-miss incident happened to draw direct executive attention to it.",
+                    "correct": false
+                },
+                {
+                    "text": "The risk register now contains 40 entries, six more than the 34 entries recorded during the previous audit cycle.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Systemic, evidenced process reliability across a representative sample is the correct auditor mindset. A volume metric, an unverified assertion, and a single attention-driven anecdote (which may reflect reactive rather than systematic management) are each weaker forms of evidence.",
+            "lms_direction": "Review LMS Activity 9.1 — Sampling for Systemic Process Reliability."
+        },
+        {
+            "category": "Support & Operation (Clauses 7 & 8)",
+            "section": "Clause 7.2",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An organization's competence records for its Data Protection Officer (DPO) show a certificate from a training course completed five years ago, with no evidence of any subsequent training, despite significant regulatory changes in the interim. What is the correct audit conclusion regarding Clause 7.2?",
+            "options": [
+                {
+                    "text": "A potential nonconformity — 7.2 requires competence to be maintained, not just established once, and a stale record in a fast-changing regulatory role deserves further probing.",
+                    "correct": true
+                },
+                {
+                    "text": "No finding, since the DPO holds a valid certificate and Clause 7.2 contains no requirement for any ongoing training once initial competence is established.",
+                    "correct": false
+                },
+                {
+                    "text": "Automatically Major, since any competence gap discovered in a dedicated regulatory role is inherently a severe finding by definition, regardless of context.",
+                    "correct": false
+                },
+                {
+                    "text": "A Clause 5.3 issue about role definition, rather than a genuine Clause 7.2 issue about the actual maintenance of competence over time.",
+                    "correct": false
+                }
+            ],
+            "rationale": "7.2 is an ongoing 'ensure competence' obligation, not a one-time credentialing requirement. Severity shouldn't be asserted without further evidence-gathering, and this is squarely a competence-maintenance question, not a role-definition question.",
+            "lms_direction": "Review LMS Activity 7.2 — Maintaining, Not Just Establishing, Competence."
+        },
+        {
+            "category": "Support & Operation (Clauses 7 & 8)",
+            "section": "Clause 7.4",
+            "type": "true_false",
+            "exhibit_ref": "none",
+            "text": "Evidence that a specific communication about a policy change actually reached relevant staff — such as distribution records or a training sign-off — constitutes stronger conformity evidence for Clause 7.4 than the existence of a communication plan alone.",
+            "options": [
+                {
+                    "text": "False",
+                    "correct": false
+                },
+                {
+                    "text": "True",
+                    "correct": true
+                }
+            ],
+            "rationale": "7.4 requires determining what needs to be communicated, when, with whom, how, and by whom, and auditors must sample evidence that communication actually took place, not simply that a plan or description exists. Executed communication is materially stronger evidence than a described plan.",
+            "lms_direction": "Review LMS Activity 7.4 — Evidencing Actual Communication."
+        },
+        {
+            "category": "Support & Operation (Clauses 7 & 8)",
+            "section": "Clause 7.5.3",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An auditor reviewing documented information finds that the Access Control Policy in active use by the IT team (a printed copy pinned to a noticeboard) is version 3.1, while the controlled copy in the official document management system is version 4.0, approved two months ago with substantive changes to privileged access requirements. What is the significance of this finding?",
+            "options": [
+                {
+                    "text": "Not a finding, since the correct, current version does technically exist somewhere within the organization's official document management system.",
+                    "correct": false
+                },
+                {
+                    "text": "A nonconformity against 7.5.3 — an obsolete version is in active use at the point of work, meaning staff are following requirements the organization already changed.",
+                    "correct": true
+                },
+                {
+                    "text": "An Opportunity for Improvement, since the differences between the two policy versions are probably minor and not substantive in practice.",
+                    "correct": false
+                },
+                {
+                    "text": "A Minor issue at most, since printed physical documents fall outside what Clause 7.5 actually governs, which is generally understood to mean digital records specifically.",
+                    "correct": false
+                }
+            ],
+            "rationale": "7.5.3 is about the RIGHT version being available WHERE NEEDED, not merely existing somewhere. Clause 7.5 covers documented information regardless of medium. The changed content (privileged access requirements) is exactly the kind of substantive change that makes obsolete-version use a real risk.",
+            "lms_direction": "Review LMS Activity 7.5.3 — Control of Documented Information."
+        },
+        {
+            "category": "Support & Operation (Clauses 7 & 8)",
+            "section": "Clause 8.1",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "During the audit of Clause 8.1 (Operational planning and control), the auditor finds a critical change to the production firewall configuration was made by a senior engineer without following the documented Change Management Procedure, because 'it was urgent and he knew exactly what needed to change.' The change did not cause any incident. How should the auditor evaluate this?",
+            "options": [
+                {
+                    "text": "As acceptable, since the engineer's seniority and technical expertise reasonably justify bypassing formal change control in a genuine, time-sensitive emergency like this one.",
+                    "correct": false
+                },
+                {
+                    "text": "As unauditable, since the engineer's claimed urgency and intent are subjective and cannot be meaningfully verified after the fact by any reviewer.",
+                    "correct": false
+                },
+                {
+                    "text": "As a finding only if a formal emergency process exists and was also bypassed; otherwise nothing applicable existed for this situation at all.",
+                    "correct": false
+                },
+                {
+                    "text": "As a nonconformity regardless of outcome — 8.1 requires even urgent changes to follow at least an abbreviated defined process; an incident-free result doesn't retroactively validate skipping it.",
+                    "correct": true
+                }
+            ],
+            "rationale": "The ABSENCE of a defined emergency-change process is itself likely a finding, not an escape from one. Individual competence is not a substitute for organizational control, and process adherence is directly verifiable via change logs/tickets regardless of claimed intent.",
+            "lms_direction": "Review LMS Activity 8.1 — Operational Planning and Control, Including Emergency Changes."
+        },
+        {
+            "category": "Support & Operation (Clauses 7 & 8)",
+            "section": "Clause 8.1 — Externally Provided Processes",
+            "type": "interactive_tool",
+            "tool_type": "audit_checklist",
+            "exhibit_ref": "none",
+            "text": "You are planning an audit of an outsourced penetration testing process (Clause 8.1). Select only the evidence items that would provide genuine, verifiable assurance the process is properly controlled.",
+            "tool_data": {
+                "instructions": "Select all items that represent strong, verifiable objective evidence. Do not select items that are weak, unverifiable, or merely administrative.",
+                "items": [
+                    {
+                        "id": "i1",
+                        "text": "Signed contract specifying security requirements and confidentiality obligations for the testing firm",
+                        "should_select": true
+                    },
+                    {
+                        "id": "i2",
+                        "text": "Evidence the testing firm's own security posture was assessed before engagement",
+                        "should_select": true
+                    },
+                    {
+                        "id": "i3",
+                        "text": "A defined scope and rules of engagement document for the test",
+                        "should_select": true
+                    },
+                    {
+                        "id": "i4",
+                        "text": "Documented evidence that resulting findings were tracked through to remediation",
+                        "should_select": true
+                    },
+                    {
+                        "id": "i5",
+                        "text": "An invoice showing payment was made to the testing firm",
+                        "should_select": false
+                    },
+                    {
+                        "id": "i6",
+                        "text": "A one-line entry in the Supplier Register listing the testing firm's name",
+                        "should_select": false
+                    },
+                    {
+                        "id": "i7",
+                        "text": "A verbal assurance from IT that 'we use a reputable firm every year'",
+                        "should_select": false
+                    }
+                ]
+            },
+            "expected_payload": "evaluated_at_runtime",
+            "rationale": "Genuine assurance requires a full evidentiary chain — contractual terms, vendor due diligence, defined scope, and remediation tracking — not administrative artifacts like invoices or supplier-list entries, which prove a relationship exists but nothing about how it's controlled.",
+            "lms_direction": "Review LMS Activity 8.1 — Auditing Externally Provided Processes."
+        },
+        {
+            "category": "Support & Operation (Clauses 7 & 8)",
+            "section": "Clause 8.2",
+            "type": "true_false",
+            "exhibit_ref": "none",
+            "text": "Clause 8.2 (Information security risk assessment) requires risk assessments to be performed at planned intervals only, and does not require reassessment when significant organizational changes occur, since that requirement is covered exclusively by Clause 6.1.2.",
+            "options": [
+                {
+                    "text": "False",
+                    "correct": true
+                },
+                {
+                    "text": "True",
+                    "correct": false
+                }
+            ],
+            "rationale": "8.2 explicitly requires risk assessments to be performed 'at planned intervals or when significant changes are proposed or occur' — this trigger-based requirement is part of 8.2's own operational execution, working in tandem with 6.1.2's planning requirements, not an exclusive requirement of 6.1.2 alone.",
+            "lms_direction": "Review LMS Activity 8.2 — Risk Assessment Triggers."
+        },
+        {
+            "category": "Support & Operation (Clauses 7 & 8)",
+            "section": "Clause 8.3",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An organization's Risk Treatment Plan (Clause 8.3) shows that 85% of planned treatment actions for the current cycle are marked complete on schedule. Is this sufficient evidence that Clause 8.3 is being effectively implemented?",
+            "options": [
+                {
+                    "text": "Yes, as long as the 85% figure itself was formally reported to management during the most recent review, since reporting alone satisfies the documentation intent of 8.3.",
+                    "correct": false
+                },
+                {
+                    "text": "Yes, an 85% completion rate is a strong pass mark on its own and requires no further investigation, since most treatment plans never reach full completion anyway.",
+                    "correct": false
+                },
+                {
+                    "text": "Not on its own — the remaining 15% needs review for severity and overdue status, and 'complete' actions need verified effectiveness, not just activity completion.",
+                    "correct": true
+                },
+                {
+                    "text": "No, because any completion rate that falls below 100% automatically represents a nonconformity against Clause 8.3, regardless of the reasons behind the remaining items.",
+                    "correct": false
+                }
+            ],
+            "rationale": "This models genuine evidence-based skepticism about aggregate metrics hiding outliers, directly echoing the case study's Risk 19. Accepting a surface-level statistic, treating any imperfection as automatic nonconformity, or substituting reporting for actual verification are each weaker forms of reasoning.",
+            "lms_direction": "Review LMS Activity 8.3 — Looking Past Aggregate Completion Metrics."
+        },
+        {
+            "category": "Performance Evaluation & Improvement (Clauses 9 & 10)",
+            "section": "Clause 9.2 — Internal Audit Reporting",
+            "type": "interactive_tool",
+            "tool_type": "ncr_generator",
+            "exhibit_ref": "none",
+            "text": "Using the scenario below, construct the correct Nonconformity Report components.",
+            "tool_data": {
+                "scenario": "An organization's Internal Audit Programme covers all required clauses and Annex A themes across a three-year cycle, and audit reports exist for each completed audit. However, when asked to show evidence that audit results were reported to relevant management per Clause 9.2.2(f), only a folder of audit reports on a shared drive is provided, with no evidence any manager reviewed, acknowledged, or acted on them.",
+                "fields": [
+                    {
+                        "id": "category",
+                        "label": "Classification",
+                        "options": [
+                            "Conformity",
+                            "Opportunity for Improvement",
+                            "Minor Nonconformity",
+                            "Major Nonconformity"
+                        ],
+                        "correct": "Minor Nonconformity",
+                        "guidance": "Consider whether this is a systemic, organization-wide failure of the entire audit programme, or a specific reporting-mechanism gap — severity should reflect scope and consequence, not the topic alone."
+                    },
+                    {
+                        "id": "criterion",
+                        "label": "Best-fit Criterion",
+                        "options": [
+                            "Clause 9.1 — Monitoring and measurement",
+                            "Clause 9.2.2(f) — Reporting audit results to relevant management",
+                            "Clause 9.3 — Management review",
+                            "Clause 5.3 — Roles and responsibilities"
+                        ],
+                        "correct": "Clause 9.2.2(f) — Reporting audit results to relevant management"
+                    },
+                    {
+                        "id": "problem_statement",
+                        "label": "Best Problem Statement",
+                        "options": [
+                            "Internal audits are not being conducted.",
+                            "Audit results exist but there is no evidence they were actively reported to and received by relevant management, only passively stored.",
+                            "The audit programme does not cover all required clauses.",
+                            "Management review was not held."
+                        ],
+                        "correct": "Audit results exist but there is no evidence they were actively reported to and received by relevant management, only passively stored."
+                    }
+                ]
+            },
+            "expected_payload": "evaluated_at_runtime",
+            "rationale": "9.2.2(f) requires demonstrable reporting, not passive availability. Correctly scoping the problem statement and criterion — rather than defaulting to the broadest possible clause or an inflated severity — is core practical NCR-writing skill.",
+            "lms_direction": "Review LMS Activity 9.2 — Writing Defensible Nonconformity Reports."
+        },
+        {
+            "category": "Performance Evaluation & Improvement (Clauses 9 & 10)",
+            "section": "Clause 9.3.2(c)",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "During Management Review, the auditor finds that 'performance of external providers' was not included as an input, despite the organization having multiple critical suppliers with information security implications. Is this omission itself sufficient to constitute a nonconformity?",
+            "options": [
+                {
+                    "text": "This can only be judged after seeing whether the omission actually led to a measurable negative business outcome sometime later on.",
+                    "correct": false
+                },
+                {
+                    "text": "No, since supplier performance only becomes relevant for review once that supplier has already caused a confirmed security incident of some kind.",
+                    "correct": false
+                },
+                {
+                    "text": "No, since management review inputs are general guidelines organizations may selectively include based on their own current business priorities and available resourcing levels.",
+                    "correct": false
+                },
+                {
+                    "text": "Yes — 9.3.2(c) requires feedback on relevant interested parties' performance, including external providers, as a review input; omitting the input itself is the nonconformity.",
+                    "correct": true
+                }
+            ],
+            "rationale": "9.3 inputs are largely mandatory minimums, not optional suggestions — a common misconception this question targets directly. Gating the requirement on a prior triggering incident inverts the preventive purpose of management review.",
+            "lms_direction": "Review LMS Activity 9.3 — Mandatory Management Review Inputs."
+        },
+        {
+            "category": "Performance Evaluation & Improvement (Clauses 9 & 10)",
+            "section": "Clause 10.1",
+            "type": "true_false",
+            "exhibit_ref": "none",
+            "text": "A corrective action can be legitimately closed once the immediate nonconformity has been fixed, without a separate verification step confirming the fix prevents recurrence, as long as the fix is documented.",
+            "options": [
+                {
+                    "text": "False",
+                    "correct": true
+                },
+                {
+                    "text": "True",
+                    "correct": false
+                }
+            ],
+            "rationale": "10.1 requires evaluating the need for action to eliminate the CAUSE(S) and reviewing the EFFECTIVENESS of any corrective action taken — documenting a fix satisfies only the 'implement the action' step, not the distinct, mandatory 'review effectiveness' step.",
+            "lms_direction": "Review LMS Activity 10.1 — Corrective Action Effectiveness Review."
+        },
+        {
+            "category": "Performance Evaluation & Improvement (Clauses 9 & 10)",
+            "section": "Clause 10.2",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "Which of the following is the strongest evidence that an organization's continual improvement process is genuinely operating, rather than being asserted in policy language alone?",
+            "options": [
+                {
+                    "text": "The number of recorded information security incidents decreased noticeably from one year to the next across the organization.",
+                    "correct": false
+                },
+                {
+                    "text": "The information security policy contains a sentence formally committing the organization to continual improvement of its ISMS over time.",
+                    "correct": false
+                },
+                {
+                    "text": "A documented trail from a specific input — an audit finding, incident, or metric — through to an implemented, verified change, not just aspirational language.",
+                    "correct": true
+                },
+                {
+                    "text": "The ISMS Manager describes several broad areas where things could generally always be improved a bit further still.",
+                    "correct": false
+                }
+            ],
+            "rationale": "The correct answer demonstrates the full causal chain of genuine improvement. Aspirational language, an outcome metric with many possible unrelated causes, and vague unverifiable statements are each weaker forms of evidence.",
+            "lms_direction": "Review LMS Activity 10.2 — Evidencing Genuine Continual Improvement."
+        },
+        {
+            "category": "Performance Evaluation & Improvement (Clauses 9 & 10)",
+            "section": "Clause 10.1 / 9.1",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An auditor is evaluating whether 'lessons learned' from a security incident were genuinely used to improve the ISMS. Which evidence would be least persuasive?",
+            "options": [
+                {
+                    "text": "A line in the incident report stating 'lessons learned: be more careful,' with no further detail and no action linked to it anywhere.",
+                    "correct": true
+                },
+                {
+                    "text": "A new SIEM detection rule built specifically to catch the exact pattern of activity that was observed during the incident.",
+                    "correct": false
+                },
+                {
+                    "text": "An updated risk register entry reflecting an increased likelihood rating for the specific threat type involved in the incident.",
+                    "correct": false
+                },
+                {
+                    "text": "A specific change to the security awareness training curriculum that directly references the incident's actual attack vector in detail.",
+                    "correct": false
+                }
+            ],
+            "rationale": "This tests the ability to distinguish substantive, traceable, verifiable changes from vague, unfalsifiable language that sounds like improvement but provides no auditable trail — directly reflecting the case study's own incident-log gap.",
+            "lms_direction": "Review LMS Activity 10.1 — Distinguishing Substantive from Vague Improvement Evidence."
+        },
+        {
+            "category": "Performance Evaluation & Improvement (Clauses 9 & 10)",
+            "section": "Clause 9.1",
+            "type": "single_select",
+            "exhibit_ref": "finding_severity_matrix",
+            "text": "Which scenario represents a Major Nonconformity rather than a Minor Nonconformity or Opportunity for Improvement, when applying the exhibited severity matrix's harm x likelihood logic to a Clause 9.1 (Monitoring, measurement, analysis and evaluation) finding?",
+            "options": [
+                {
+                    "text": "One of fifteen defined metrics was measured a single week later than its originally defined reporting schedule specified in the formally approved annual monitoring plan document.",
+                    "correct": false
+                },
+                {
+                    "text": "No evidence that any defined metric has actually been measured, analyzed, or reported for the entire current certification cycle — total absence, both severe and confirmed.",
+                    "correct": true
+                },
+                {
+                    "text": "The organization actually measures more metrics in total than the minimum set it originally committed to tracking under its own plan.",
+                    "correct": false
+                },
+                {
+                    "text": "A metric's dashboard uses a slightly different chart color scheme than the one originally described in the monitoring plan document.",
+                    "correct": false
+                }
+            ],
+            "rationale": "The correct answer shows total systemic failure of a core clause with both harm and likelihood maxed out, matching the Major band's definition. The other options are trivial, cosmetic, or actually positive variances that should not be over-classified.",
+            "lms_direction": "Review LMS Activity 9.1 — Calibrating Severity Proportionally."
+        },
+        {
+            "category": "Performance Evaluation & Improvement (Clauses 9 & 10)",
+            "section": "Clause 10.2",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An organization presents its 'Opportunities for Improvement' log showing 40 entries logged over the past year, none of which have any assigned owner, target date, or status. What does this pattern suggest about the organization's improvement process?",
+            "options": [
+                {
+                    "text": "That while the organization can identify opportunities, evidenced by the log, there is no evidence of a functioning process to act on them — identification without action doesn't improve the ISMS.",
+                    "correct": true
+                },
+                {
+                    "text": "That the organization has a mature improvement culture, since logging 40 separate opportunities for improvement demonstrates genuinely strong organizational self-awareness across every department.",
+                    "correct": false
+                },
+                {
+                    "text": "That the log should be purged immediately, since a large volume of unresolved OFIs reflects poorly on the organization's image during external certification audits.",
+                    "correct": false
+                },
+                {
+                    "text": "That this is not an audit concern at all, since Opportunities for Improvement are not actually required to exist or be tracked under ISO 27001 in any form.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Volume of identification is not the same as maturity of ACTION. Clause 10.2's continual improvement expectation still applies to how identified opportunities are actually handled, and recommending the log be purged is inappropriate, prescriptive consulting.",
+            "lms_direction": "Review LMS Activity 10.2 — From Identification to Action."
+        },
+        {
+            "category": "Performance Evaluation & Improvement (Clauses 9 & 10)",
+            "section": "Clause 9.2",
+            "type": "true_false",
+            "exhibit_ref": "none",
+            "text": "Under Clause 9.2, an organization may legitimately audit higher-risk areas of its ISMS more frequently than lower-risk areas, rather than auditing every clause and control with identical frequency across the audit programme.",
+            "options": [
+                {
+                    "text": "True",
+                    "correct": true
+                },
+                {
+                    "text": "False",
+                    "correct": false
+                }
+            ],
+            "rationale": "9.2.2(a) explicitly expects audit programmes to consider the importance of relevant processes and results of previous audits — risk-based frequency variation is correct practice, not a shortcut. This also connects to the case study's own finding that a suspiciously clean or uniform audit pattern deserves scrutiny of the programme's rigor.",
+            "lms_direction": "Review LMS Activity 9.2 — Risk-Based Internal Audit Programme Design."
+        },
+        {
+            "category": "Performance Evaluation & Improvement (Clauses 9 & 10)",
+            "section": "Clause 9.3",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "During management review, minutes show that 'resource adequacy for the ISMS' was discussed, with the note: 'Team agrees resources are fine for now.' No supporting data (headcount trends, budget vs. plan, backlog of open actions) was referenced. How should an auditor treat this input?",
+            "options": [
+                {
+                    "text": "As a finding only if the organization is later independently shown to have actually been understaffed during that specific period reviewed.",
+                    "correct": false
+                },
+                {
+                    "text": "As irrelevant, since Clause 9.3 does not actually require resource adequacy to be discussed as part of any management review session at all.",
+                    "correct": false
+                },
+                {
+                    "text": "As fully compliant, since resource adequacy was explicitly raised as a topic and recorded in the management review minutes, exactly as the standard formally requires.",
+                    "correct": false
+                },
+                {
+                    "text": "As weak evidence at best — a subjective, undocumented consensus statement without supporting data doesn't demonstrate the evidence-based evaluation the standard's broader emphasis implies.",
+                    "correct": true
+                }
+            ],
+            "rationale": "Accepting a topic as 'discussed' is not the same as it being properly evaluated with evidence. Resourcing ties into leadership commitment that management review should reflect, and eventual outcome should not be confused with process conformity.",
+            "lms_direction": "Review LMS Activity 9.3 — Evidence Standards for Management Review Inputs."
+        },
+        {
+            "category": "Performance Evaluation & Improvement (Clauses 9 & 10)",
+            "section": "Clause 10.1 / 9.2",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "Which is the most appropriate order of steps for an auditor investigating a suspected recurring nonconformity (i.e., a finding similar to one closed in a previous audit cycle)?",
+            "options": [
+                {
+                    "text": "Verify the prior corrective action's effectiveness evidence, compare root causes, determine if this is genuinely related, then classify — typically escalating if it's a real recurrence.",
+                    "correct": true
+                },
+                {
+                    "text": "Immediately classify the new finding as Major, since any repeat finding automatically belongs in the most severe category available under standard audit convention.",
+                    "correct": false
+                },
+                {
+                    "text": "Ask the auditee directly whether they believe the two findings are related, and accept whatever answer they give as the final, binding word.",
+                    "correct": false
+                },
+                {
+                    "text": "Treat it as an entirely unrelated new finding, since prior audit cycles have no formal bearing on how the current cycle's findings should be classified.",
+                    "correct": false
+                }
+            ],
+            "rationale": "The correct answer models the proper investigative sequence. Skipping investigation and assuming severity, ignoring prior-cycle context, or delegating the auditor's own judgment to the auditee each violate independence and evidence-based principles.",
+            "lms_direction": "Review LMS Activity 10.1 — Investigating Recurring Nonconformities."
+        },
+        {
+            "category": "Annex A — Organizational & People Controls (Themes 5 & 6)",
+            "section": "Annex A Mapping",
+            "type": "interactive_tool",
+            "tool_type": "annex_a_mapper",
+            "exhibit_ref": "none",
+            "text": "Map the following audit findings to the correct ISO 27001:2022 Annex A Control Theme.",
+            "tool_data": {
+                "themes": [
+                    "A.5 Organizational",
+                    "A.6 People",
+                    "A.7 Physical",
+                    "A.8 Technological"
+                ],
+                "items": [
+                    {
+                        "id": "c1",
+                        "text": "No background checks performed on new sysadmins",
+                        "category": "A.6 People"
+                    },
+                    {
+                        "id": "c2",
+                        "text": "Unencrypted backups stored in public cloud",
+                        "category": "A.8 Technological"
+                    },
+                    {
+                        "id": "c3",
+                        "text": "Visitor log at the server room is not maintained",
+                        "category": "A.7 Physical"
+                    },
+                    {
+                        "id": "c4",
+                        "text": "Information security policy hasn't been reviewed in 3 years",
+                        "category": "A.5 Organizational"
+                    },
+                    {
+                        "id": "c5",
+                        "text": "An employee who resigned still has VPN access two weeks later",
+                        "category": "A.6 People"
+                    },
+                    {
+                        "id": "c6",
+                        "text": "No documented supplier security requirements in a new vendor contract",
+                        "category": "A.5 Organizational"
+                    }
+                ]
+            },
+            "expected_payload": "evaluated_at_runtime",
+            "rationale": "Auditors must be able to categorize vulnerabilities according to the 2022 Annex A control themes. Item c5 is deliberately tricky: it involves technical VPN access, but the underlying control failure is the People-theme offboarding RESPONSIBILITY (A.6.5) not being executed, even though the enforcement mechanism is technical.",
+            "lms_direction": "Review Annex A Framework — Organizational, People, Physical, Technological Themes."
+        },
+        {
+            "category": "Annex A — Organizational & People Controls (Themes 5 & 6)",
+            "section": "A.5.18 vs A.5.15",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "Which is the correct Annex A control reference for an organization's failure to conduct a documented review of user access rights on a periodic basis?",
+            "options": [
+                {
+                    "text": "A.5.18 (Access rights) — this control specifically addresses provisioning, review, and removal of access, distinct from A.5.15's broader access control policy framework.",
+                    "correct": true
+                },
+                {
+                    "text": "A.6.3 (Awareness training), since a missed periodic access review is fundamentally a staff training and awareness gap.",
+                    "correct": false
+                },
+                {
+                    "text": "A.5.15 (Access control) only, since every access-related finding of any kind is properly filed under this single broad control.",
+                    "correct": false
+                },
+                {
+                    "text": "A.8.2 (Privileged access rights) only, since periodic access reviews are understood to concern privileged accounts exclusively, not standard user accounts under normal circumstances.",
+                    "correct": false
+                }
+            ],
+            "rationale": "This tests precise control differentiation, a common exam trap where multiple related controls exist and learners default to the broadest/most familiar one, or misapply based on surface keyword association.",
+            "lms_direction": "Review LMS Activity A.5.18 — Access Rights Provisioning and Review."
+        },
+        {
+            "category": "Annex A — Organizational & People Controls (Themes 5 & 6)",
+            "section": "A.6.1",
+            "type": "true_false",
+            "exhibit_ref": "none",
+            "text": "Control A.6.1 (Screening) requires the extent of background verification checks to be proportional to the business requirements, the classification of information to be accessed, and the perceived risk of the specific role — not a single uniform check applied identically to every position.",
+            "options": [
+                {
+                    "text": "False",
+                    "correct": false
+                },
+                {
+                    "text": "True",
+                    "correct": true
+                }
+            ],
+            "rationale": "A.6.1's intent is risk-proportionate screening, calibrated to role sensitivity and data access, rather than one uniform check for every position. This is directly relevant to evaluating how SecureTech should properly remediate the WageWise staff screening gap — the right fix is proportionate, not necessarily identical to engineering-hire screening.",
+            "lms_direction": "Review LMS Activity A.6.1 — Proportionate Screening."
+        },
+        {
+            "category": "Annex A — Organizational & People Controls (Themes 5 & 6)",
+            "section": "A.5.9",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An auditor finds that A.5.9 (Inventory of information and other associated assets) is marked 'Implemented' in the SoA, and an asset register exists. However, the register lists only hardware assets (laptops, servers) and does not include any software licenses, cloud service subscriptions, or data assets. What is the correct evaluation?",
+            "options": [
+                {
+                    "text": "Likely a nonconformity — 'other associated assets' is understood broadly to include software, data, and cloud services, not just physical hardware, regardless of the SoA's declared status.",
+                    "correct": true
+                },
+                {
+                    "text": "No finding, since a physical hardware inventory alone fully satisfies A.5.9, with software and data assumed to be adequately covered by other separate controls instead.",
+                    "correct": false
+                },
+                {
+                    "text": "Not assessable at all, since Annex A itself never actually defines what should count as an 'asset' in the first place, unlike ISO 27002.",
+                    "correct": false
+                },
+                {
+                    "text": "A Minor issue only if the organization can later demonstrate actual financial loss tied specifically to an asset that went unlisted.",
+                    "correct": false
+                }
+            ],
+            "rationale": "The 'hardware-only satisfies it' option wrongly narrows the control's clear intent. A financial-loss gate is irrelevant to conformity classification. 'Asset' has an established broad meaning in information security practice, even though Annex A itself is deliberately concise.",
+            "lms_direction": "Review LMS Activity A.5.9 — Scope of the Asset Inventory."
+        },
+        {
+            "category": "Annex A — Organizational & People Controls (Themes 5 & 6)",
+            "section": "A.6.4",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "Which scenario best illustrates a genuine A.6.4 (Disciplinary process) finding, as opposed to a normal HR/performance management matter outside ISMS scope?",
+            "options": [
+                {
+                    "text": "An employee's annual bonus was reduced following a below-average result on their standard yearly performance review conducted by their manager.",
+                    "correct": false
+                },
+                {
+                    "text": "An employee exfiltrated confidential data via personal email, a clear policy violation, but received only an informal verbal warning with no formal process or record.",
+                    "correct": true
+                },
+                {
+                    "text": "An employee was formally disciplined for repeatedly arriving late to their scheduled shifts over several consecutive weeks despite receiving two prior formal warnings.",
+                    "correct": false
+                },
+                {
+                    "text": "An employee was placed on a formal performance improvement plan after missing unrelated quarterly sales targets twice in a row.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Only this option involves an actual information-security policy violation lacking a formal, documented, consistently applied disciplinary response — the core of what A.6.4 requires. The others are ordinary HR/performance matters unrelated to information security.",
+            "lms_direction": "Review LMS Activity A.6.4 — Scoping Disciplinary Process Findings."
+        },
+        {
+            "category": "Annex A — Organizational & People Controls (Themes 5 & 6)",
+            "section": "A.6.7",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An organization's remote working policy (A.6.7) requires all remote employees to use company-issued, encrypted laptops with VPN-only access to production systems. During interview, a remote sales employee mentions occasionally checking company email 'from my personal tablet when traveling, since it's just faster.' What is the auditor's most appropriate next step?",
+            "options": [
+                {
+                    "text": "Instruct the employee on the spot to stop the practice immediately, since this is obviously a clear-cut violation requiring no further review at all.",
+                    "correct": false
+                },
+                {
+                    "text": "Investigate further — sample additional remote staff, check what data personal-device access actually reaches, and verify any mitigating technical controls before classifying severity.",
+                    "correct": true
+                },
+                {
+                    "text": "Disregard the comment entirely, since checking email is inherently a low-risk activity regardless of which device happens to be used for it.",
+                    "correct": false
+                },
+                {
+                    "text": "Immediately classify this as a Major Nonconformity, based solely on the single comment made during this one interview with one employee.",
+                    "correct": false
+                }
+            ],
+            "rationale": "The correct answer models proper evidence-gathering before classification. Jumping to severity from a single anecdote, dismissing a real potential policy violation, and directing on-the-spot corrective behavior (consulting, not auditing) are all reasoning errors.",
+            "lms_direction": "Review LMS Activity A.6.7 — Remote Working Controls."
+        },
+        {
+            "category": "Annex A — Organizational & People Controls (Themes 5 & 6)",
+            "section": "A.5.11",
+            "type": "true_false",
+            "exhibit_ref": "none",
+            "text": "Control A.5.11 (Return of assets) applies only to physical assets such as laptops and access badges, and does not extend to intangible assets such as access credentials or organizational knowledge/data held by a departing employee.",
+            "options": [
+                {
+                    "text": "True",
+                    "correct": false
+                },
+                {
+                    "text": "False",
+                    "correct": true
+                }
+            ],
+            "rationale": "A.5.11 extends to the return of all organizational assets in the employee's or external party's possession upon termination — both physical assets and intangible ones such as access rights, credentials, and organizational information — directly connecting to the case study's own leaver-access-delay finding.",
+            "lms_direction": "Review LMS Activity A.5.11 — Scope of Asset Return Requirements."
+        },
+        {
+            "category": "Annex A — Organizational & People Controls (Themes 5 & 6)",
+            "section": "A.5.19 / A.5.20",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "A newly signed contract with a critical software-development contractor contains standard commercial terms (price, deliverables, timelines) but no information security requirements, confidentiality obligations, or right-to-audit clause. Which is the most accurate audit finding?",
+            "options": [
+                {
+                    "text": "Not assessable until this particular contractor has actually caused a real, confirmed security incident that can be traced back to this contract.",
+                    "correct": false
+                },
+                {
+                    "text": "A nonconformity against A.5.20 — the agreement contains no security terms at all for a contractor doing security-relevant development work, leaving nothing enforceable in place.",
+                    "correct": true
+                },
+                {
+                    "text": "A Minor issue confined to legal documentation, with no real information security relevance to the actual contracted development work being performed.",
+                    "correct": false
+                },
+                {
+                    "text": "No finding, since A.5.19 and A.5.20 are understood to apply only to cloud infrastructure vendors, not to software development contractors of any kind, size, or engagement type.",
+                    "correct": false
+                }
+            ],
+            "rationale": "A.5.19/A.5.20 apply broadly to supplier relationships with information security implications, not narrowly to cloud/infrastructure vendors — a development contractor handling source code or sensitive data is squarely in scope. This is a substantive information security gap, not merely a legal technicality.",
+            "lms_direction": "Review LMS Activity A.5.19 / A.5.20 — Information Security in Supplier Agreements."
+        },
+        {
+            "category": "Annex A — Physical & Technological Controls (Themes 7 & 8)",
+            "section": "A.8.9 vs A.8.32",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "Which of the following is the correct distinction between A.8.9 (Configuration management) and A.8.32 (Change management)?",
+            "options": [
+                {
+                    "text": "A.8.9 applies only to cloud-hosted environments, while A.8.32 applies only to traditional on-premises environments, reflecting how most organizations historically split governance.",
+                    "correct": false
+                },
+                {
+                    "text": "A.8.32 is really just a narrower subset of A.8.9, since every change an organization makes is fundamentally, at its core, some kind of configuration change.",
+                    "correct": false
+                },
+                {
+                    "text": "They are functionally identical controls that Annex A lists twice for emphasis, since both ultimately exist to prevent unauthorized or undocumented modifications to systems.",
+                    "correct": false
+                },
+                {
+                    "text": "A.8.9 concerns secure baseline configurations for systems, while A.8.32 concerns the broader process of controlling changes generally — related but genuinely distinct controls.",
+                    "correct": true
+                }
+            ],
+            "rationale": "This tests precise conceptual differentiation between closely related but distinct controls, a realistic exam-level challenge. Each distractor misrepresents the relationship in a different common way: identical, environment-based split, or a false subset relationship.",
+            "lms_direction": "Review LMS Activity A.8.9 / A.8.32 — Configuration vs. Change Management."
+        },
+        {
+            "category": "Annex A — Physical & Technological Controls (Themes 7 & 8)",
+            "section": "A.8.23",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An organization's SoA marks A.8.23 (Web filtering) as 'Not Applicable,' with the justification: 'Our organization does not provide internet access to any employees.' During the site visit, the auditor observes every employee workstation has an active internet browser and is able to access external websites. What is the correct conclusion?",
+            "options": [
+                {
+                    "text": "The exclusion is factually contradicted by direct observation, itself a nonconformity against 6.1.3(d) — evidence disproving a stated justification undermines confidence in the whole SoA.",
+                    "correct": true
+                },
+                {
+                    "text": "No finding, since the auditor's own direct observation is merely anecdotal and cannot override a formally documented SoA justification signed off by management.",
+                    "correct": false
+                },
+                {
+                    "text": "This should be reclassified as an Opportunity for Improvement, since web filtering is generally considered a fairly low-priority control compared to other, more critical technological controls.",
+                    "correct": false
+                },
+                {
+                    "text": "Outside audit scope, since employee internet browsing habits are really an HR and IT policy matter, not something Annex A is meant to govern.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Direct observation is strong, first-hand objective evidence that should override an unverified paper claim, not the reverse. A.8.23 is explicitly an Annex A Technological control, and a factually false SoA justification is understated by calling it merely low-priority.",
+            "lms_direction": "Review LMS Activity A.8.23 — Verifying SoA Exclusion Justifications by Observation."
+        },
+        {
+            "category": "Annex A — Physical & Technological Controls (Themes 7 & 8)",
+            "section": "A.8.16",
+            "type": "true_false",
+            "exhibit_ref": "audit_story",
+            "text": "Control A.8.16 (Monitoring activities) is satisfied as long as a SIEM tool or equivalent monitoring technology has been purchased and deployed, regardless of whether generated alerts are reviewed or acted upon.",
+            "options": [
+                {
+                    "text": "True",
+                    "correct": false
+                },
+                {
+                    "text": "False",
+                    "correct": true
+                }
+            ],
+            "rationale": "A.8.16 requires networks, systems, and applications to be monitored for anomalous behavior with that monitoring resulting in evaluation — directly mirroring the case study's own eleven-day untriaged 'High' severity alert. Deploying the tool addresses only detection capability, not the operational monitoring-and-response process the control requires.",
+            "lms_direction": "Review LMS Activity A.8.16 — Monitoring Requires Response, Not Just Detection."
+        },
+        {
+            "category": "Annex A — Physical & Technological Controls (Themes 7 & 8)",
+            "section": "A.8.11 / A.5.34",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An organization stores customer personal data in a cloud database, and its SoA marks A.8.11 (Data masking) as 'Not Applicable' with the justification: 'We do not use production data in test/development environments.' The auditor's evidence sampling later reveals that the QA team routinely copies a full production database snapshot, including unmasked customer names and payment details, into the test environment for 'realistic testing.' What is the correct evaluation?",
+            "options": [
+                {
+                    "text": "A clear nonconformity — the exclusion justification is directly contradicted by observed practice, and unmasked personal data in test environments is exactly what A.8.11 targets.",
+                    "correct": true
+                },
+                {
+                    "text": "A Minor Nonconformity only, since QA teams typically have a genuine, legitimate business need for realistic-looking test data to validate features properly.",
+                    "correct": false
+                },
+                {
+                    "text": "Not evaluable without first knowing exactly which specific data masking technology is available and affordable on the current market for this organization.",
+                    "correct": false
+                },
+                {
+                    "text": "No finding, since data masking as a control is only ever relevant to production environments, not test or development ones, by its very definition.",
+                    "correct": false
+                }
+            ],
+            "rationale": "Data masking controls specifically target NON-production environments where full security controls are typically weaker — the 'production only' option has the logic backwards. A legitimate need for realistic-LOOKING data doesn't justify using actual unmasked personal data.",
+            "lms_direction": "Review LMS Activity A.8.11 — Data Masking in Non-Production Environments."
+        },
+        {
+            "category": "Annex A — Physical & Technological Controls (Themes 7 & 8)",
+            "section": "A.5.30",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "Which is the correct Annex A control most directly associated with an organization's failure to define and test a documented procedure for restoring IT services after a major cloud provider outage?",
+            "options": [
+                {
+                    "text": "A.5.30 (ICT readiness for business continuity) — this new 2022 control specifically covers planning, testing, and maintaining ICT readiness for disruption scenarios.",
+                    "correct": true
+                },
+                {
+                    "text": "A.7.11 (Supporting utilities), since a cloud provider outage is fundamentally a facilities and utilities-related concern in this specific context and business scenario overall.",
+                    "correct": false
+                },
+                {
+                    "text": "A.5.29 exclusively, treated as entirely unrelated to A.5.30, since the two controls address completely separate disruption scenarios.",
+                    "correct": false
+                },
+                {
+                    "text": "A.8.13 (Information backup) only, since having backups in place is functionally the same thing as having business continuity.",
+                    "correct": false
+                }
+            ],
+            "rationale": "A.5.30 is one of the 11 new 2022 controls and is precisely correct here, directly relevant to the case study's own AWS/cloud dependency. Having backups is not the same as having a tested restoration capability, and A.5.29/A.5.30 are typically relevant together, not mutually exclusive.",
+            "lms_direction": "Review LMS Activity A.5.30 — ICT Readiness for Business Continuity."
+        },
+        {
+            "category": "Annex A — Physical & Technological Controls (Themes 7 & 8)",
+            "section": "A.7.2 / A.7.4",
+            "type": "single_select",
+            "exhibit_ref": "none",
+            "text": "An organization's physical security controls include badge readers at all entry points (A.7.2) and CCTV coverage of the data center floor (A.7.4). During the audit, footage review shows an unbadged individual was let into the data center by an employee who 'held the door' for them, an event not flagged by any alert or subsequently investigated. What does this best illustrate?",
+            "options": [
+                {
+                    "text": "Not a finding, since the individual who was let in did not go on to cause any confirmed security incident afterward that was later traced.",
+                    "correct": false
+                },
+                {
+                    "text": "The CCTV system itself is malfunctioning, since it should have automatically prevented the tailgating event from happening in the first place.",
+                    "correct": false
+                },
+                {
+                    "text": "Badge readers should be replaced with biometric scanners, which would fully solve this specific tailgating problem going forward without requiring any other procedural changes.",
+                    "correct": false
+                },
+                {
+                    "text": "Physical controls alone aren't enough without a supporting behavioral policy against tailgating and an active process to actually review footage and flag such events.",
+                    "correct": true
+                }
+            ],
+            "rationale": "The correct answer captures the systemic insight that technology, behavior, and monitoring must work together. CCTV is passive recording, not automatic prevention. Absence of harm is not the same as absence of nonconformity, and recommending a specific technology swap is prescriptive consulting.",
+            "lms_direction": "Review LMS Activity A.7.2 / A.7.4 — Layered Physical Security Controls."
+        },
+        {
+            "category": "Annex A — Physical & Technological Controls (Themes 7 & 8)",
+            "section": "A.8.28",
+            "type": "true_false",
+            "exhibit_ref": "none",
+            "text": "Control A.8.28 (Secure coding) is only relevant to organizations that develop custom software in-house, and does not need to be assessed for organizations that exclusively use commercial off-the-shelf (COTS) or SaaS software with no internal development activity.",
+            "options": [
+                {
+                    "text": "True",
+                    "correct": true
+                },
+                {
+                    "text": "False",
+                    "correct": false
+                }
+            ],
+            "rationale": "A.8.28 concerns applying secure coding principles to development activity the organization itself performs. An organization with genuinely zero development activity has a legitimate basis to mark this control 'Not Applicable,' provided this is accurately justified — contrasting with SecureTech, which does perform in-house development and must treat A.8.28 as applicable. 'Not Applicable' is sometimes the correct answer when genuinely justified.",
+            "lms_direction": "Review LMS Activity A.8.28 — Correctly Scoping Secure Coding Applicability."
+        }
+    ]
+};

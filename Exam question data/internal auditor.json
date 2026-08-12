@@ -1,450 +1,776 @@
 export default {
     "title": "ISO 45001:2018 Internal Auditor — Capstone Exam",
-    "instrument_notice": "This is a knowledge-underpinning assessment. It measures recognition of correct audit reasoning, not the generative skills of live audit practice (formulating unscripted questions, deciding what to sample with no list provided, noticing an absence nobody flagged). Those capabilities are assessed separately through the Live Workshop and the Capstone Project's submitted work product (a real A7/A8 the candidate drafts). This exam should not be the sole basis for certifying audit competence.",
+    "instrument_notice": "This is a knowledge-underpinning assessment measuring recognition of correct audit reasoning, not the generative skills of live audit practice. Those capabilities are assessed separately through the Live Workshop and the Capstone Project's submitted work product.",
     "layout_size": 35,
     "time_limit": 45,
     "passing_score_percent": 75,
-    "scoring_note": "75% (30/40) was set as a provisional cut score reflecting the material's difficulty and the course's Analyze/Evaluate cognitive tier; it has not been empirically validated against pilot candidate data (no Angoff study or item-level p-values exist yet). Treat as provisional until a pilot cohort's results are analysed.",
+    "scoring_note": "75% (26/35) is a provisional cut score, not yet validated against pilot candidate data.",
+    "pool_size": 60,
+    "extraction_note": "This 60-question pool feeds a stratified, category-aware extractor presenting 35 questions per sitting. Any category containing 'Case Study' in its name is hardcoded to contribute exactly 8 of the 35, with the remaining 27 drawn proportionally across the other categories based on their share of the 60-question pool. Category sizes below were deliberately set with this stratification in mind — no category needs multiple redundant copies of a given tool type to guarantee presence, since the engine will not leave a populated category empty; sizing instead reflects genuine curriculum weight.",
     "blueprint": {
-        "Program & Planning (2.1-2.3)": 5,
-        "Fieldwork Methodology & Sampling (2.4-2.5)": 6,
-        "Auditing the Clauses (2.6-2.16)": 14,
-        "Specialized Domains & Behavioral Auditing (2.17-2.21)": 7,
-        "Classification, Reporting & Wrap-Up (2.22-2.28)": 8
+        "Case Study — Apex Welding Arm (8 of 35, hardcoded)": 15,
+        "Program & Planning": 5,
+        "Fieldwork Methodology & Sampling": 6,
+        "Auditing the Clauses": 16,
+        "Specialized Domains & Behavioral Auditing": 7,
+        "Classification, Reporting & Wrap-Up": 11
     },
     "exhibits": {
-        "case_study_apex": {
-            "description": "Apex Industrial Ltd. is a mid-sized manufacturer certified to ISO 45001:2018, employing approximately 340 staff plus a rotating pool of contractors. Six months ago, a maintenance contractor narrowly avoided severe injury on an improperly locked-out stamping press. Apex's external certification audit is four months away. You are Dr. Zainab Bello, an independent OH&S Internal Auditor with no prior relationship to Apex. Note: several exhibits below present NEW situations at Apex, parallel to but distinct from anything covered in the course lessons — you are expected to apply the reasoning, not recall a specific answer."
-        },
-        "audit_programme_excerpt": {
-            "description": "Apex's draft Annual Audit Programme (A1) for the coming year.",
-            "schedule": [
-                {
-                    "quarter": "Q1",
-                    "area": "Warehousing & Logistics"
-                },
-                {
-                    "quarter": "Q2",
-                    "area": "Welding Bays"
-                },
-                {
-                    "quarter": "Q3",
-                    "area": "Chemical Treatment Lines"
-                },
-                {
-                    "quarter": "Q4",
-                    "area": "Stamping & Machining"
-                }
+        "apex_audit_story": {
+            "description": "A continuous eight-paragraph audit narrative. Each Case Study question below refers to a specific paragraph. This is a new situation at Apex, distinct from anything covered in the course lessons — apply the reasoning, don't recall a specific lesson answer.",
+            "paragraphs": [
+                "Paragraph 1: Apex Industrial's external certification audit is four months away. Ten months ago, the national OSH regulator tightened its rules on machine-guarding interlocks for robotic equipment. Three months ago, Apex installed a new robotic welding arm in the welding bay, replacing part of the manual welding line, to meet rising demand from its largest customer. Insurance premiums have also risen since the stamping-press near-miss six months ago. Dr. Zainab Bello begins her scheduled internal audit of the welding bay.",
+                "Paragraph 2: Dr. Bello requests the welding bay's current HIRA and the robotic arm's interlock permit file. Both documents are professionally formatted, clearly laid out, and dated within the last two months. On paper, everything about the welding bay's documentation looks current and complete.",
+                "Paragraph 3: She interviews a welding bay technician, Tunde, who mentions he transferred from the Warehousing team four months ago — one month before the robotic arm was installed. When Dr. Bello asks him to walk through the arm's specific interlock reset procedure, he pauses, then says a colleague told him 'it's basically the same as the old manual station, just faster.'",
+                "Paragraph 4: Dr. Bello cross-references two independent sources: the HIRA document itself, and Tunde's own training record from HR. The HIRA still only lists the old manual welding station — the robotic arm does not appear anywhere in it. Tunde's training record shows his last entry is a general induction, five months ago, which predates both his transfer and the robotic arm's installation.",
+                "Paragraph 5: The picture is now clear: the robotic arm was installed and brought into daily use without ever being added to the HIRA, and Tunde — one of the operators now running it — has never received any interlock-specific training at all. His only guidance was an informal, unverified comment from a colleague.",
+                "Paragraph 6: Dr. Bello traces the gap. Why was Tunde untrained on the interlock procedure? Because no training was ever scheduled for it. Why wasn't it scheduled? Because the HIRA was never updated to include the robotic arm as new equipment. Why wasn't the HIRA updated? Because Maintenance, who installed the arm, never notified the HSE team the installation had happened at all.",
+                "Paragraph 7: Apex's HSE Manager proposes a corrective action: retrain Tunde immediately on the interlock procedure, and close the finding. Dr. Bello asks whether any other new equipment installed in the last year has been checked against the same gap. The HSE Manager admits this has not yet been done for anything else.",
+                "Paragraph 8: Dr. Bello classifies the finding and prepares it for Apex's next Management Review, noting both the immediate training gap and the deeper, unaddressed question of whether other recent equipment changes carry the same risk."
             ]
         },
-        "sampling_scenario": {
-            "description": "Apex issued 340 hot work permits this quarter. The near-miss did not involve hot work, and no known deviation pattern exists in this control.",
-            "formula_reference": "n = (Z^2 x P x (1-P)) / d^2, Z=1.96 (95% confidence), P=expected deviation rate, d=tolerable deviation rate."
-        },
-        "context_excerpt": {
-            "description": "Apex's Clause 4.1/4.2 context analysis, version 3, dated 5 months ago (after the near-miss).",
-            "content_summary": "Names specific hazard categories, the regulator by name, and the maintenance contractor as a named interested party. Includes a dated addendum referencing the near-miss.",
-            "consultee_record": "Three named consultees at last revision: HSE Manager, Maintenance Supervisor, one welding-bay operator representative."
-        },
-        "leadership_interview_excerpt": {
-            "description": "Interview with the Managing Director about a forklift near-collision three weeks ago (no injury).",
-            "exchange": [
+        "finding_severity_matrix": {
+            "description": "A simple severity-scoring model used in this exam for classifying findings. Score = Potential Harm x Likelihood of Recurrence. Note: ISO 45001 does not mandate this specific model — the organisation defines its own classification criteria. This model is for this exam only.",
+            "harm_scale": "1=Negligible, 2=Minor Injury, 3=Moderate Injury, 4=Serious Injury, 5=Fatality/Permanent Disability",
+            "recurrence_scale": "1=Rare, 2=Unlikely, 3=Possible, 4=Likely, 5=Almost Certain",
+            "bands": [
                 {
-                    "speaker": "Auditor",
-                    "line": "Walk me through how you learned about this, and what happened after."
+                    "min": 1,
+                    "max": 6,
+                    "level": "Opportunity for Improvement"
                 },
                 {
-                    "speaker": "MD",
-                    "line": "Told the same day. I personally approved budget for physical bollards and asked the Warehouse Supervisor to report back within two weeks."
+                    "min": 7,
+                    "max": 14,
+                    "level": "Minor Nonconformity"
                 },
                 {
-                    "speaker": "Auditor",
-                    "line": "Have you seen the bollards installed yourself?"
-                },
-                {
-                    "speaker": "MD",
-                    "line": "Yes — I walked the floor myself last week specifically to check."
+                    "min": 15,
+                    "max": 25,
+                    "level": "Major Nonconformity"
                 }
             ]
-        },
-        "worker_participation_excerpt": {
-            "description": "Interview with a chemical-line operator about a new PPE protocol introduced two months ago.",
-            "exchange": [
-                {
-                    "speaker": "Auditor",
-                    "line": "Before this was finalised, were you asked what you thought, or told what had been decided?"
-                },
-                {
-                    "speaker": "Operator",
-                    "line": "They trialled it with three of us for two weeks first and asked what was uncomfortable. They changed the strap design based on that before it went to everyone."
-                }
-            ]
-        },
-        "legal_register_excerpt": {
-            "description": "Legal register entry for the chemical lines' environmental discharge permit.",
-            "entry": {
-                "expiry_date": "8 months from now",
-                "last_amendment_check": "Checked 2 months ago; no amendments found"
-            }
-        },
-        "hierarchy_of_controls_excerpt": {
-            "description": "Control-selection record for a newly identified vibration hazard on a lathe station.",
-            "record": "(1) Lower-vibration model — rejected, discontinued by manufacturer, no equivalent available. (2) Vibration-dampening mounts — implemented, reduced vibration 40%. (3) Anti-vibration gloves — supplementary, for remaining exposure."
-        },
-        "management_of_change_excerpt": {
-            "description": "Change record for a new packaging line installed 5 months ago.",
-            "record": "Change logged with Maintenance. HIRA updated within 2 weeks. Operators trained before first use. No outstanding items."
-        },
-        "emergency_drill_log": {
-            "description": "Fire evacuation drill log, welding bay, over 12 months.",
-            "entries": [
-                {
-                    "date": "9 months ago",
-                    "type": "Unannounced",
-                    "outcome": "2 contractors unaccounted for initially, located after 4 min. Procedure updated to include contractor sign-in tracking."
-                },
-                {
-                    "date": "3 months ago",
-                    "type": "Unannounced",
-                    "outcome": "Full headcount within 90 sec; all contractors accounted for via updated tracking."
-                }
-            ]
-        },
-        "contractor_file_excerpt": {
-            "description": "Vetting file for a newly engaged electrical contractor, three-week project.",
-            "record": {
-                "company_qualification": "Valid, current",
-                "task_specific_induction": "Signed record dated day 1, references Apex's specific isolation procedure by document number, names the technician"
-            }
-        },
-        "permit_log_excerpt": {
-            "description": "Confined-space entry permit plus the independent gas-detector's own data log, same day.",
-            "permit_record": {
-                "entry_authorised": "14:05",
-                "test_signed_off": "13:52"
-            },
-            "gas_meter_log": {
-                "reading_timestamp": "13:52",
-                "result": "Safe"
-            },
-            "note": "Apex's procedure requires re-testing if entry occurs more than 30 minutes after the initial reading."
-        },
-        "incident_classification_exhibit": {
-            "description": "Incident record plus the first-aider's own note, minor cut two weeks ago.",
-            "internal_incident_report": {
-                "classification": "First-aid case"
-            },
-            "first_aiders_note": {
-                "treatment_given": "Cleaned, covered with plaster on-site. Returned to duty within 10 minutes. No further treatment sought."
-            }
-        },
-        "management_review_minutes_excerpt": {
-            "description": "Management Review minutes addressing a supplier OH&S-clause finding.",
-            "action_item": {
-                "owner": "Procurement Director (named)",
-                "date_committed": "Within 2 weeks, before next delivery",
-                "next_follow_up": "This same quarter"
-            }
         }
     },
     "questions": [
         {
-            "category": "Program & Planning",
-            "section": "Risk-Based Scheduling",
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 1",
+            "type": "interactive_tool",
+            "tool_type": "context_sorter",
+            "exhibit_ref": "apex_audit_story",
+            "text": "Review Paragraph 1. Sort these context factors into the correct category for a Clause 4.1 context analysis.",
+            "tool_data": {
+                "items": [
+                    {
+                        "id": "i1",
+                        "text": "Tightened regulator rules on machine-guarding interlocks"
+                    },
+                    {
+                        "id": "i2",
+                        "text": "Rising insurance premiums since the earlier near-miss"
+                    },
+                    {
+                        "id": "i3",
+                        "text": "Largest customer's rising demand driving new equipment"
+                    },
+                    {
+                        "id": "i4",
+                        "text": "Installation of a new robotic welding arm"
+                    }
+                ],
+                "categories": [
+                    "Legal/Regulatory",
+                    "Economic",
+                    "Market/Customer",
+                    "Technological"
+                ]
+            },
+            "expected_payload": {
+                "Legal/Regulatory": [
+                    "i1"
+                ],
+                "Economic": [
+                    "i2"
+                ],
+                "Market/Customer": [
+                    "i3"
+                ],
+                "Technological": [
+                    "i4"
+                ]
+            },
+            "rationale": "Each factor traces to a distinct context category: regulatory tightening is Legal, insurance cost is Economic, customer-driven demand is Market, and the new equipment itself is Technological.",
+            "lms_direction": "Review Activity 2.6 — Auditing Clause 4."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 2",
             "type": "single_select",
-            "exhibit_ref": "audit_programme_excerpt",
-            "text": "Given the near-miss occurred in Stamping & Machining, and this area is scheduled last (Q4), what is the most defensible immediate conclusion?",
+            "exhibit_ref": "apex_audit_story",
+            "text": "Both documents in Paragraph 2 are professionally formatted and recently dated. Is this sufficient evidence they are accurate?",
             "options": [
                 {
-                    "text": "This sequencing is a genuine, arguable weakness worth raising, though a case exists either way depending on what Q1-Q3 prioritise",
+                    "text": "Yes, but only because both documents were dated within the same two-month window",
+                    "correct": false
+                },
+                {
+                    "text": "Yes, recent dating and professional formatting are the standard of evidence required",
+                    "correct": false
+                },
+                {
+                    "text": "No, because professionally formatted documents are inherently less trustworthy than handwritten ones",
+                    "correct": false
+                },
+                {
+                    "text": "No — formatting and a recent date establish nothing about whether the content itself reflects current operational reality",
+                    "correct": true
+                }
+            ],
+            "rationale": "A recent date and clean formatting say nothing about whether the content is genuinely current — this is precisely the assumption Paragraph 4's cross-reference goes on to test and disprove.",
+            "lms_direction": "Review Activity 2.9 — Auditing Clause 6, HIRA."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 3",
+            "type": "single_select",
+            "exhibit_ref": "apex_audit_story",
+            "text": "Tunde pauses before answering about the interlock procedure, then repeats an informal comment from a colleague. What does his response most likely indicate?",
+            "options": [
+                {
+                    "text": "Tunde's hesitation is irrelevant and should not be recorded as evidence of anything",
+                    "correct": false
+                },
+                {
+                    "text": "Tunde has not received formal training on this specific procedure and is relying on secondhand, unverified guidance",
                     "correct": true
                 },
                 {
-                    "text": "The schedule is definitely non-conformant and must be rejected outright",
+                    "text": "Tunde is being deliberately evasive and should be reported for non-cooperation",
                     "correct": false
                 },
                 {
-                    "text": "Sequencing has no bearing on programme adequacy under Clause 9.2.2",
-                    "correct": false
-                },
-                {
-                    "text": "The schedule is fine because every area is still covered within the year",
+                    "text": "The interlock procedure genuinely is identical to the old manual station, exactly as his colleague said",
                     "correct": false
                 }
             ],
-            "rationale": "Coverage alone doesn't settle risk-weighting, but this is genuinely arguable, not clear-cut — state it as a documented concern to probe, not a certainty.",
+            "rationale": "A pause followed by reliance on an informal, unverified secondhand comment is a strong signal of a genuine training gap, not evasiveness or an accurate technical claim.",
+            "lms_direction": "Review Activity 2.4 — Fieldwork Methodology."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 4",
+            "type": "interactive_tool",
+            "tool_type": "flowchart_arranger",
+            "exhibit_ref": "apex_audit_story",
+            "text": "Review Paragraph 4. Arrange these facts in the order Dr. Bello actually established them during her cross-reference.",
+            "tool_data": {
+                "steps": [
+                    {
+                        "id": "s2",
+                        "text": "The HIRA still only lists the old manual welding station"
+                    },
+                    {
+                        "id": "s1",
+                        "text": "Dr. Bello requests the HIRA and Tunde's training record"
+                    },
+                    {
+                        "id": "s3",
+                        "text": "Tunde's last training entry predates both his transfer and the arm's installation"
+                    }
+                ]
+            },
+            "expected_payload": [
+                "s1",
+                "s2",
+                "s3"
+            ],
+            "rationale": "The sequence is: request both records, find the HIRA gap, then find the training-record gap — establishing two independent confirmations of the same underlying issue.",
+            "lms_direction": "Review Activity 2.3 — Initial Scoping & Documentation Review."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 4",
+            "type": "true_false",
+            "exhibit_ref": "apex_audit_story",
+            "text": "True or False: cross-referencing two independent sources (the HIRA and the training record) provided stronger evidence than either document alone would have.",
+            "options": [
+                {
+                    "text": "True",
+                    "correct": true
+                },
+                {
+                    "text": "False",
+                    "correct": false
+                }
+            ],
+            "rationale": "Two independent sources confirming the same gap is stronger, more defensible evidence than relying on either document in isolation.",
+            "lms_direction": "Review Activity 2.4 — Fieldwork Methodology."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 5",
+            "type": "interactive_tool",
+            "tool_type": "ncr_generator",
+            "exhibit_ref": "apex_audit_story",
+            "text": "Review Paragraph 5. Complete the Nonconformity Report for this finding.",
+            "tool_data": {
+                "findings": "Robotic welding arm absent from HIRA; operator Tunde has no interlock-specific training on record.",
+                "classifications": [
+                    "Major",
+                    "Minor",
+                    "Opportunity for Improvement"
+                ],
+                "clauses": [
+                    "Clause 6.1.2 - Hazard ID",
+                    "Clause 7.2 - Competence",
+                    "Clause 8.1.3 - Management of Change",
+                    "Clause 9.2 - Internal Audit"
+                ]
+            },
+            "expected_payload": {
+                "classification": "Minor",
+                "clause": "Clause 8.1.3 - Management of Change"
+            },
+            "rationale": "At this stage, only one instance (the welding arm) is confirmed — this is a genuine finding, but classified Minor until Paragraph 7 confirms whether it's systemic. The root issue is a management-of-change gap (the arm's installation never triggered HSE review), not a Clause 9.2 audit-process issue.",
+            "lms_direction": "Review Activity 2.13 — Management of Change."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 5",
+            "type": "single_select",
+            "exhibit_ref": "apex_audit_story",
+            "text": "Why is this classified as a Management of Change issue (Clause 8.1.3) rather than simply a Competence gap (Clause 7.2)?",
+            "options": [
+                {
+                    "text": "Because Clause 7.2 only applies to office-based staff, not shop-floor operators",
+                    "correct": false
+                },
+                {
+                    "text": "Because Tunde's transfer, not the equipment, is the primary issue here",
+                    "correct": false
+                },
+                {
+                    "text": "Because the training gap is a downstream symptom; the actual root failure is that the equipment change never triggered HSE review at all",
+                    "correct": true
+                },
+                {
+                    "text": "Because Clause 8.1.3 and Clause 7.2 cover exactly the same requirement under different names",
+                    "correct": false
+                }
+            ],
+            "rationale": "The training gap is real, but it's a consequence of the equipment change never being flagged to HSE — treating it purely as a competence issue would miss the actual systemic cause.",
+            "lms_direction": "Review Activity 2.13 — Management of Change."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 6",
+            "type": "interactive_tool",
+            "tool_type": "root_cause_tree",
+            "exhibit_ref": "apex_audit_story",
+            "text": "Review Paragraph 6. Complete the Five Whys tracing this gap to its root cause.",
+            "tool_data": {
+                "levels": [
+                    {
+                        "id": "why1",
+                        "question": "Why was Tunde untrained on the interlock procedure?",
+                        "options": [
+                            "No training was ever scheduled for it",
+                            "He skipped a scheduled session",
+                            "The trainer was unavailable"
+                        ]
+                    },
+                    {
+                        "id": "why2",
+                        "question": "Why wasn't it scheduled?",
+                        "options": [
+                            "The HIRA was never updated to include the arm",
+                            "HR lost his onboarding paperwork",
+                            "The training budget ran out"
+                        ]
+                    },
+                    {
+                        "id": "why3",
+                        "question": "Why wasn't the HIRA updated?",
+                        "options": [
+                            "Maintenance never notified HSE the arm was installed",
+                            "The HSE Manager forgot to check",
+                            "The HIRA template doesn't support new equipment"
+                        ]
+                    }
+                ]
+            },
+            "expected_payload": {
+                "why1": "No training was ever scheduled for it",
+                "why2": "The HIRA was never updated to include the arm",
+                "why3": "Maintenance never notified HSE the arm was installed"
+            },
+            "rationale": "The chain traces cleanly to a genuine systemic cause: no cross-departmental trigger exists for Maintenance to notify HSE when new equipment goes live.",
+            "lms_direction": "Review Activity 2.23 — RCA & CAPA Evaluation."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 6",
+            "type": "single_select",
+            "exhibit_ref": "apex_audit_story",
+            "text": "Is the root cause identified in Paragraph 6 specific to Maintenance and HSE, or does it suggest a broader pattern worth checking?",
+            "options": [
+                {
+                    "text": "It cannot be generalised beyond this single robotic arm under any circumstances",
+                    "correct": false
+                },
+                {
+                    "text": "It suggests a broader pattern — any department introducing change (new hires, new contractors, new equipment) may have the same missing notification trigger",
+                    "correct": true
+                },
+                {
+                    "text": "It is specific to Maintenance and HSE only, and no further checking is needed elsewhere",
+                    "correct": false
+                },
+                {
+                    "text": "It indicates Maintenance department staff are personally negligent",
+                    "correct": false
+                }
+            ],
+            "rationale": "A missing cross-departmental notification trigger is a structural gap, not confined to one specific pairing of departments — it's worth checking whether other change types show the same absence.",
+            "lms_direction": "Review Activity 2.22 — Nonconformity Classification."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 7",
+            "type": "single_select",
+            "exhibit_ref": "apex_audit_story",
+            "text": "The HSE Manager proposes retraining Tunde and closing the finding. Is this an adequate corrective action given what Paragraph 6 revealed?",
+            "options": [
+                {
+                    "text": "No — it addresses only the symptom (Tunde's training) without addressing the missing cross-departmental notification trigger that caused it",
+                    "correct": true
+                },
+                {
+                    "text": "Yes, provided Tunde signs a form confirming the retraining occurred",
+                    "correct": false
+                },
+                {
+                    "text": "Yes — retraining directly fixes the specific gap identified",
+                    "correct": false
+                },
+                {
+                    "text": "No, because Tunde should be transferred to a different role entirely",
+                    "correct": false
+                }
+            ],
+            "rationale": "Fixing Tunde's individual training gap doesn't touch the root cause — without a genuine notification trigger, the same gap will recur with the next new hire or new equipment change.",
+            "lms_direction": "Review Activity 2.16 — Systemic Improvement & CAPA."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 7",
+            "type": "true_false",
+            "exhibit_ref": "apex_audit_story",
+            "text": "True or False: the HSE Manager's admission that no other equipment has been checked for the same gap is itself relevant evidence for this finding.",
+            "options": [
+                {
+                    "text": "True",
+                    "correct": true
+                },
+                {
+                    "text": "False",
+                    "correct": false
+                }
+            ],
+            "rationale": "This admission is direct, relevant evidence that the gap is likely systemic rather than isolated to the one robotic arm.",
+            "lms_direction": "Review Activity 2.22 — Nonconformity Classification."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 8",
+            "type": "interactive_tool",
+            "tool_type": "ncr_generator",
+            "exhibit_ref": "apex_audit_story",
+            "text": "Review Paragraph 8. Given everything established across Paragraphs 5-7, finalise the classification of this finding.",
+            "tool_data": {
+                "findings": "Robotic arm never added to HIRA; Tunde untrained; no cross-departmental notification trigger exists; other recent equipment changes unchecked.",
+                "classifications": [
+                    "Major",
+                    "Minor",
+                    "Opportunity for Improvement"
+                ],
+                "clauses": [
+                    "Clause 6.1.2 - Hazard ID",
+                    "Clause 8.1.3 - Management of Change",
+                    "Clause 10.2 - Corrective Action"
+                ]
+            },
+            "expected_payload": {
+                "classification": "Major",
+                "clause": "Clause 8.1.3 - Management of Change"
+            },
+            "rationale": "Once the systemic, unconfirmed-scope nature of the gap is established (Paragraph 7's admission), this escalates from an isolated Minor to a genuinely evidenced Major.",
+            "lms_direction": "Review Activity 2.22 — Nonconformity Classification."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 8",
+            "type": "single_select",
+            "exhibit_ref": "apex_audit_story",
+            "text": "What should Dr. Bello specifically recommend as the corrective mechanism in her report?",
+            "options": [
+                {
+                    "text": "A detailed, step-by-step redesign of Maintenance's equipment-installation workflow",
+                    "correct": false
+                },
+                {
+                    "text": "A mandate that Maintenance and HSE merge into a single department",
+                    "correct": false
+                },
+                {
+                    "text": "No specific mechanism — the finding and its evidence are reported; Apex's own function determines the fix",
+                    "correct": true
+                },
+                {
+                    "text": "Hiring an external consultant to design the notification process",
+                    "correct": false
+                }
+            ],
+            "rationale": "The Anti-Consulting Rule holds even for a Major, systemic finding — the auditor evidences and classifies, and never prescribes the specific remedy.",
+            "lms_direction": "Review Activity 0.3 — Independence & Objectivity."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 8",
+            "type": "single_select",
+            "exhibit_ref": "apex_audit_story",
+            "text": "Given the external certification audit is four months away, what should Dr. Bello specifically check regarding Apex's Management Review response?",
+            "options": [
+                {
+                    "text": "Only whether the finding was discussed at the meeting",
+                    "correct": false
+                },
+                {
+                    "text": "Whether Top Management personally apologised for the gap",
+                    "correct": false
+                },
+                {
+                    "text": "Whether a named owner, a committed date, and a review timeline proportionate to the finding's severity and the approaching external audit were actually set",
+                    "correct": true
+                },
+                {
+                    "text": "Nothing further — Management Review's only job is to acknowledge findings",
+                    "correct": false
+                }
+            ],
+            "rationale": "A genuine Clause 9.3 output needs a named owner, a committed date, and urgency proportionate to both the finding's severity and the real external deadline Apex is facing.",
+            "lms_direction": "Review Activity 2.25 — Management Review."
+        },
+        {
+            "category": "Case Study — Apex Welding Arm",
+            "section": "Paragraph 3",
+            "type": "single_select",
+            "exhibit_ref": "apex_audit_story",
+            "text": "Why does Dr. Bello ask Tunde to walk through the interlock procedure rather than simply asking if he understands it?",
+            "options": [
+                {
+                    "text": "It is a formal requirement to always ask exactly this question in every interview",
+                    "correct": false
+                },
+                {
+                    "text": "It takes less time than asking a closed question",
+                    "correct": false
+                },
+                {
+                    "text": "Tunde would have refused to answer a closed question",
+                    "correct": false
+                },
+                {
+                    "text": "Open, specific-action questions are harder to answer convincingly without genuine understanding",
+                    "correct": true
+                }
+            ],
+            "rationale": "This is the same interview-design principle from Activity 2.4 — a specific walkthrough forces demonstrated understanding rather than a reflexive yes.",
+            "lms_direction": "Review Activity 2.4 — Fieldwork Methodology."
+        },
+        {
+            "category": "Program & Planning",
+            "section": "Risk-Based Scheduling",
+            "type": "single_select",
+            "text": "An audit programme places the area with the organisation's most recent safety incident last in the yearly schedule. What is the most defensible immediate conclusion?",
+            "options": [
+                {
+                    "text": "This is a genuine, arguable weakness worth raising, though a case exists either way depending on what earlier quarters prioritise",
+                    "correct": true
+                },
+                {
+                    "text": "Sequencing has no bearing on programme adequacy",
+                    "correct": false
+                },
+                {
+                    "text": "The schedule is fine as long as every area is covered within the year, since comprehensive annual coverage is generally treated as the primary conformance test",
+                    "correct": false
+                },
+                {
+                    "text": "The schedule must be rejected outright as non-conformant",
+                    "correct": false
+                }
+            ],
+            "rationale": "Coverage alone doesn't settle risk-weighting, but this is genuinely arguable, not a clear failure.",
             "lms_direction": "Review Activity 2.1 — Program Definition."
         },
         {
             "category": "Program & Planning",
             "section": "Engagement Scope",
             "type": "single_select",
-            "text": "Midway through a planned audit of the chemical treatment lines, a worker mentions an unrelated concern about warehousing racking. What is the correct immediate response?",
+            "text": "Midway through a planned audit, a worker raises an unrelated concern outside today's scope. What is the correct immediate response?",
             "options": [
                 {
-                    "text": "Immediately expand today's audit to cover racking, since safety concerns override planned scope",
+                    "text": "End today's audit early to address it",
                     "correct": false
                 },
                 {
-                    "text": "Record the concern for a future engagement, and stay within today's defined scope and timebox",
+                    "text": "Record the concern for a future engagement, and stay within today's defined scope",
                     "correct": true
                 },
                 {
-                    "text": "Dismiss the comment entirely since it falls outside today's clause focus",
+                    "text": "Dismiss the comment entirely",
                     "correct": false
                 },
                 {
-                    "text": "End today's audit early to address the new concern properly",
+                    "text": "Immediately expand today's audit to cover it",
                     "correct": false
                 }
             ],
-            "rationale": "A pre-defined Individual Audit Plan exists so engagements don't drift. The concern is valuable input for the programme, not license to expand scope unplanned.",
+            "rationale": "A pre-defined Individual Audit Plan exists so engagements don't drift.",
             "lms_direction": "Review Activity 2.2 — Engagement Planning."
         },
         {
             "category": "Program & Planning",
             "section": "Documentation Review",
-            "type": "single_select",
-            "text": "Before fieldwork, an auditor cross-references a HIRA's equipment list against the maintenance log and finds new equipment absent from the HIRA. What has this desk-review method achieved that fieldwork alone could not?",
+            "type": "true_false",
+            "text": "True or False: cross-referencing a HIRA against an independent record before fieldwork begins can surface real gaps using only paperwork.",
             "options": [
                 {
-                    "text": "Nothing — this could equally have been found by walking the floor first",
+                    "text": "False",
                     "correct": false
                 },
                 {
-                    "text": "It proves the HIRA document itself is fraudulent",
-                    "correct": false
-                },
-                {
-                    "text": "It surfaced a genuine gap using only paperwork, before any interview or observation, sharpening what fieldwork should target",
+                    "text": "True",
                     "correct": true
-                },
-                {
-                    "text": "It replaces the need for any physical observation of that equipment later",
-                    "correct": false
                 }
             ],
-            "rationale": "Desk review testing documents against each other is distinct from fieldwork — it can surface real gaps efficiently and should inform, not replace, later physical verification.",
+            "rationale": "Desk-review cross-referencing is a genuine, distinct method that can surface real findings before any interview or observation occurs.",
             "lms_direction": "Review Activity 2.3 — Initial Scoping & Documentation Review."
         },
         {
             "category": "Program & Planning",
             "section": "Resource Adequacy",
             "type": "single_select",
-            "text": "An audit programme is well-structured and risk-weighted, but the only qualified auditor is also assigned to prepare the external certification submission during the same quarter as a planned internal audit. What does this reveal?",
+            "text": "A well-structured audit programme relies on the only qualified auditor, who is also preparing the external certification submission in the same quarter. What does this reveal?",
             "options": [
                 {
-                    "text": "The programme should be abandoned entirely and rebuilt from scratch, since a single resourcing conflict typically indicates deeper structural planning failures",
+                    "text": "This is only a concern if the auditor personally raises it",
                     "correct": false
                 },
                 {
-                    "text": "This is only a concern if the auditor personally raises it as an issue",
-                    "correct": false
-                },
-                {
-                    "text": "A structurally sound programme can still fail on resource adequacy — design quality and executability are separate tests",
+                    "text": "A structurally sound programme can still fail on resource adequacy — design and executability are separate tests",
                     "correct": true
                 },
                 {
-                    "text": "Nothing — programme design and resourcing are the same question",
+                    "text": "The programme should be rebuilt from scratch, since a single resourcing conflict is often treated as evidence of deeper structural planning failures",
+                    "correct": false
+                },
+                {
+                    "text": "Nothing — design and resourcing are the same question",
                     "correct": false
                 }
             ],
-            "rationale": "Clause 9.2.2(c) requires auditors are available to execute without compromise — a good design with an impossible resourcing reality still fails the standard's actual intent.",
+            "rationale": "Clause 9.2.2(c) requires auditors are actually available to execute without compromise.",
             "lms_direction": "Review Activity 2.1 — Program Definition."
         },
         {
             "category": "Program & Planning",
             "section": "Competency Matrix",
             "type": "single_select",
-            "text": "An auditor is assigned to review a procedure they personally helped draft eighteen months ago, before becoming an auditor. What does independence require?",
+            "text": "An auditor is assigned to review a procedure they personally helped draft eighteen months ago. What does independence require?",
             "options": [
                 {
-                    "text": "Disclose the prior involvement and have a different qualified auditor assigned to that specific area",
+                    "text": "Proceed, with a colleague silently double-checking findings afterward",
+                    "correct": false
+                },
+                {
+                    "text": "Proceed only if the auditor feels personally confident",
+                    "correct": false
+                },
+                {
+                    "text": "Disclose the prior involvement and have a different auditor assigned to that area",
                     "correct": true
                 },
                 {
-                    "text": "Proceed, but have a colleague silently double-check the findings afterward",
-                    "correct": false
-                },
-                {
-                    "text": "Proceed only if the auditor personally feels confident they can remain objective",
-                    "correct": false
-                },
-                {
-                    "text": "Proceed as normal, since eighteen months is sufficient time to ensure objectivity and the auditor has since gained substantial independent audit experience elsewhere",
+                    "text": "Proceed, since eighteen months is enough time to ensure objectivity",
                     "correct": false
                 }
             ],
-            "rationale": "Self-review threat doesn't expire after a fixed time period — prior authorship of the exact artifact under review requires reassignment.",
-            "lms_direction": "Review Activity 0.3 — Independence & Objectivity, and 2.1 (A2)."
+            "rationale": "Self-review threat doesn't expire after a fixed time period.",
+            "lms_direction": "Review Activity 0.3 — Independence & Objectivity."
         },
         {
-            "category": "Fieldwork & Sampling",
+            "category": "Fieldwork Methodology & Sampling",
             "section": "Sample Size Calculation",
             "type": "single_select",
-            "exhibit_ref": "sampling_scenario",
-            "text": "Apex issued 340 hot work permits this quarter, no known deviation history. Using 95% confidence (Z=1.96), a zero-deviation planning assumption (P=0), and d=0.05, which describes the correct approach?",
+            "text": "An auditor plans to sample hot work permits using a zero-deviation planning assumption (P=0), 95% confidence, and d=0.05. What is the correct approach?",
             "options": [
                 {
-                    "text": "The formula breaks down at P=0; zero-deviation testing requires attribute-sampling tables built for this exact case, not the basic formula",
+                    "text": "The entire population must always be checked regardless of confidence level, since full-population testing is often considered the safest and most defensible approach whenever time realistically allows",
+                    "correct": false
+                },
+                {
+                    "text": "Sample size should be a fixed 10% of the population regardless of assumptions",
+                    "correct": false
+                },
+                {
+                    "text": "The formula breaks down at P=0; zero-deviation testing requires attribute-sampling tables built for this exact case",
                     "correct": true
                 },
                 {
-                    "text": "n = 340, meaning the entire population must always be checked regardless of confidence level, since full-population testing is always the safest and most defensible approach when time allows",
-                    "correct": false
-                },
-                {
-                    "text": "Sample size should simply be a fixed 10% of the population regardless of assumptions",
-                    "correct": false
-                },
-                {
-                    "text": "n = (1.96^2 x 0 x 1) / 0.05^2 = 0, meaning no sample is required at all since P=0",
+                    "text": "n = 0, since the formula's numerator becomes zero when P=0",
                     "correct": false
                 }
             ],
-            "rationale": "Zero-deviation planning is a special case the basic formula doesn't handle cleanly — recognising this, and knowing to consult attribute-sampling tables, is the actual competency, not blind plug-in.",
+            "rationale": "Zero-deviation planning is a special case the basic formula doesn't handle cleanly.",
             "lms_direction": "Review Activity 2.5 — Sampling Theory."
         },
         {
-            "category": "Fieldwork & Sampling",
+            "category": "Fieldwork Methodology & Sampling",
             "section": "Sample Independence",
             "type": "single_select",
-            "text": "Apex's HSE Manager offers to personally select \"the ten most representative\" permits for the auditor's sample. What is the correct response?",
+            "text": "An HSE Manager offers to personally select \"the most representative\" permits for the sample. What is the correct response?",
             "options": [
                 {
-                    "text": "Decline, and refuse to review any permits at all as a result",
+                    "text": "Accept, but double the sample size, since a larger sample size is generally assumed to compensate for any concerns about how it was originally selected",
                     "correct": false
                 },
                 {
-                    "text": "Decline; the sample must be drawn by the auditor from the full logged population, not pre-selected by the auditee",
+                    "text": "Decline, and refuse to review any permits at all",
+                    "correct": false
+                },
+                {
+                    "text": "Accept, since this saves audit time",
+                    "correct": false
+                },
+                {
+                    "text": "Decline; the sample must be drawn by the auditor from the full logged population",
                     "correct": true
-                },
-                {
-                    "text": "Accept, but double the sample size to compensate for the fact that the auditee chose the specific permits being reviewed",
-                    "correct": false
-                },
-                {
-                    "text": "Accept gratefully, since this saves valuable audit time",
-                    "correct": false
                 }
             ],
-            "rationale": "A sample pre-selected by the audited party stops being random and risks curation toward compliance — the auditor draws the sample directly from the complete population.",
+            "rationale": "A pre-selected sample risks curation toward compliance.",
             "lms_direction": "Review Activity 2.5 — Sampling Theory."
         },
         {
-            "category": "Fieldwork & Sampling",
+            "category": "Fieldwork Methodology & Sampling",
             "section": "Judgmental vs Statistical Sampling",
-            "type": "single_select",
-            "text": "Which population is more appropriately tested using judgmental, rather than statistical, sampling?",
+            "type": "true_false",
+            "text": "True or False: a single, already-flagged near-miss investigation file is better tested using judgmental rather than statistical sampling.",
             "options": [
                 {
-                    "text": "A large, uniform batch of standard training completion records",
+                    "text": "False",
                     "correct": false
                 },
                 {
-                    "text": "A single, already-flagged near-miss investigation file",
+                    "text": "True",
                     "correct": true
-                },
-                {
-                    "text": "400 routine LOTO work orders from a single shift pattern",
-                    "correct": false
-                },
-                {
-                    "text": "340 near-identical hot work permits issued this quarter",
-                    "correct": false
                 }
             ],
-            "rationale": "Judgmental sampling suits a specific, high-risk, already-identified item — not because it's typical, but because it's specifically worth examining.",
+            "rationale": "Judgmental sampling suits a specific, high-risk item — not because it's typical, but because it's specifically worth examining.",
             "lms_direction": "Review Activity 2.5 — Sampling Theory."
         },
         {
-            "category": "Fieldwork & Sampling",
+            "category": "Fieldwork Methodology & Sampling",
             "section": "Independent Verification",
             "type": "single_select",
-            "text": "A worker's account and the written log both agree with each other. Physical observation shows the actual equipment doesn't match either. What does triangulation require?",
+            "text": "A worker's account and a written log agree, but physical observation shows the equipment doesn't match either. What does triangulation require?",
             "options": [
                 {
-                    "text": "Discard all three sources as unreliable and restart the audit",
+                    "text": "Accept the majority view since two sources agree",
                     "correct": false
                 },
                 {
-                    "text": "Ask a fourth person to break the tie, since a majority consensus across observers is generally treated as the deciding factor in ambiguous situations",
+                    "text": "Ask a fourth person to break the tie, since majority consensus among multiple observers is typically the deciding factor in ambiguous situations",
+                    "correct": false
+                },
+                {
+                    "text": "Discard all sources and restart the audit",
                     "correct": false
                 },
                 {
                     "text": "Treat physical observation as decisive; agreement between two documentation sources doesn't override physical reality",
                     "correct": true
-                },
-                {
-                    "text": "Accept the majority view, since two of three sources agree",
-                    "correct": false
                 }
             ],
-            "rationale": "Two sources agreeing doesn't make them correct — both could describe an intended procedure while nobody noticed it's been physically defeated.",
+            "rationale": "Two sources agreeing doesn't make them correct if physical reality contradicts both.",
             "lms_direction": "Review Activity 2.4 — Fieldwork Methodology."
         },
         {
-            "category": "Fieldwork & Sampling",
+            "category": "Fieldwork Methodology & Sampling",
             "section": "Interview Design",
             "type": "single_select",
             "text": "Which interview question best tests genuine understanding rather than rehearsed compliance?",
             "options": [
                 {
-                    "text": "\"Walk me through exactly what you did the last time you serviced this equipment.\"",
+                    "text": "\"You always check this step, right?\"",
+                    "correct": false
+                },
+                {
+                    "text": "\"Do you follow the procedure every time?\"",
+                    "correct": false
+                },
+                {
+                    "text": "\"Is the procedure clear to you?\"",
+                    "correct": false
+                },
+                {
+                    "text": "\"Walk me through exactly what you did the last time you performed this task.\"",
                     "correct": true
-                },
-                {
-                    "text": "\"Is the lock-out procedure clear to you?\"",
-                    "correct": false
-                },
-                {
-                    "text": "\"You always check de-energisation before starting, right?\"",
-                    "correct": false
-                },
-                {
-                    "text": "\"Do you follow the lock-out procedure every time?\"",
-                    "correct": false
                 }
             ],
-            "rationale": "Open, specific-memory questions are far harder to answer convincingly without genuine understanding than closed questions inviting a reflexive yes.",
+            "rationale": "Open, specific-memory questions are harder to answer convincingly without genuine understanding.",
             "lms_direction": "Review Activity 2.4 — Fieldwork Methodology."
         },
         {
-            "category": "Fieldwork & Sampling",
+            "category": "Fieldwork Methodology & Sampling",
             "section": "Timebox Management",
             "type": "single_select",
             "text": "An auditee provides far more documentation than the planned scope requires. What is the most defensible response?",
             "options": [
                 {
-                    "text": "End the session and reschedule once a smaller volume can be arranged",
+                    "text": "Refuse to review any of it out of suspicion, since an unusually large volume of unsolicited material is often treated as a red flag in its own right",
                     "correct": false
                 },
                 {
-                    "text": "Refuse to review any of the provided material out of suspicion",
+                    "text": "Review everything provided as thoroughly as time allows",
                     "correct": false
                 },
                 {
-                    "text": "Review everything provided as thoroughly as time allows, spreading attention across all of it",
+                    "text": "Reschedule for a smaller volume",
                     "correct": false
                 },
                 {
-                    "text": "Acknowledge the material, then explicitly redirect to the specific documents named in the Individual Audit Plan",
+                    "text": "Acknowledge the material, then redirect to the specific documents named in the Individual Audit Plan",
                     "correct": true
                 }
             ],
-            "rationale": "Volume offered isn't equivalent to relevant evidence. Redirecting to the pre-planned scope preserves quality without assuming deliberate obstruction.",
+            "rationale": "Volume offered isn't equivalent to relevant evidence.",
             "lms_direction": "Review Activity 2.21 — Behavioral Auditing."
         },
         {
             "category": "Auditing the Clauses",
             "section": "Context Currency",
             "type": "single_select",
-            "exhibit_ref": "context_excerpt",
-            "text": "Evaluate this context analysis. Is it adequate?",
+            "text": "A context analysis names specific hazards, a specific interested party, and a dated addendum reflecting a real recent event. Is this adequate under Clause 4.1/4.2?",
             "options": [
                 {
-                    "text": "No — context analyses can never be adequate without external certification body sign-off",
+                    "text": "No — it is likely generic regardless of the specifics",
+                    "correct": false
+                },
+                {
+                    "text": "No — context analyses require external certification body sign-off before they can be considered valid input for an internal audit programme",
                     "correct": false
                 },
                 {
@@ -452,69 +778,55 @@ export default {
                     "correct": false
                 },
                 {
-                    "text": "No — it is generic and unlikely to reflect Apex's real situation",
-                    "correct": false
-                },
-                {
-                    "text": "Yes — it names specific hazards, a specific interested party, a dated post-incident addendum, and named consultees",
+                    "text": "Yes — specificity and evidence of genuine post-event revision are exactly what distinguish a genuine analysis from boilerplate",
                     "correct": true
                 }
             ],
-            "rationale": "This is deliberately a Pass: specificity, genuine post-incident revision, and named consultees are what distinguish a genuine analysis from boilerplate.",
+            "rationale": "This is deliberately a Pass — specificity plus genuine revision evidence is what matters, not formatting.",
             "lms_direction": "Review Activity 2.6 — Auditing Clause 4."
         },
         {
             "category": "Auditing the Clauses",
             "section": "Leadership Commitment",
             "type": "single_select",
-            "exhibit_ref": "leadership_interview_excerpt",
-            "text": "Does this interview provide adequate evidence of genuine Clause 5.1 leadership commitment?",
+            "text": "A Managing Director describes a specific resourcing decision made after an incident, plus a specific, self-reported act of independent follow-up verification. Does this satisfy Clause 5.1?",
             "options": [
                 {
-                    "text": "No — verbal claims from Top Management are never sufficient evidence on their own",
+                    "text": "Yes, but only because no injury occurred",
                     "correct": false
                 },
                 {
-                    "text": "Yes, but only because no injury actually occurred",
-                    "correct": false
-                },
-                {
-                    "text": "No — the MD should have installed the bollards personally rather than delegating it",
-                    "correct": false
-                },
-                {
-                    "text": "Yes — a specific resourcing decision and a self-reported, specific act of independent verification",
+                    "text": "Yes — a specific resourcing decision plus independent verification is adequate evidence of commitment",
                     "correct": true
+                },
+                {
+                    "text": "No — verbal claims from Top Management are never sufficient alone",
+                    "correct": false
+                },
+                {
+                    "text": "No — the MD should have handled the task personally rather than delegating",
+                    "correct": false
                 }
             ],
-            "rationale": "This is deliberately a Pass, contrasting with 'Delegation Deflection': genuine delegation plus a named resourcing decision plus independent follow-up is adequate commitment.",
+            "rationale": "Genuine delegation plus a named decision plus independent follow-up is adequate leadership commitment.",
             "lms_direction": "Review Activity 2.7 — Auditing Clause 5."
         },
         {
             "category": "Auditing the Clauses",
             "section": "Worker Participation",
-            "type": "single_select",
-            "exhibit_ref": "worker_participation_excerpt",
-            "text": "Does this account satisfy Clause 5.4's requirement for genuine worker consultation?",
+            "type": "true_false",
+            "text": "True or False: worker input that occurs before a decision is finalised, and demonstrably changes the outcome, satisfies Clause 5.4 regardless of how many workers were involved.",
             "options": [
                 {
-                    "text": "Yes, but only because exactly three workers were involved",
-                    "correct": false
-                },
-                {
-                    "text": "No — a two-week trial is too short to count as genuine consultation",
-                    "correct": false
-                },
-                {
-                    "text": "No — only formal written surveys satisfy Clause 5.4",
-                    "correct": false
-                },
-                {
-                    "text": "Yes — input occurred before the decision was finalised and demonstrably changed the outcome",
+                    "text": "True",
                     "correct": true
+                },
+                {
+                    "text": "False",
+                    "correct": false
                 }
             ],
-            "rationale": "This is deliberately a Pass, contrasting with 'Toolbox Talk': pre-finalisation input with a traceable effect is genuine consultation, regardless of trial length or headcount.",
+            "rationale": "Pre-finalisation input with a traceable effect is genuine consultation regardless of headcount.",
             "lms_direction": "Review Activity 2.8 — Auditing Clause 5.4."
         },
         {
@@ -524,50 +836,49 @@ export default {
             "text": "An HSE Manager, asked what specifically changed at a HIRA's last revision, names the exact hazard added and control introduced. What does this indicate?",
             "options": [
                 {
-                    "text": "This is irrelevant unless the HIRA document itself is also inspected",
-                    "correct": false
-                },
-                {
-                    "text": "This is suspicious and should be treated as evidence of coaching",
-                    "correct": false
-                },
-                {
-                    "text": "This proves the HIRA is fully current for all equipment, not just the one item mentioned",
-                    "correct": false
-                },
-                {
                     "text": "This is the specific, nameable-change pattern of a genuine revision",
                     "correct": true
+                },
+                {
+                    "text": "This is suspicious and should be treated as coaching",
+                    "correct": false
+                },
+                {
+                    "text": "This proves the HIRA is fully current for all equipment",
+                    "correct": false
+                },
+                {
+                    "text": "This is irrelevant unless the document is also inspected",
+                    "correct": false
                 }
             ],
-            "rationale": "A specific answer marks genuine revision — though it should still prompt checking whether other equipment received the same rigor.",
+            "rationale": "A specific answer marks genuine revision.",
             "lms_direction": "Review Activity 2.9 — Auditing Clause 6, HIRA."
         },
         {
             "category": "Auditing the Clauses",
             "section": "Legal Currency",
             "type": "single_select",
-            "exhibit_ref": "legal_register_excerpt",
-            "text": "Evaluate this legal register entry. Is it adequate?",
+            "text": "A legal register entry shows a valid future expiry date and a recent, dated regulation-amendment check. Is this adequate?",
             "options": [
                 {
-                    "text": "No — the amendment check should have been conducted by an external lawyer",
-                    "correct": false
-                },
-                {
-                    "text": "No — the permit could still expire unexpectedly regardless of the stated date",
-                    "correct": false
-                },
-                {
-                    "text": "Yes, because 8 months is a sufficiently long time until expiry",
-                    "correct": false
-                },
-                {
-                    "text": "Yes — a valid future expiry date plus evidence of an active regulation-amendment check, not just a filed document",
+                    "text": "Yes — the recent amendment check, not just the permit's existence, is what distinguishes genuine currency",
                     "correct": true
+                },
+                {
+                    "text": "No — the permit could still expire unexpectedly",
+                    "correct": false
+                },
+                {
+                    "text": "Yes, simply because the expiry date is far in the future",
+                    "correct": false
+                },
+                {
+                    "text": "No — the check should have been conducted by an external lawyer",
+                    "correct": false
                 }
             ],
-            "rationale": "This is deliberately a Pass: a recent, dated amendment check — not just existence — distinguishes genuine currency from the 'On-File' trap.",
+            "rationale": "The presence of an active amendment check is what matters, not just document existence.",
             "lms_direction": "Review Activity 2.10 — Legal & Other Requirements."
         },
         {
@@ -577,166 +888,159 @@ export default {
             "text": "Which of these correctly counts as a compliance obligation under Clause 6.1.3?",
             "options": [
                 {
-                    "text": "An employee's personal preference for a particular PPE brand",
+                    "text": "An organisation's own internal target to reduce incidents by 10%",
                     "correct": false
                 },
                 {
-                    "text": "A national OSH regulation specifying maximum permitted noise exposure levels",
+                    "text": "An employee's personal preference for a PPE brand",
+                    "correct": false
+                },
+                {
+                    "text": "A national OSH regulation specifying maximum permitted noise exposure",
                     "correct": true
                 },
                 {
-                    "text": "Apex's own internal target to reduce TRIR by 10% this year",
-                    "correct": false
-                },
-                {
-                    "text": "A competitor's voluntary safety certification scheme Apex has no relationship with",
+                    "text": "A competitor's voluntary certification scheme with no relationship to the organisation",
                     "correct": false
                 }
             ],
-            "rationale": "Clause 6.1.3 covers legal requirements and other requirements actually adopted or binding — an external regulation fits; an internal target or unrelated scheme doesn't.",
+            "rationale": "An external, binding regulation fits; internal targets and unrelated schemes don't.",
             "lms_direction": "Review Activity 2.10 — Legal & Other Requirements."
         },
         {
             "category": "Auditing the Clauses",
             "section": "Support & Competence",
             "type": "single_select",
-            "text": "A worker's only safety training predates their transfer into a more hazardous role by several months, with no role-specific refresher since. How should this be classified?",
+            "text": "A worker's only safety training predates their transfer into a more hazardous role by several months, with no refresher since. How should this be classified?",
             "options": [
                 {
-                    "text": "A gap that only affects the worker's manager, not the worker themselves",
+                    "text": "Not a gap, since a training record exists",
                     "correct": false
                 },
                 {
-                    "text": "A genuine competence gap — a record's existence doesn't establish it's current for the worker's actual, present role",
+                    "text": "A gap affecting only the worker's manager",
+                    "correct": false
+                },
+                {
+                    "text": "A genuine competence gap — a record's existence doesn't establish currency for the worker's present role",
                     "correct": true
                 },
                 {
-                    "text": "Not a gap, since a training record does exist on file",
-                    "correct": false
-                },
-                {
-                    "text": "A gap only if the worker has since had a safety incident",
+                    "text": "A gap only if an incident has since occurred",
                     "correct": false
                 }
             ],
-            "rationale": "Clause 7.2 requires competence appropriate to the current role — a valid but role-mismatched record doesn't satisfy this.",
+            "rationale": "Clause 7.2 requires competence appropriate to the current role.",
             "lms_direction": "Review Activity 2.11 — Auditing Clause 7."
         },
         {
             "category": "Auditing the Clauses",
             "section": "Hierarchy of Controls",
             "type": "single_select",
-            "exhibit_ref": "hierarchy_of_controls_excerpt",
-            "text": "Evaluate this control-selection record. Does it satisfy Clause 8.1.2?",
+            "text": "A control-selection record shows elimination genuinely considered and rejected for a real technical reason, with an engineering control implemented and PPE added only supplementarily. Does this satisfy Clause 8.1.2?",
             "options": [
                 {
-                    "text": "Yes — higher-order options were genuinely considered and one rejected for a real technical reason, with engineering implemented before supplementary PPE",
+                    "text": "Yes — higher-order options were genuinely assessed, and PPE plays a supplementary, not primary, role",
                     "correct": true
                 },
                 {
-                    "text": "No — gloves alone are never an acceptable control for vibration exposure",
+                    "text": "No — a fully custom replacement should always be priced out first",
                     "correct": false
                 },
                 {
-                    "text": "Yes, simply because three options are listed regardless of the reasoning given",
+                    "text": "No — PPE should never appear in an adequate control record at all",
                     "correct": false
                 },
                 {
-                    "text": "No — the record should have priced out a fully custom-built replacement machine",
+                    "text": "Yes, simply because multiple options are listed",
                     "correct": false
                 }
             ],
-            "rationale": "This is deliberately a Pass, contrasting with 'PPE-First': a genuine rejection reason plus an implemented engineering control plus supplementary (not primary) PPE is the hierarchy done correctly.",
+            "rationale": "A genuine rejection reason plus an implemented higher-order control plus supplementary PPE is the hierarchy applied correctly.",
             "lms_direction": "Review Activity 2.12 — Auditing Clause 8.1."
         },
         {
             "category": "Auditing the Clauses",
             "section": "Management of Change",
-            "type": "single_select",
-            "exhibit_ref": "management_of_change_excerpt",
-            "text": "Evaluate this change record. Does it satisfy Clause 8.1.3?",
+            "type": "true_false",
+            "text": "True or False: a change record showing the change logged, the HIRA updated within a bounded timeframe, and training completed before first use satisfies Clause 8.1.3.",
             "options": [
                 {
-                    "text": "Yes — logged, HIRA updated within a bounded timeframe, training preceded first use",
+                    "text": "True",
                     "correct": true
                 },
                 {
-                    "text": "No — 2 weeks is too slow a turnaround for a HIRA update",
-                    "correct": false
-                },
-                {
-                    "text": "Yes, but only if Top Management personally signed off",
-                    "correct": false
-                },
-                {
-                    "text": "No — packaging equipment changes never require a documented change record",
+                    "text": "False",
                     "correct": false
                 }
             ],
-            "rationale": "This is deliberately a Pass: a bounded, reasonable timeframe with training before use is a genuine change process — contrast with 'Temporary-Forever'.",
+            "rationale": "A bounded timeframe with training before operational use is a genuinely functioning change process.",
             "lms_direction": "Review Activity 2.13 — Management of Change."
         },
         {
             "category": "Auditing the Clauses",
             "section": "Emergency Preparedness",
             "type": "single_select",
-            "exhibit_ref": "emergency_drill_log",
-            "text": "Evaluate this drill log. What does the pattern indicate?",
+            "text": "A drill log shows an unannounced test revealing a real gap, a corrective change made, and a subsequent unannounced test showing improvement. What does this pattern indicate?",
             "options": [
                 {
-                    "text": "The drills are worthless because the first one revealed a real problem",
-                    "correct": false
-                },
-                {
-                    "text": "Only the first drill counts as valid evidence; the second is redundant",
-                    "correct": false
-                },
-                {
-                    "text": "This is what genuine testing should show: a real gap surfaced, a fix made, improvement demonstrated in the next unannounced test",
+                    "text": "This is exactly what genuine testing should show — a real gap surfaced, fixed, and improvement demonstrated",
                     "correct": true
                 },
                 {
-                    "text": "Both drills are staged, since improvement between them is suspiciously convenient",
+                    "text": "The drills are worthless since the first one revealed a problem",
+                    "correct": false
+                },
+                {
+                    "text": "Both drills are staged, since improvement is suspiciously convenient",
+                    "correct": false
+                },
+                {
+                    "text": "Only the first drill counts as valid evidence",
                     "correct": false
                 }
             ],
-            "rationale": "This is deliberately a Pass, contrasting with 'Paper Drill': unannounced testing revealing a gap, a real fix, then demonstrated improvement is the credible pattern.",
+            "rationale": "Unannounced testing revealing then resolving a real gap is the credible pattern.",
             "lms_direction": "Review Activity 2.14 — Emergency Preparedness."
         },
         {
             "category": "Auditing the Clauses",
             "section": "Emergency Preparedness Scope",
             "type": "single_select",
-            "text": "Apex's emergency plan covers fire and chemical spill in detail but has no distinct procedure for a medical emergency involving a serious injury. Is this adequate?",
+            "text": "An emergency plan covers fire and chemical spill in detail but has no distinct procedure for a serious-injury medical emergency. Is this adequate given the organisation's hazard profile?",
             "options": [
                 {
-                    "text": "Yes — fire and chemical spill are the only genuinely likely emergencies at a manufacturing site",
+                    "text": "Yes — fire and chemical spill are the only likely emergencies at this type of site",
                     "correct": false
                 },
                 {
-                    "text": "No, but only because of the specific near-miss six months ago",
-                    "correct": false
-                },
-                {
-                    "text": "No — Clause 8.2 requires addressing realistic potential emergencies, and a serious-injury medical response is foreseeable given Apex's hazard profile",
+                    "text": "No — a serious-injury medical response is a foreseeable scenario given the operational hazards present",
                     "correct": true
                 },
                 {
                     "text": "Yes, provided a first-aid kit is present somewhere on site",
                     "correct": false
+                },
+                {
+                    "text": "No, but only because of one specific prior incident",
+                    "correct": false
                 }
             ],
-            "rationale": "This follows from Apex's operational hazard profile generally, not solely from the one specific incident.",
+            "rationale": "This follows from the organisation's operational hazard profile generally.",
             "lms_direction": "Review Activity 2.14 — Emergency Preparedness."
         },
         {
             "category": "Auditing the Clauses",
             "section": "TRIR Recalculation",
             "type": "single_select",
-            "text": "Apex reports 6 recordable incidents with 480,000 total hours worked. Using TRIR = (Recordable Incidents x 200,000) / Total Hours Worked, what is the correct figure?",
+            "text": "An organisation reports 6 recordable incidents with 480,000 total hours worked. Using TRIR = (Recordable Incidents x 200,000) / Total Hours Worked, what is the correct figure?",
             "options": [
                 {
-                    "text": "28,800, forgetting to divide by hours worked at all",
+                    "text": "2.50",
+                    "correct": true
+                },
+                {
+                    "text": "28,800, forgetting to divide by hours worked",
                     "correct": false
                 },
                 {
@@ -744,161 +1048,135 @@ export default {
                     "correct": false
                 },
                 {
-                    "text": "2.50",
-                    "correct": true
-                },
-                {
                     "text": "0.04, inverting the formula",
                     "correct": false
                 }
             ],
-            "rationale": "(6 x 200,000) / 480,000 = 2.50. Distractors reflect genuine, common calculation errors.",
+            "rationale": "(6 x 200,000) / 480,000 = 2.50.",
             "lms_direction": "Review Activity 2.15 — Performance Evaluation."
         },
         {
             "category": "Auditing the Clauses",
             "section": "Performance Evaluation",
-            "type": "single_select",
-            "text": "A recalculated TRIR matches Apex's own reported figure exactly. Does this rule out under-reporting?",
+            "type": "true_false",
+            "text": "True or False: a recalculated TRIR matching the organisation's own reported figure rules out under-reporting.",
             "options": [
                 {
-                    "text": "No — matching confirms correct arithmetic on whatever was logged; it says nothing about incidents never logged",
+                    "text": "True",
+                    "correct": false
+                },
+                {
+                    "text": "False",
                     "correct": true
-                },
-                {
-                    "text": "Yes, provided the calculation was done by two people independently",
-                    "correct": false
-                },
-                {
-                    "text": "Yes — matching confirms no incidents were suppressed",
-                    "correct": false
-                },
-                {
-                    "text": "No — a matching figure is itself suspicious and should be a finding",
-                    "correct": false
                 }
             ],
-            "rationale": "Under-reporting happens before the calculation stage, not within it.",
+            "rationale": "Matching confirms correct arithmetic on whatever was logged, not that all incidents were logged.",
             "lms_direction": "Review Activity 2.15 — Performance Evaluation."
         },
         {
             "category": "Auditing the Clauses",
             "section": "Root Cause Depth",
             "type": "single_select",
-            "text": "A submitted corrective action for a repeated equipment fault states: \"Root cause: operator error. Action: retrained the operator.\" What is the primary weakness?",
+            "text": "A corrective action for a repeated fault states: \"Root cause: operator error. Action: retrained the operator.\" What is the primary weakness?",
             "options": [
                 {
-                    "text": "It stops at the individual level without asking why the same fault could recur for a different operator",
+                    "text": "It stops at the individual level without asking why the fault could recur for a different operator",
                     "correct": true
                 },
                 {
-                    "text": "Retraining is never an acceptable corrective action under any circumstances",
+                    "text": "The record should have named a specific date",
                     "correct": false
                 },
                 {
-                    "text": "The record should have named a specific date for the retraining",
+                    "text": "Nothing — this is complete and adequate",
                     "correct": false
                 },
                 {
-                    "text": "Nothing — this is a complete and adequate corrective action",
+                    "text": "Retraining is never acceptable as a corrective action",
                     "correct": false
                 }
             ],
-            "rationale": "A Five Whys stopping at 'operator error' hasn't identified whether the same gap awaits the next person — a superficial, single-instance root cause.",
+            "rationale": "A Five Whys stopping at 'operator error' hasn't identified whether the same gap awaits the next person.",
             "lms_direction": "Review Activity 2.16 — Systemic Improvement & CAPA."
         },
         {
-            "category": "Specialized Domains",
-            "section": "Psychosocial Risk",
+            "category": "Auditing the Clauses",
+            "section": "Psychosocial Hazards",
             "type": "single_select",
-            "text": "A HIRA covers all physical and chemical hazards thoroughly but never addresses workload, shift patterns, or role clarity. Is this complete under Clause 6.1.2.1?",
+            "text": "A HIRA covers physical and chemical hazards thoroughly but has never addressed workload, shift patterns, or role clarity. Is this complete under Clause 6.1.2.1?",
             "options": [
                 {
-                    "text": "Yes — psychosocial factors are outside the scope of a physical hazard assessment",
-                    "correct": false
-                },
-                {
-                    "text": "No — Clause 6.1.2.1 explicitly includes how work is organised as a hazard-identification input",
+                    "text": "No — how work is organised is explicitly included as a hazard-identification input",
                     "correct": true
                 },
                 {
-                    "text": "Yes, provided ISO 45003 certification is pursued as a separate exercise",
+                    "text": "Yes, provided ISO 45003 certification is pursued separately",
                     "correct": false
                 },
                 {
-                    "text": "No, but only if a specific incident has already occurred linking fatigue to injury",
+                    "text": "No, but only if fatigue has already caused a documented injury",
+                    "correct": false
+                },
+                {
+                    "text": "Yes — psychosocial factors are outside the scope of physical hazard assessment",
                     "correct": false
                 }
             ],
-            "rationale": "Psychosocial hazards are in scope by the standard's own text, regardless of whether an incident has yet demonstrated the connection.",
+            "rationale": "Psychosocial hazards are in scope by the standard's own text, regardless of demonstrated harm.",
             "lms_direction": "Review Activity 2.17 — Psychosocial Risks."
         },
         {
-            "category": "Specialized Domains",
-            "section": "Reporting Culture",
-            "type": "single_select",
-            "text": "A supervisor is heard telling staff \"too many incident reports make the department look bad.\" How should this be classified?",
+            "category": "Auditing the Clauses",
+            "section": "Contractor Vetting",
+            "type": "true_false",
+            "text": "True or False: a contractor's company-level qualification plus an individual, task-specific induction naming the exact procedure and technician satisfies genuine vetting.",
             "options": [
                 {
-                    "text": "An administrative matter for HR, entirely outside audit scope",
+                    "text": "False",
                     "correct": false
                 },
                 {
-                    "text": "Not significant unless a specific unreported incident can be proven",
-                    "correct": false
-                },
-                {
-                    "text": "A genuine finding — direct evidence undermining both psychosocial safety and the integrity of reported metrics",
+                    "text": "True",
                     "correct": true
-                },
-                {
-                    "text": "Relevant only to Clause 9 metrics, with no connection to psychosocial risk",
-                    "correct": false
                 }
             ],
-            "rationale": "This evidence has genuine dual relevance and doesn't require proving a specific suppressed report to be worth raising.",
-            "lms_direction": "Review Activity 2.15 and 2.17."
-        },
-        {
-            "category": "Specialized Domains",
-            "section": "Contractor Management",
-            "type": "single_select",
-            "exhibit_ref": "contractor_file_excerpt",
-            "text": "Evaluate this contractor's vetting file. Is it adequate?",
-            "options": [
-                {
-                    "text": "No — a signed record alone can never establish genuine competence",
-                    "correct": false
-                },
-                {
-                    "text": "No — electrical contractors require a longer induction period than any other trade",
-                    "correct": false
-                },
-                {
-                    "text": "Yes — company-level qualification plus an individual, task-specific induction naming the exact procedure and technician",
-                    "correct": true
-                },
-                {
-                    "text": "Yes, but only because it is dated the contractor's first day",
-                    "correct": false
-                }
-            ],
-            "rationale": "This is deliberately a Pass, contrasting with 'Certificate-on-File': individual, task-specific induction is what genuine vetting requires.",
+            "rationale": "Individual, task-specific induction — not just company-level qualification — is what genuine vetting requires.",
             "lms_direction": "Review Activity 2.18 — Contractor & Visitor Management."
         },
         {
-            "category": "Specialized Domains",
-            "section": "Permit-to-Work Timing",
+            "category": "Specialized Domains & Behavioral Auditing",
+            "section": "Reporting Culture",
             "type": "single_select",
-            "exhibit_ref": "permit_log_excerpt",
-            "text": "Cross-referencing the gas meter log against the permit and Apex's own 30-minute re-test rule, what is the correct finding?",
+            "text": "A supervisor tells staff \"too many incident reports make the department look bad.\" How should this be classified?",
             "options": [
                 {
-                    "text": "No finding — the gap is 13 minutes, within Apex's own stated 30-minute rule",
+                    "text": "Relevant only to metrics, with no psychosocial connection",
+                    "correct": false
+                },
+                {
+                    "text": "A genuine finding — direct evidence undermining both psychosocial safety and reported metrics' integrity",
                     "correct": true
                 },
                 {
-                    "text": "A finding, because any gap between testing and entry is unacceptable",
+                    "text": "Not significant unless a specific unreported incident is proven",
+                    "correct": false
+                },
+                {
+                    "text": "An administrative HR matter, entirely outside audit scope",
+                    "correct": false
+                }
+            ],
+            "rationale": "This evidence has genuine dual relevance and doesn't require proving a specific suppressed report.",
+            "lms_direction": "Review Activity 2.15 and 2.17."
+        },
+        {
+            "category": "Specialized Domains & Behavioral Auditing",
+            "section": "Permit-to-Work Timing",
+            "type": "single_select",
+            "text": "A confined-space entry occurs 13 minutes after a gas-meter test, under an organisation's own stated 30-minute re-test rule. What is the correct finding?",
+            "options": [
+                {
+                    "text": "A finding, since 13 minutes exceeds the limit",
                     "correct": false
                 },
                 {
@@ -906,68 +1184,115 @@ export default {
                     "correct": false
                 },
                 {
-                    "text": "A finding — 13 minutes exceeds the stated 30-minute limit",
-                    "correct": false
-                }
-            ],
-            "rationale": "This is deliberately a Pass: 13:52 to 14:05 is 13 minutes, within the 30-minute rule — genuine compliance.",
-            "lms_direction": "Review Activity 2.19 — Permit-to-Work Systems."
-        },
-        {
-            "category": "Specialized Domains",
-            "section": "Incident Classification",
-            "type": "single_select",
-            "exhibit_ref": "incident_classification_exhibit",
-            "text": "Compare the internal report's classification against the first-aider's own note for this cut. Is the classification correct?",
-            "options": [
-                {
-                    "text": "Yes — the first-aider's note confirms treatment was genuinely limited to first aid, with no referral or follow-up",
+                    "text": "No finding — 13 minutes is within the organisation's own stated 30-minute rule",
                     "correct": true
                 },
                 {
-                    "text": "No — the classification cannot be verified without the worker's own statement",
-                    "correct": false
-                },
-                {
-                    "text": "Yes, but only because the worker returned to duty within exactly 10 minutes",
-                    "correct": false
-                },
-                {
-                    "text": "No — any cut requiring a plaster should be classified as recordable",
+                    "text": "A finding — any gap at all is unacceptable",
                     "correct": false
                 }
             ],
-            "rationale": "This is deliberately a Pass, contrasting with 'Under-Classification': the independent record here confirms rather than contradicts the classification.",
+            "rationale": "Calculating the actual gap against the organisation's own rule shows genuine compliance here.",
+            "lms_direction": "Review Activity 2.19 — Permit-to-Work Systems."
+        },
+        {
+            "category": "Specialized Domains & Behavioral Auditing",
+            "section": "Incident Classification",
+            "type": "true_false",
+            "text": "True or False: a first-aider's own treatment note confirming care was genuinely limited to first-aid measures, with no referral, is stronger evidence than the internal incident report's classification alone.",
+            "options": [
+                {
+                    "text": "False",
+                    "correct": false
+                },
+                {
+                    "text": "True",
+                    "correct": true
+                }
+            ],
+            "rationale": "The independent treating record carries more weight than a self-reported internal classification.",
             "lms_direction": "Review Activity 2.20 — Incident Investigation."
         },
         {
-            "category": "Specialized Domains",
+            "category": "Specialized Domains & Behavioral Auditing",
             "section": "Behavioral Auditing",
             "type": "single_select",
-            "text": "An HSE Manager answers three consecutive questions on different topics with \"you'd need to ask [a different named person].\" What is the most appropriate interpretation?",
+            "text": "An HSE Manager answers three consecutive questions on different topics with \"you'd need to ask someone else.\" What is the most appropriate interpretation?",
             "options": [
-                {
-                    "text": "Report the HSE Manager to Top Management for non-cooperation, since repeated deflection during an audit is a legitimate escalation concern in most audit frameworks",
-                    "correct": false
-                },
                 {
                     "text": "Note the repeated deflection and schedule direct follow-up with the named individuals, without assuming bad faith",
                     "correct": true
                 },
                 {
-                    "text": "Accept all three deflections without further action, since one deflection is always legitimate",
+                    "text": "Accept all three deflections without further action",
                     "correct": false
                 },
                 {
-                    "text": "Assume deliberate obstruction and terminate the interview immediately",
+                    "text": "Report the manager for non-cooperation, since repeated deflection during a scheduled interview is a legitimate escalation trigger in most audit frameworks",
+                    "correct": false
+                },
+                {
+                    "text": "Assume deliberate obstruction and terminate the interview",
                     "correct": false
                 }
             ],
-            "rationale": "A single deflection is often legitimate; a repeated pattern across unrelated questions is worth noting and following up on, without assuming deliberate deception.",
+            "rationale": "A repeated pattern is worth noting and following up on, without assuming deliberate deception.",
             "lms_direction": "Review Activity 2.21 — Behavioral Auditing."
         },
         {
-            "category": "Classification & Reporting",
+            "category": "Specialized Domains & Behavioral Auditing",
+            "section": "Emergency Scope",
+            "type": "single_select",
+            "text": "Which emergency scenario should be identified directly from an organisation's own significant-aspect or hazard register?",
+            "options": [
+                {
+                    "text": "A competitor's new product launch",
+                    "correct": false
+                },
+                {
+                    "text": "A delay in an unrelated office-supply shipment",
+                    "correct": false
+                },
+                {
+                    "text": "A shift in currency exchange rates",
+                    "correct": false
+                },
+                {
+                    "text": "A chemical spill from a storage tank identified as a significant hazard",
+                    "correct": true
+                }
+            ],
+            "rationale": "Emergency scenarios should trace directly from the organisation's own identified hazards.",
+            "lms_direction": "Review Activity 2.14 — Emergency Preparedness."
+        },
+        {
+            "category": "Specialized Domains & Behavioral Auditing",
+            "section": "Contractor Categories",
+            "type": "single_select",
+            "text": "Which contractor category most plausibly requires the same ongoing training currency as an employee?",
+            "options": [
+                {
+                    "text": "A one-off equipment installer on-site for a single afternoon",
+                    "correct": false
+                },
+                {
+                    "text": "A non-operational visitor touring the facility",
+                    "correct": false
+                },
+                {
+                    "text": "A delivery driver present only briefly at the loading dock",
+                    "correct": false
+                },
+                {
+                    "text": "A long-term, embedded maintenance contractor working on-site regularly",
+                    "correct": true
+                }
+            ],
+            "rationale": "Embedded, regularly-present contractors carry an ongoing exposure closer to an employee's than a brief one-off visit.",
+            "lms_direction": "Review Activity 2.18 — Contractor & Visitor Management."
+        },
+        {
+            "category": "Classification, Reporting & Wrap-Up",
             "section": "Nonconformity Classification",
             "type": "single_select",
             "text": "A single, isolated deviation is found in an otherwise well-functioning control, with no corroborating instances elsewhere. How should this most likely be classified?",
@@ -977,214 +1302,193 @@ export default {
                     "correct": false
                 },
                 {
-                    "text": "Minor — an isolated instance without evidence of a broader, repeated pattern",
-                    "correct": true
+                    "text": "Major, since any deviation on a safety-critical control is automatically major",
+                    "correct": false
                 },
                 {
                     "text": "Not a nonconformity at all, since it was only found once",
                     "correct": false
                 },
                 {
-                    "text": "Major, since any deviation on a safety-critical control is automatically major",
-                    "correct": false
+                    "text": "Minor — an isolated instance without evidence of a broader, repeated pattern",
+                    "correct": true
                 }
             ],
-            "rationale": "A single, genuinely isolated instance without corroborating evidence is the textbook definition of a Minor.",
+            "rationale": "A single, genuinely isolated instance is the textbook definition of a Minor.",
             "lms_direction": "Review Activity 2.22 — Nonconformity Classification."
         },
         {
-            "category": "Classification & Reporting",
+            "category": "Classification, Reporting & Wrap-Up",
             "section": "Aggregation Logic",
             "type": "single_select",
-            "text": "Three separately-discovered findings — a missed training refresher, an unassessed equipment change, and a contractor induction gap — share one identical root cause. What is the most defensible classification?",
+            "text": "Three separately-discovered findings share one identical root cause. What is the most defensible classification approach?",
             "options": [
                 {
-                    "text": "Escalate all three directly to the external certification body without internal reporting first",
-                    "correct": false
-                },
-                {
-                    "text": "Aggregate into one well-evidenced Major naming the shared root cause",
-                    "correct": true
-                },
-                {
-                    "text": "Discard two of the three findings as redundant once the pattern is noticed",
+                    "text": "Discard two of the three findings as redundant",
                     "correct": false
                 },
                 {
                     "text": "Report all three as separate Minors to keep the audit trail simple",
                     "correct": false
+                },
+                {
+                    "text": "Escalate all three directly to the external certification body first",
+                    "correct": false
+                },
+                {
+                    "text": "Aggregate into one well-evidenced Major naming the shared root cause",
+                    "correct": true
                 }
             ],
-            "rationale": "Clause 10.2 requires evaluating whether similar nonconformities exist elsewhere — three instances sharing a genuine root cause should be aggregated.",
+            "rationale": "Clause 10.2 requires evaluating whether similar nonconformities exist elsewhere.",
             "lms_direction": "Review Activity 2.22 — Nonconformity Classification."
         },
         {
-            "category": "Classification & Reporting",
+            "category": "Classification, Reporting & Wrap-Up",
             "section": "Root Cause Testing",
-            "type": "single_select",
-            "text": "A proposed root cause for an aggregated finding explains 3 of 4 contributing instances well, but not the 4th. What is the correct next step?",
+            "type": "true_false",
+            "text": "True or False: a proposed root cause explaining 3 of 4 contributing instances, but not the 4th, should be accepted as complete since it explains a majority.",
             "options": [
                 {
-                    "text": "Report the 4th instance as an unrelated, separate Minor and finalise the rest",
-                    "correct": false
-                },
-                {
-                    "text": "Average the four instances into a single representative case for simplicity, since reporting four nearly-identical root causes separately would be redundant",
-                    "correct": false
-                },
-                {
-                    "text": "Continue investigating for a deeper root cause that genuinely explains all four instances",
+                    "text": "False",
                     "correct": true
                 },
                 {
-                    "text": "Accept the root cause since it explains a clear majority of the instances",
+                    "text": "True",
                     "correct": false
                 }
             ],
-            "rationale": "A root cause for an aggregated Major must hold against every contributing instance — partial coverage means the true cause hasn't been found yet.",
+            "rationale": "A root cause for an aggregated finding must hold against every contributing instance.",
             "lms_direction": "Review Activity 2.23 — RCA & CAPA Evaluation."
         },
         {
-            "category": "Classification & Reporting",
+            "category": "Classification, Reporting & Wrap-Up",
             "section": "Falsifiable Reporting",
             "type": "single_select",
             "text": "Which nonconformity statement is written to the evidentiary standard this course requires?",
             "options": [
                 {
-                    "text": "\"Staff don't seem to really understand the procedures they're supposed to follow.\"",
+                    "text": "\"Staff don't seem to really understand procedures.\"",
                     "correct": false
                 },
                 {
-                    "text": "\"The HSE Manager was unhelpful during this part of the audit, which reflects a genuine behavioural pattern worth noting for future engagement planning.\"",
+                    "text": "\"The HSE Manager was unhelpful during this part of the audit., which reflects a genuine behavioural pattern worth noting for future engagement planning\"",
+                    "correct": false
+                },
+                {
+                    "text": "\"The training process seems generally weak.\"",
                     "correct": false
                 },
                 {
                     "text": "\"Worker transferred to Role X on [date]; training record shows last entry [date, predating transfer]; interview confirmed no refresher, per record [ref].\"",
                     "correct": true
-                },
-                {
-                    "text": "\"The training process seems generally weak and could probably use some attention.\"",
-                    "correct": false
                 }
             ],
-            "rationale": "A defensible finding cites specific, checkable facts and evidence references rather than vague impressions.",
+            "rationale": "A defensible finding cites specific, checkable facts and evidence references.",
             "lms_direction": "Review Activity 2.24 — Audit Reporting."
         },
         {
-            "category": "Classification & Reporting",
+            "category": "Classification, Reporting & Wrap-Up",
             "section": "Report Structure",
             "type": "single_select",
-            "text": "An A8 Final Audit Report lists 15 findings in the exact chronological order they were discovered. What is the primary structural weakness?",
+            "text": "An A8 Final Audit Report lists 15 findings in the exact chronological order discovered. What is the primary structural weakness?",
             "options": [
                 {
-                    "text": "The report is too short and should include more individual findings",
+                    "text": "Findings should never be numbered in any professional audit report, as numbering can imply a false sense of relative priority",
                     "correct": false
                 },
                 {
-                    "text": "Findings should never be numbered at all in a professional report, as numbering can imply a false sense of relative priority between unrelated items",
-                    "correct": false
-                },
-                {
-                    "text": "Chronological order is always the correct structure for any audit report",
-                    "correct": false
-                },
-                {
-                    "text": "It fails to lead with systemic, aggregated conclusions, risking important patterns being buried among lower-priority items",
+                    "text": "It fails to lead with systemic conclusions, risking important patterns being buried among lower-priority items",
                     "correct": true
+                },
+                {
+                    "text": "Chronological order is always correct for any report",
+                    "correct": false
+                },
+                {
+                    "text": "The report is too short",
+                    "correct": false
                 }
             ],
             "rationale": "A synthesis-led structure communicates far more effectively than a flat, discovery-order list.",
             "lms_direction": "Review Activity 2.24 — Audit Reporting."
         },
         {
-            "category": "Classification & Reporting",
+            "category": "Classification, Reporting & Wrap-Up",
             "section": "Anti-Consulting Rule",
-            "type": "single_select",
-            "text": "Having identified a systemic finding, what should the auditor's report recommend as the specific corrective mechanism?",
+            "type": "true_false",
+            "text": "True or False: a report identifying a systemic finding should recommend a specific, detailed corrective mechanism for the organisation to implement.",
             "options": [
                 {
-                    "text": "Whichever fix the auditor has personally seen work well elsewhere",
+                    "text": "True",
                     "correct": false
                 },
                 {
-                    "text": "A recommendation to hire an external consultant to design the fix, since external consultants often bring specialised expertise the organisation may lack internally",
-                    "correct": false
-                },
-                {
-                    "text": "A detailed, step-by-step redesign of the affected department's workflow",
-                    "correct": false
-                },
-                {
-                    "text": "No specific mechanism — the report states the finding and its evidence; the organisation determines the fix",
+                    "text": "False",
                     "correct": true
                 }
             ],
-            "rationale": "The Anti-Consulting Rule holds throughout reporting: the auditor classifies and evidences, and never prescribes the remedy.",
+            "rationale": "The Anti-Consulting Rule holds throughout reporting — the auditor evidences and classifies, and never prescribes the remedy.",
             "lms_direction": "Review Activity 0.3 — Independence & Objectivity."
         },
         {
-            "category": "Classification & Reporting",
+            "category": "Classification, Reporting & Wrap-Up",
             "section": "Management Review Adequacy",
             "type": "single_select",
-            "exhibit_ref": "management_review_minutes_excerpt",
-            "text": "Evaluate this Management Review action item. Is it an adequate Clause 9.3 output?",
+            "text": "A Management Review action item names a specific owner with real authority, a specific committed date, and a proportionate follow-up timeframe. Is this adequate?",
             "options": [
                 {
-                    "text": "No — Management Review outputs must always be reviewed by the external certification body first",
-                    "correct": false
-                },
-                {
-                    "text": "Yes, but only because the Procurement Director signed it personally",
-                    "correct": false
-                },
-                {
-                    "text": "No — supplier-related findings can never be closed via Management Review, since supplier relationships fall under Procurement rather than the OH&S management system",
-                    "correct": false
-                },
-                {
-                    "text": "Yes — a named owner with real authority, a specific proportionate timeframe, and a same-quarter follow-up",
+                    "text": "Yes — a named owner, committed date, and proportionate follow-up is exactly what a genuine Clause 9.3 decision requires",
                     "correct": true
+                },
+                {
+                    "text": "No — outputs must always be reviewed by the external certification body first",
+                    "correct": false
+                },
+                {
+                    "text": "Yes, but only if signed personally by the CEO",
+                    "correct": false
+                },
+                {
+                    "text": "No — findings of this type can never be closed via Management Review, since certain categories of finding are generally reserved for direct corrective action tracking instead",
+                    "correct": false
                 }
             ],
-            "rationale": "This is deliberately a Pass, contrasting with 'Discussion-Only': a named owner, committed date, and proportionate follow-up is genuine.",
+            "rationale": "This is the genuine, adequate pattern for a Clause 9.3 output.",
             "lms_direction": "Review Activity 2.25 — Management Review."
         },
         {
-            "category": "Classification & Reporting",
+            "category": "Classification, Reporting & Wrap-Up",
             "section": "Follow-Up Verification",
             "type": "single_select",
-            "text": "An organisation demonstrates a new process working correctly for one fresh example. Does this alone close an aggregated finding built from four original instances?",
+            "text": "An organisation demonstrates a new process working for one fresh example. Does this alone close an aggregated finding built from four original instances?",
             "options": [
-                {
-                    "text": "No — aggregated findings can never be closed under any circumstances",
-                    "correct": false
-                },
                 {
                     "text": "Yes — a working demonstration is sufficient proof of complete closure",
                     "correct": false
                 },
                 {
-                    "text": "Yes, provided the demonstration is documented in writing, since written documentation is generally the strongest form of audit evidence available in any context",
+                    "text": "No — aggregated findings can never be closed",
                     "correct": false
                 },
                 {
                     "text": "No — each original instance must be independently re-verified; a new example proves the mechanism works, not that all four gaps were fixed",
                     "correct": true
+                },
+                {
+                    "text": "Yes, provided the demonstration is documented in writing, since written documentation is generally regarded as the strongest form of audit evidence in most contexts",
+                    "correct": false
                 }
             ],
             "rationale": "Genuine closure requires checking back against the specific instances that produced the original finding.",
             "lms_direction": "Review Activity 2.26 — Follow-Up & Verification."
         },
         {
-            "category": "Classification & Reporting",
+            "category": "Classification, Reporting & Wrap-Up",
             "section": "Remote Verification Method",
             "type": "single_select",
             "text": "Which follow-up task is genuinely appropriate to verify via a scheduled remote video call?",
             "options": [
-                {
-                    "text": "Confirming a worker's genuine understanding of a procedure's reasoning, independent of a supervisor's framing",
-                    "correct": false
-                },
                 {
                     "text": "Confirming a permit's officially renewed, documented expiry date",
                     "correct": true
@@ -1194,38 +1498,94 @@ export default {
                     "correct": false
                 },
                 {
-                    "text": "Confirming an unannounced gas-meter timing check reflects genuine real-time conditions",
+                    "text": "Confirming an unannounced gas-meter timing check reflects real-time conditions",
+                    "correct": false
+                },
+                {
+                    "text": "Confirming a worker's genuine understanding of a procedure's reasoning",
                     "correct": false
                 }
             ],
-            "rationale": "An objective, documented fact doesn't depend on who presents it. The other three depend on unstaged, real-time conditions a scheduled call can't reliably confirm.",
+            "rationale": "An objective, documented fact doesn't depend on who presents it or the format used.",
             "lms_direction": "Review Activity 2.27 — Remote, Digital & Hybrid Auditing."
         },
         {
-            "category": "Classification & Reporting",
+            "category": "Classification, Reporting & Wrap-Up",
             "section": "Course Synthesis",
             "type": "single_select",
             "text": "Across this course, what is the single recurring test applied to nearly every piece of evidence, regardless of clause or domain?",
             "options": [
                 {
-                    "text": "Whether the relevant document is professionally formatted and grammatically correct",
-                    "correct": false
-                },
-                {
-                    "text": "Whether the organisation's staff are generally polite and cooperative during the audit",
-                    "correct": false
-                },
-                {
-                    "text": "Whether every finding can be resolved within the same audit visit, since an audit that leaves open items unresolved is generally considered incomplete by most certification bodies",
+                    "text": "Whether every finding can be resolved within the same visit",
                     "correct": false
                 },
                 {
                     "text": "Whether documented claims are independently verified against operational reality, rather than accepted at face value",
                     "correct": true
+                },
+                {
+                    "text": "Whether the relevant document is professionally formatted",
+                    "correct": false
+                },
+                {
+                    "text": "Whether staff are generally polite during the audit",
+                    "correct": false
                 }
             ],
             "rationale": "This is the course's central, recurring discipline, reapplied across every clause and domain.",
             "lms_direction": "Review Activity 2.28 — Gateway Capstone Preparation."
+        },
+        {
+            "category": "Specialized Domains & Behavioral Auditing",
+            "section": "Sign-In Sheet Trap",
+            "type": "single_select",
+            "text": "A worker can recite a safety rule word-for-word but cannot explain what could happen if it were skipped. What does this indicate?",
+            "options": [
+                {
+                    "text": "The worker has been trained on the rule's wording but not made genuinely aware of its purpose — a real, distinct gap",
+                    "correct": true
+                },
+                {
+                    "text": "Nothing — reciting a rule accurately is sufficient evidence of competence",
+                    "correct": false
+                },
+                {
+                    "text": "The worker has genuinely satisfied Clause 7.3's awareness requirement",
+                    "correct": false
+                },
+                {
+                    "text": "This only matters if the worker has since caused an incident by skipping the rule, since the absence of an actual consequence is often treated as evidence the gap was never truly significant",
+                    "correct": false
+                }
+            ],
+            "rationale": "Reciting a rule and understanding its consequence are genuinely different capabilities — Clause 7.3 requires the latter.",
+            "lms_direction": "Review Activity 2.11 — the 'Sign-In Sheet' trap."
+        },
+        {
+            "category": "Classification, Reporting & Wrap-Up",
+            "section": "Evidence Citation Standard",
+            "type": "single_select",
+            "text": "Why does a well-written nonconformity report cite specific evidence references (dates, document versions, interview records) rather than only a narrative description?",
+            "options": [
+                {
+                    "text": "It makes each claim independently checkable and falsifiable, rather than resting on the auditor's summary being trusted at face value",
+                    "correct": true
+                },
+                {
+                    "text": "It makes the report longer, which certification bodies see as more thorough",
+                    "correct": false
+                },
+                {
+                    "text": "It is a purely stylistic preference with no substantive purpose",
+                    "correct": false
+                },
+                {
+                    "text": "It is only necessary for Major findings, not Minor ones, since Minor findings are generally not expected to be independently verified after the fact",
+                    "correct": false
+                }
+            ],
+            "rationale": "Specific, checkable citations let the organisation or a future auditor independently verify the claim.",
+            "lms_direction": "Review Activity 2.24 — Audit Reporting."
         }
     ]
 };
