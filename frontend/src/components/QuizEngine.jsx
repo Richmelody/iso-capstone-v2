@@ -199,6 +199,8 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
     recoveredState && recoveredState.userAnswers ? recoveredState.userAnswers : {}
   );
 
+  const [vaultError, setVaultError] = useState(false);
+
   // ─── Epic 4.1: localStorage Vault — write on every state change ──────────
   const VAULT_KEY = accessCode ? `iso_exam_state_${accessCode}` : null;
   useEffect(() => {
@@ -210,11 +212,13 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
         currentIdx,
         assignedLayout,
       }));
+      if (vaultError) setVaultError(false);
     } catch (e) {
       // Storage quota exceeded — non-fatal, backend sync is the primary store
       console.warn('localStorage vault write failed:', e);
+      setVaultError(true);
     }
-  }, [userAnswers, currentIdx, assignedLayout]);
+  }, [userAnswers, currentIdx, assignedLayout, vaultError, VAULT_KEY]);
   
   // UI Display States
   const [showReviewDrawer, setShowReviewDrawer] = useState(false);
@@ -332,6 +336,12 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
     return { finalScore, failedCats: cats };
   };
 
+  // Ref to hold the latest user answers for the timer calculation
+  const userAnswersRef = React.useRef(userAnswers);
+  useEffect(() => {
+    userAnswersRef.current = userAnswers;
+  }, [userAnswers]);
+
   // 1. Timer Logic (Absolute Date.now() to foil pause-exploits)
   useEffect(() => {
     const timer = setInterval(() => {
@@ -342,12 +352,12 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
          clearInterval(timer);
          hasTrippedRef.current = true;
          isSubmittingRef.current = true; // Mark as legitimate submission
-         const { finalScore, failedCats } = calculateFinals(userAnswers);
+         const { finalScore, failedCats } = calculateFinals(userAnswersRef.current);
          onFinish(finalScore, failedCats);
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [onFinish, userAnswers]);
+  }, [onFinish]);
 
   // 2. Prevent Refreshing the Page & Prevent Right Clicking
   useEffect(() => {
@@ -493,14 +503,19 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
     }
   };
 
-  const handleFinalSubmit = () => {
+  const handleFinalSubmit = async () => {
     // Epic 4.4: Safe Submission Lock — block offline submissions
     if (!navigator.onLine) return;
     isSubmittingRef.current = true; // Mark as legitimate submission
     setShowSubmitModal(false);
-    hasTrippedRef.current = true;
+    
     const { finalScore, failedCats } = calculateFinals(userAnswers);
-    onFinish(finalScore, failedCats, assignedLayout, userAnswers);
+    try {
+      await onFinish(finalScore, failedCats, assignedLayout, userAnswers);
+      hasTrippedRef.current = true;
+    } catch (e) {
+      isSubmittingRef.current = false;
+    }
   };
 
   const formatTime = (secs) => {
@@ -556,6 +571,12 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
       {timerTarget ? createPortal(timerContent, timerTarget) : timerContent}
 
       {/* Main Container HUD */}
+      {vaultError && (
+        <div className="bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-4 mb-4 rounded-r-xl shadow-sm" role="alert">
+          <p className="font-bold text-sm uppercase tracking-widest flex items-center"><i className="fa-solid fa-triangle-exclamation mr-2"></i> Warning: Local backup unavailable</p>
+          <p className="text-xs mt-1 font-semibold">Your browser's local storage is restricted or full. Ensure you have a stable connection.</p>
+        </div>
+      )}
       <div id="exam-hud" className="mb-4 flex flex-col sm:flex-row justify-between sm:items-end gap-2">
         <div>
           <span className="bg-brand-gold text-white text-[10px] font-black px-2 py-1 rounded uppercase mb-1 inline-block">{q.section}</span>

@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { examLibrary } from '../data';
+import ExhibitViewer from './ExhibitViewer';
 
 export default function ResultsScreen({ score, failedCats, studentName, studentEmail, assignedLayout, userAnswers }) {
   const { examId } = useParams();
   const examData = examLibrary[examId] || examLibrary["14001-fnd"];
   const remediationData = examData.remediationData || {};
+  const [viewingExhibit, setViewingExhibit] = useState(null);
 
   const totalQuestions = (assignedLayout && assignedLayout.length > 0) ? assignedLayout.length : (examData.layout_size || 20);
   const percent = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
@@ -140,6 +142,8 @@ export default function ResultsScreen({ score, failedCats, studentName, studentE
                   
                   const lmsDirection = q.lms_direction || remediationData[q.category] || `Review the ${q.category} section of the standard.`;
 
+                  const exhibitData = q.exhibit_ref && q.exhibit_ref !== 'none' ? examData.exhibits?.[q.exhibit_ref] : null;
+
                   return (
                     <div key={displayIdx} className="bg-white/70 backdrop-blur-sm rounded-xl border border-white/80 p-5 shadow-[0_2px_10px_0_rgba(0,0,0,0.02)] relative overflow-hidden">
                       <div className={`absolute left-0 top-0 bottom-0 w-1 ${isCorrect ? 'bg-emerald-400' : 'bg-rose-400'}`}></div>
@@ -154,6 +158,15 @@ export default function ResultsScreen({ score, failedCats, studentName, studentE
                               {isCorrect ? 'Correct' : 'Incorrect'}
                             </span>
                           </div>
+
+                          {exhibitData && (
+                            <button
+                              onClick={() => setViewingExhibit(exhibitData)}
+                              className="mb-3 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-100 px-2.5 py-1.5 rounded-md transition-colors"
+                            >
+                              <i className="fa-solid fa-book-open"></i> View Scenario
+                            </button>
+                          )}
 
                           <div className="mt-4 flex flex-col gap-3">
                             <div className={`p-3 rounded-lg text-xs font-medium ${
@@ -207,6 +220,29 @@ export default function ResultsScreen({ score, failedCats, studentName, studentE
           </div>
         </div>
       </div>
+
+      {/* SCENARIO VIEWER MODAL */}
+      {viewingExhibit && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4"
+          onClick={() => setViewingExhibit(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex-1 overflow-y-auto">
+              <ExhibitViewer exhibitData={viewingExhibit} />
+            </div>
+            <button
+              onClick={() => setViewingExhibit(null)}
+              className="w-full py-4 bg-slate-800 text-white font-black text-xs uppercase tracking-widest hover:bg-slate-700 transition"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

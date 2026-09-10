@@ -1,10 +1,8 @@
 export default {
     "title": "ISO/IEC 27001:2022 Lead Auditor — Capstone Exam",
-    "instrument_notice": "This is a knowledge-underpinning assessment confirming readiness to transition to Phase 2 live training with an accredited partner. It measures interpretive recognition and applied judgement built across Modules 1–5 of Phase 1 — it does not certify live audit competence, which Phase 2 assesses directly.",
     "layout_size": 35,
     "time_limit": 45,
     "passing_score_percent": 75,
-    "scoring_note": "75% (26/35) is a provisional cut score, not yet validated against pilot candidate data.",
     "pool_size": 80,
     "extraction_note": "This 80-question pool feeds a stratified, category-aware extractor presenting 35 questions per sitting. 'Case Study — Veyra Logistics' is hardcoded to contribute exactly 8 of the 35, with the remaining 27 drawn proportionally across the other categories based on their share of the 80-question pool.",
     "blueprint": {

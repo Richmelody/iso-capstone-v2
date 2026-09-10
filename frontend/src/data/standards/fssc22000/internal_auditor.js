@@ -1,10 +1,8 @@
 export default {
     "title": "FSSC 22000 Version 6 Internal Auditor — Capstone Exam",
-    "instrument_notice": "This is a knowledge-underpinning assessment measuring recognition of correct audit reasoning across all three FSSC 22000 pillars (ISO 22000:2018, sector PRPs, and the FSSC Additional Requirements), not the generative skills of live audit practice.",
     "layout_size": 40,
     "time_limit": 75,
     "passing_score_percent": 75,
-    "scoring_note": "75% (30/40) is a provisional cut score.",
     "pool_size": 80,
     "extraction_note": "This 80-question pool feeds a stratified, category-aware extractor presenting 40 questions per sitting, proportionally sampled across all seven blueprint categories.",
     "blueprint": {

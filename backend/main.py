@@ -297,150 +297,166 @@ class SyncRequest(BaseModel):
 
 @app.post("/sync-progress")
 def sync_progress(req: SyncRequest):
-    try:
-        with sqlite3.connect(DB_PATH, timeout=15) as conn:
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT id FROM access_codes WHERE code = ? COLLATE NOCASE AND assigned_email = ? COLLATE NOCASE AND is_used = 0",
-                (req.code, req.studentEmail)
-            )
-            if not cur.fetchone():
-                raise HTTPException(status_code=400, detail="Invalid sync constraints")
+    import time
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+            with sqlite3.connect(DB_PATH, timeout=15) as conn:
+                cur = conn.cursor()
+                cur.execute(
+                    "SELECT id FROM access_codes WHERE code = ? COLLATE NOCASE AND assigned_email = ? COLLATE NOCASE AND is_used = 0",
+                    (req.code, req.studentEmail)
+                )
+                if not cur.fetchone():
+                    raise HTTPException(status_code=400, detail="Invalid sync constraints")
 
-            # Epic 1.2b: Persist layout when provided.
-            # COALESCE ensures a legacy sync (no layout field) NEVER overwrites
-            # an existing saved_layout — Epic 5.3 failsafe.
-            layout_json = json.dumps(req.layout) if req.layout is not None else None
-            conn.execute("""
-                UPDATE access_codes
-                SET saved_answers     = ?,
-                    saved_time_left   = ?,
-                    saved_question_idx = ?,
-                    saved_layout      = COALESCE(?, saved_layout)
-                WHERE code = ?
-            """, (json.dumps(req.userAnswers), req.timeLeft, req.currentIdx, layout_json, req.code))
-            conn.commit()
-            return {"status": "synced"}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+                # Epic 1.2b: Persist layout when provided.
+                # COALESCE ensures a legacy sync (no layout field) NEVER overwrites
+                # an existing saved_layout — Epic 5.3 failsafe.
+                layout_json = json.dumps(req.layout) if req.layout is not None else None
+                conn.execute("""
+                    UPDATE access_codes
+                    SET saved_answers     = ?,
+                        saved_time_left   = ?,
+                        saved_question_idx = ?,
+                        saved_layout      = COALESCE(?, saved_layout)
+                    WHERE code = ?
+                """, (json.dumps(req.userAnswers), req.timeLeft, req.currentIdx, layout_json, req.code))
+                conn.commit()
+                return {"status": "synced"}
+        except sqlite3.OperationalError as e:
+            if "database is locked" in str(e).lower() and attempt < max_retries - 1:
+                time.sleep(0.5)
+                continue
+            raise HTTPException(status_code=500, detail=str(e))
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/complete-exam")
 def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
-    try:
-        with sqlite3.connect(DB_PATH, timeout=15) as conn:
-            cur = conn.cursor()
-            cur.execute("SELECT id, exam_id, is_used, assigned_name FROM access_codes WHERE code = ? COLLATE NOCASE AND assigned_email = ? COLLATE NOCASE", (req.code, req.studentEmail))
-            row = cur.fetchone()
-            if not row:
-                raise HTTPException(status_code=400, detail="Invalid code or unauthorized user")
-            
-            code_id, exam_id, is_used, assigned_name = row
-            
-            if is_used:
-                # Idempotency block: Prevent duplicate ledger recording if submitted multiple times
-                return {"status": "success", "message": "Exam results already processed"}
+    import time
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+            with sqlite3.connect(DB_PATH, timeout=15) as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT id, exam_id, is_used, assigned_name FROM access_codes WHERE code = ? COLLATE NOCASE AND assigned_email = ? COLLATE NOCASE", (req.code, req.studentEmail))
+                row = cur.fetchone()
+                if not row:
+                    raise HTTPException(status_code=400, detail="Invalid code or unauthorized user")
                 
-            conn.execute("UPDATE access_codes SET is_used = 1 WHERE code = ?", (req.code,))
-            
-            if assigned_name:
-                conn.execute("""
-                    INSERT INTO exam_results (student_name, student_email, exam_id, final_score, total_score, percent, passed)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (assigned_name, req.studentEmail, exam_id, req.score, req.totalScore, req.percent, req.passed))
+                code_id, exam_id, is_used, assigned_name = row
                 
-            conn.commit()
+                if is_used:
+                    # Idempotency block: Prevent duplicate ledger recording if submitted multiple times
+                    return {"status": "success", "message": "Exam results already processed"}
+                    
+                conn.execute("UPDATE access_codes SET is_used = 1 WHERE code = ?", (req.code,))
+                
+                if assigned_name:
+                    conn.execute("""
+                        INSERT INTO exam_results (student_name, student_email, exam_id, final_score, total_score, percent, passed)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """, (assigned_name, req.studentEmail, exam_id, req.score, req.totalScore, req.percent, req.passed))
+                    
+                conn.commit()
 
-            # Fetch total cheating events count for this session
-            total_cheating_events = 0
-            cheating_events = []
-            try:
-                # First, count exactly how many cheating logs occurred today
-                cur.execute("""
-                    SELECT COUNT(*) 
-                    FROM cheating_logs 
-                    WHERE student_email = ? COLLATE NOCASE AND timestamp > datetime('now', '-1 day')
-                """, (req.studentEmail,))
-                total_cheating_events = cur.fetchone()[0]
-                
-                # Fetch only a MAXIMUM of 10 cheating events to avoid crashing make.com payloads
-                cur.execute("""
-                    SELECT violation_type, details, timestamp, snapshot_path 
-                    FROM cheating_logs 
-                    WHERE student_email = ? COLLATE NOCASE AND timestamp > datetime('now', '-1 day')
-                    ORDER BY timestamp DESC
-                    LIMIT 10
-                """, (req.studentEmail,))
-                
-                api_url = os.environ.get("API_PUBLIC_URL", "https://api-exams.astutebusinessprojects.cloud")
-                
-                for row_log in cur.fetchall():
-                    v_type, v_details, v_time, s_path = row_log
-                    filename = os.path.basename(s_path)
-                    file_id = filename.replace(".png", "")
-                    secret = os.environ.get("SNAPSHOT_SECRET", "astute-secure-view")
-                    image_url = f"{api_url}/evidence/{file_id}?token={secret}"
-                    cheating_events.append({
-                        "type": v_type,
-                        "details": v_details,
-                        "timestamp": v_time,
-                        "image_url": image_url
-                    })
-            except Exception as e:
-                print(f"Error fetching cheating logs: {e}")
-
-            # Transmit Webhook Securely from the Backend via Background Task
-            submission_timestamp = datetime.datetime.now(datetime.UTC).isoformat().replace("+00:00", "Z")
-
-            # Map standard and category to clean names
-            std_map = {
-                "14001": "ISO 14001:2015",
-                "9001": "ISO 9001:2015",
-                "45001": "ISO 45001:2018",
-                "fssc22000": "FSSC 22000",
-                "27001": "ISO/IEC 27001:2022"
-            }
-            cat_map = {
-                "fnd": "Foundations",
-                "imp": "Implementer",
-                "ia": "Internal Auditor",
-                "la": "Lead Auditor"
-            }
-            
-            parts = exam_id.split("-") if exam_id else []
-            raw_std = parts[0] if len(parts) > 0 else ""
-            raw_cat = parts[1] if len(parts) > 1 else ""
-            
-            mapped_standard = std_map.get(raw_std, raw_std)
-            mapped_category = cat_map.get(raw_cat, raw_cat)
-
-            def send_webhook():
+                # Fetch total cheating events count for this session
+                total_cheating_events = 0
+                cheating_events = []
                 try:
-                    with httpx.Client(timeout=5.0) as client:
-                        client.post("https://hook.eu1.make.com/6qavu69ct5v9vuw4mcdxuc0iopyikare", json={
-                            "source": f"ISO_Capstone_{exam_id}",
-                            "environment": os.environ.get("ENV", "development"),
-                            "name": assigned_name or "Unknown",
-                            "email": req.studentEmail,
-                            "score": req.score,
-                            "total_score": req.totalScore,
-                            "percent": req.percent,
-                            "passed": req.passed,
-                            "standard": mapped_standard,
-                            "category": mapped_category,
-                            "submitted_at": submission_timestamp,
-                            "total_cheating_glitches": total_cheating_events,
-                            "cheating_events": cheating_events
+                    # First, count exactly how many cheating logs occurred today
+                    cur.execute("""
+                        SELECT COUNT(*) 
+                        FROM cheating_logs 
+                        WHERE student_email = ? COLLATE NOCASE AND timestamp > datetime('now', '-1 day')
+                    """, (req.studentEmail,))
+                    total_cheating_events = cur.fetchone()[0]
+                    
+                    # Fetch only a MAXIMUM of 10 cheating events to avoid crashing make.com payloads
+                    cur.execute("""
+                        SELECT violation_type, details, timestamp, snapshot_path 
+                        FROM cheating_logs 
+                        WHERE student_email = ? COLLATE NOCASE AND timestamp > datetime('now', '-1 day')
+                        ORDER BY timestamp DESC
+                        LIMIT 10
+                    """, (req.studentEmail,))
+                    
+                    api_url = os.environ.get("API_PUBLIC_URL", "https://api-exams.astutebusinessprojects.cloud")
+                    
+                    for row_log in cur.fetchall():
+                        v_type, v_details, v_time, s_path = row_log
+                        filename = os.path.basename(s_path)
+                        file_id = filename.replace(".png", "")
+                        secret = os.environ.get("SNAPSHOT_SECRET", "astute-secure-view")
+                        image_url = f"{api_url}/evidence/{file_id}?token={secret}"
+                        cheating_events.append({
+                            "type": v_type,
+                            "details": v_details,
+                            "timestamp": v_time,
+                            "image_url": image_url
                         })
                 except Exception as e:
-                    pass
+                    print(f"Error fetching cheating logs: {e}")
 
-            background_tasks.add_task(send_webhook)
+                # Transmit Webhook Securely from the Backend via Background Task
+                submission_timestamp = datetime.datetime.now(datetime.UTC).isoformat().replace("+00:00", "Z")
 
-            return {"status": "success", "message": "Exam completed, code used and results saved"}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+                # Map standard and category to clean names
+                std_map = {
+                    "14001": "ISO 14001:2015",
+                    "9001": "ISO 9001:2015",
+                    "45001": "ISO 45001:2018",
+                    "fssc22000": "FSSC 22000",
+                    "27001": "ISO/IEC 27001:2022"
+                }
+                cat_map = {
+                    "fnd": "Foundations",
+                    "imp": "Implementer",
+                    "ia": "Internal Auditor",
+                    "la": "Lead Auditor"
+                }
+                
+                parts = exam_id.split("-") if exam_id else []
+                raw_std = parts[0] if len(parts) > 0 else ""
+                raw_cat = parts[1] if len(parts) > 1 else ""
+                
+                mapped_standard = std_map.get(raw_std, raw_std)
+                mapped_category = cat_map.get(raw_cat, raw_cat)
+
+                def send_webhook():
+                    try:
+                        with httpx.Client(timeout=5.0) as client:
+                            client.post("https://hook.eu1.make.com/6qavu69ct5v9vuw4mcdxuc0iopyikare", json={
+                                "source": f"ISO_Capstone_{exam_id}",
+                                "environment": os.environ.get("ENV", "development"),
+                                "name": assigned_name or "Unknown",
+                                "email": req.studentEmail,
+                                "score": req.score,
+                                "total_score": req.totalScore,
+                                "percent": req.percent,
+                                "passed": req.passed,
+                                "standard": mapped_standard,
+                                "category": mapped_category,
+                                "submitted_at": submission_timestamp,
+                                "total_cheating_glitches": total_cheating_events,
+                                "cheating_events": cheating_events
+                            })
+                    except Exception as e:
+                        pass
+
+                background_tasks.add_task(send_webhook)
+
+                return {"status": "success", "message": "Exam completed, code used and results saved"}
+        except sqlite3.OperationalError as e:
+            if "database is locked" in str(e).lower() and attempt < max_retries - 1:
+                time.sleep(0.5)
+                continue
+            raise HTTPException(status_code=500, detail=str(e))
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
 

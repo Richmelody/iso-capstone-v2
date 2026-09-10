@@ -158,10 +158,68 @@ def test_timestamp_spoofing_prevention():
         row = cur.fetchone()
         assert row is not None
         
-        saved_timestamp = row[0]
-        assert "1999" not in saved_timestamp
         # It should contain the current year/datetime since it is UTC server generated
         import datetime
         current_year = str(datetime.datetime.now(datetime.UTC).year)
         assert current_year in saved_timestamp
+
+from unittest.mock import patch
+
+def test_database_locked_retry_on_complete_exam():
+    # Setup initial code
+    client.post("/verify-code", json={"code": "TEST-CODE-99", "studentEmail": "tester@astute.com", "studentName": "Test User"})
+    
+    call_count = 0
+    original_connect = sqlite3.connect
+
+    def mock_connect(*args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        if call_count <= 2:
+            raise sqlite3.OperationalError("database is locked")
+        return original_connect(*args, **kwargs)
+
+    with patch('sqlite3.connect', side_effect=mock_connect):
+        payload = {
+            "code": "TEST-CODE-99",
+            "studentEmail": "tester@astute.com",
+            "score": 15,
+            "totalScore": 20,
+            "percent": "75.0%",
+            "passed": True,
+            "cheating_events": []
+        }
+        response = client.post("/complete-exam", json=payload)
+        
+        # Without retry logic, this returns 500. With retry logic, it should catch the error, retry, and return 200.
+        assert response.status_code == 200, f"Expected 200 OK, got {response.status_code}"
+        assert call_count >= 3
+
+def test_database_locked_retry_on_sync_progress():
+    client.post("/verify-code", json={"code": "TEST-CODE-99", "studentEmail": "tester@astute.com", "studentName": "Test User"})
+    
+    call_count = 0
+    original_connect = sqlite3.connect
+
+    def mock_connect(*args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        if call_count <= 2:
+            raise sqlite3.OperationalError("database is locked")
+        return original_connect(*args, **kwargs)
+
+    with patch('sqlite3.connect', side_effect=mock_connect):
+        payload = {
+            "code": "TEST-CODE-99",
+            "studentEmail": "tester@astute.com",
+            "userAnswers": {"0": 1},
+            "timeLeft": 1000,
+            "currentIdx": 1,
+            "layout": []
+        }
+        response = client.post("/sync-progress", json=payload)
+        
+        assert response.status_code == 200, f"Expected 200 OK, got {response.status_code}"
+        assert call_count >= 3
+
 

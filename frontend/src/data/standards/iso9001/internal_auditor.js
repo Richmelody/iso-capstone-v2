@@ -1,10 +1,8 @@
 export default {
     "title": "ISO 9001:2015 Internal Auditor \u2014 Capstone Exam",
-    "instrument_notice": "This is a knowledge-underpinning assessment measuring recognition of correct audit reasoning, not the generative skills of live audit practice.",
     "layout_size": 35,
     "time_limit": 60,
     "passing_score_percent": 75,
-    "scoring_note": "75% (26/35) is a provisional cut score.",
     "pool_size": 65,
     "extraction_note": "This 65-question pool feeds a stratified, category-aware extractor presenting 35 questions per sitting.",
     "blueprint": {

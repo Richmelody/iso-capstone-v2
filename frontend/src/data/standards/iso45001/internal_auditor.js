@@ -1,10 +1,8 @@
 export default {
     "title": "ISO 45001:2018 Internal Auditor — Capstone Exam",
-    "instrument_notice": "This is a knowledge-underpinning assessment measuring recognition of correct audit reasoning, not the generative skills of live audit practice.",
     "layout_size": 35,
     "time_limit": 60,
     "passing_score_percent": 75,
-    "scoring_note": "75% (26/35) is a provisional cut score.",
     "pool_size": 65,
     "extraction_note": "This 65-question pool feeds a stratified, category-aware extractor presenting 35 questions per sitting.",
     "blueprint": {
@@ -1575,12 +1573,12 @@ export default {
         }
         ,
     {
-        "category": "Hazard Identification, Risk & Planning",
+        "category": "Hazard Identification, Risk Assessment & Planning",
         "section": "Capstone Practical",
         "type": "interactive_tool",
         "tool_type": "document_builder",
         "exhibit_ref": "audit_story",
-        "text": "As the Lead Auditor preparing for the Apex Manufacturing surveillance audit, build a targeted Audit Plan for the newly acquired Plant B by assigning the correct fragments to the plan template.",
+        "text": "As the Internal Auditor preparing for the Apex Heavy Engineering surveillance audit, build a targeted Audit Plan for the newly integrated automated welding line by assigning the correct fragments to the plan template.",
         "tool_data": {
             "document_type": "Audit Plan Extract",
             "fields": [
@@ -1600,11 +1598,11 @@ export default {
             "fragments": [
                 {
                     "id": "frag1",
-                    "text": "Verify the effectiveness of hazard identification and operational controls for the newly integrated high-speed packaging line."
+                    "text": "Verify the effectiveness of hazard identification and operational controls for the newly integrated automated welding line."
                 },
                 {
                     "id": "frag2",
-                    "text": "Confirm the financial ROI and production output quotas of the Plant B acquisition."
+                    "text": "Confirm the financial ROI and production output quotas of the new welding line."
                 },
                 {
                     "id": "frag3",
@@ -1616,7 +1614,7 @@ export default {
                 },
                 {
                     "id": "frag5",
-                    "text": "Packaging Line Machine Operators and the Plant Manager."
+                    "text": "Welding line operators and the Production Manager."
                 }
             ]
         },
@@ -1634,7 +1632,7 @@ export default {
         "type": "interactive_tool",
         "tool_type": "document_builder",
         "exhibit_ref": "audit_story",
-        "text": "Based on the Apex Manufacturing scenario, build the Nonconformity Report (NCR) regarding the bypassed safety guard on the new high-speed packaging line.",
+        "text": "Based on the Apex Heavy Engineering scenario, build the Nonconformity Report (NCR) regarding the recurring LEV ventilation failures on the new automated welding line.",
         "tool_data": {
             "document_type": "Nonconformity Report",
             "fields": [
@@ -1662,7 +1660,7 @@ export default {
                 },
                 {
                     "id": "frag3",
-                    "text": "During the floor tour, a machine operator was observed running the newly installed high-speed packaging line with the physical safety guard completely bypassed."
+                    "text": "Shift handover notes documented six separate LEV system trips over two weeks, with operators informally resetting the system rather than filing a formal hazard report."
                 },
                 {
                     "id": "frag4",
@@ -1670,7 +1668,7 @@ export default {
                 },
                 {
                     "id": "frag5",
-                    "text": "The organization failed to implement and control planned changes to mitigate OH&S risks prior to equipment handover, resulting in operators bypassing poorly integrated controls."
+                    "text": "The organization failed to update its risk assessment for a process change (the new welding line) and failed to formally report and control the resulting LEV failures, reflecting a breakdown in the Management of Change process."
                 }
             ]
         },
@@ -1688,7 +1686,7 @@ export default {
         "type": "interactive_tool",
         "tool_type": "document_builder",
         "exhibit_ref": "audit_story",
-        "text": "The Plant Manager has submitted a Corrective Action Plan (CAP) in response to the bypassed guard. Reconstruct the approved CAP to ensure it addresses the systemic root cause.",
+        "text": "The Production Manager has submitted a Corrective Action Plan (CAP) in response to the LEV ventilation failures. Reconstruct the approved CAP to ensure it addresses the systemic root cause.",
         "tool_data": {
             "document_type": "Corrective Action Plan (CAP)",
             "fields": [
@@ -1708,7 +1706,7 @@ export default {
             "fragments": [
                 {
                     "id": "frag1",
-                    "text": "Stop the machine, repair the jammed safety guard, and re-induct the specific operator."
+                    "text": "Purchase higher-capacity filters for the LEV system and instruct the operator to submit a formal hazard report."
                 },
                 {
                     "id": "frag2",
@@ -1716,15 +1714,15 @@ export default {
                 },
                 {
                     "id": "frag3",
-                    "text": "The Management of Change (MOC) process was expedited for a major client order, bypassing formal hazard reviews and training protocols."
+                    "text": "The Management of Change (MOC) procedure was bypassed because the project manager categorized the new welding line as an 'equipment replacement' rather than a 'process change'."
                 },
                 {
                     "id": "frag4",
-                    "text": "Revise the MOC procedure to require a mandatory EHS hard-stop sign-off and competency verification on all relocated equipment before production handover."
+                    "text": "Revise the MOC procedure to require a mandatory process-vs-replacement classification review and updated risk assessment sign-off before any new equipment handover."
                 },
                 {
                     "id": "frag5",
-                    "text": "Reprimand the operator and issue a written warning to all Plant B staff."
+                    "text": "Reprimand the operator and issue a written warning to all welding line staff."
                 }
             ]
         },
@@ -1742,7 +1740,7 @@ export default {
         "type": "interactive_tool",
         "tool_type": "document_builder",
         "exhibit_ref": "audit_story",
-        "text": "The Lead Auditor is verifying if Apex Manufacturing is prepared for its upcoming Top Management Review. Build the agenda by dragging the correct ISO 45001 mandatory inputs and expected outputs into the template.",
+        "text": "The Internal Auditor is verifying if Apex Heavy Engineering is prepared for its upcoming Top Management Review. Build the agenda by dragging the correct ISO 45001 mandatory inputs and expected outputs into the template.",
         "tool_data": {
             "document_type": "Management Review Agenda",
             "fields": [

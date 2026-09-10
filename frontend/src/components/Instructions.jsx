@@ -45,22 +45,26 @@ export default function Instructions({ examData, onStartExam, onLogout }) {
         )}
 
         {/* OBJECTIVE CONTEXT & RULES */}
-        <div className="bg-slate-50 border-l-4 border-slate-600 p-6 mb-8 rounded-r-xl">
-          <h4 className="font-black text-slate-800 uppercase text-sm mb-3 tracking-widest flex items-center">
-            <i className="fa-solid fa-scale-balanced text-xl mr-3"></i>
-            Assessment Integrity Protocols
+        <div className="bg-red-50 border-l-4 border-red-600 p-6 mb-8 rounded-r-xl shadow-sm">
+          <h4 className="font-black text-red-800 uppercase text-sm mb-3 tracking-widest flex items-center">
+            <i className="fa-solid fa-shield-halved text-xl mr-3 text-red-600"></i>
+            Strict Assessment Integrity Protocols
           </h4>
-          <p className="text-sm text-slate-700 leading-relaxed font-medium mb-4">
-            To maintain the standard of this certification, this environment is governed by automated compliance protocols. Please note the following system constraints before initiating the assessment:
+          <p className="text-sm text-red-900 leading-relaxed font-bold mb-4">
+            To maintain the rigorous standard of this certification, this exam environment is heavily governed by automated compliance protocols. Any violation of the rules below will result in immediate termination of the session:
           </p>
-          <ul className="list-none space-y-3">
-            <li className="flex items-start">
-              <i className="fa-solid fa-window-restore text-slate-500 mt-1 mr-3"></i>
-              <p className="text-xs text-slate-700 font-medium"><strong>Tab Navigation:</strong> The system requires continuous focus. Navigating away from the active tab or minimizing the browser will immediately terminate the session and submit your current score.</p>
+          <ul className="list-none space-y-4">
+            <li className="flex items-start bg-white/60 p-3 rounded-lg border border-red-100">
+              <i className="fa-solid fa-camera text-red-600 mt-0.5 mr-3 text-lg"></i>
+              <p className="text-xs text-red-900 font-medium leading-relaxed"><strong>Webcam Monitoring & Snapshots:</strong> The application will randomly take visual snapshots during the exam to verify your continuous presence and identity. Your webcam must remain on, uncovered, and functional. Obscuring the camera or leaving the frame will trigger an automatic failure.</p>
             </li>
-            <li className="flex items-start">
-              <i className="fa-solid fa-compress text-slate-500 mt-1 mr-3"></i>
-              <p className="text-xs text-slate-700 font-medium"><strong>Display Mode:</strong> The assessment operates exclusively in full-screen mode. Exiting full-screen will trigger an automatic submission.</p>
+            <li className="flex items-start bg-white/60 p-3 rounded-lg border border-red-100">
+              <i className="fa-solid fa-window-restore text-red-600 mt-0.5 mr-3 text-lg"></i>
+              <p className="text-xs text-red-900 font-medium leading-relaxed"><strong>Tab Navigation:</strong> The system requires continuous browser focus. Navigating away from the active tab, opening new windows, or minimizing the browser will immediately terminate the session and submit your current score.</p>
+            </li>
+            <li className="flex items-start bg-white/60 p-3 rounded-lg border border-red-100">
+              <i className="fa-solid fa-compress text-red-600 mt-0.5 mr-3 text-lg"></i>
+              <p className="text-xs text-red-900 font-medium leading-relaxed"><strong>Display Mode:</strong> The assessment operates exclusively in forced full-screen mode to prevent distraction. Attempting to exit full-screen will trigger an automatic submission.</p>
             </li>
           </ul>
         </div>

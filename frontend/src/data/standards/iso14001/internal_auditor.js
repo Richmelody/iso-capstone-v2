@@ -1,11 +1,9 @@
 export default {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "ISO 14001:2015 Internal Auditor — Capstone Exam",
-    "instrument_notice": "This is a knowledge-underpinning assessment measuring recognition of correct audit reasoning, not the generative skills of live audit practice.",
     "layout_size": 35,
     "time_limit": 45,
     "passing_score_percent": 75,
-    "scoring_note": "75% (26/35) is a provisional cut score.",
     "pool_size": 65,
     "extraction_note": "This 65-question pool feeds a stratified, category-aware extractor presenting 35 questions per sitting.",
     "blueprint": {
@@ -1558,7 +1556,7 @@ export default {
         "type": "interactive_tool",
         "tool_type": "document_builder",
         "exhibit_ref": "audit_story",
-        "text": "As the Lead Auditor preparing for the Verdant Chemical audit, build a targeted Audit Plan for the new solvent recovery unit by assigning the correct fragments to the plan template.",
+        "text": "As the Internal Auditor preparing for the Verdant Chemical audit, build a targeted Audit Plan for the new solvent recovery unit by assigning the correct fragments to the plan template.",
         "tool_data": {
             "document_type": "Audit Plan Extract",
             "fields": [
