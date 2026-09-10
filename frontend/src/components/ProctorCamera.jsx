@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as tf from '@tensorflow/tfjs';
 import * as blazeface from '@tensorflow-models/blazeface';
 
-export default function ProctorCamera({ studentName, studentEmail, isProctoringActive }) {
+export default function ProctorCamera({ studentName, studentEmail, accessCode, isProctoringActive }) {
   const videoRef = useRef(null);
   const [warningMsg, setWarningMsg] = useState(null);
   const activeIntervalRef = useRef(null);
@@ -35,6 +35,7 @@ export default function ProctorCamera({ studentName, studentEmail, isProctoringA
     const payload = {
       studentEmail: studentEmail,
       studentName: studentName,
+      accessCode: accessCode,
       violationType: type,
       details: detail,
       timestamp: new Date().toISOString(),
@@ -126,7 +127,7 @@ export default function ProctorCamera({ studentName, studentEmail, isProctoringA
       document.removeEventListener('cut', handleCut);
       window.removeEventListener('resize', handleResize);
     };
-  }, [isProctoringActive, studentName, studentEmail]);
+  }, [isProctoringActive, studentName, studentEmail, accessCode]);
 
   // --- DRAG HANDLERS ---
   const onPointerDown = (e) => {

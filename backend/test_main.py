@@ -113,6 +113,7 @@ def test_log_cheating_invalid_image():
     payload = {
         "studentEmail": "cheater@astute.com",
         "studentName": "Bad Actor",
+        "accessCode": "TEST-CODE-99",
         "violationType": "Multiple Persons",
         "details": "Two people on screen",
         "timestamp": "2024-01-01T00:00:00Z",
@@ -143,6 +144,7 @@ def test_timestamp_spoofing_prevention():
     payload = {
         "studentEmail": "spoof@astute.com",
         "studentName": "Spoofer",
+        "accessCode": "TEST-CODE-99",
         "violationType": "Face Missing",
         "details": "Checking timestamp security",
         "timestamp": "1999-01-01T00:00:00Z", 
@@ -161,6 +163,7 @@ def test_timestamp_spoofing_prevention():
         # It should contain the current year/datetime since it is UTC server generated
         import datetime
         current_year = str(datetime.datetime.now(datetime.UTC).year)
+        saved_timestamp = row[0]
         assert current_year in saved_timestamp
 
 from unittest.mock import patch

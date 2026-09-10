@@ -4,21 +4,64 @@ import ExhibitViewer from './ExhibitViewer';
 import { PESTLECanvas, PolicyEditor, RiskCalculator, CommunicationMatrix, FlowchartArranger, NCRGenerator, RootCauseTree, ContextSorter, DocumentBuilder, AuditChecklist, AnnexAMapper, SoAReviewer } from './implementer/InteractiveTools';
 
 function InteractiveToolSwitch({ question, initialPayload, onComplete }) {
+  let instructionText = "";
   switch (question.tool_type) {
-    case 'pestle_canvas': return <PESTLECanvas data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    case 'policy_editor': return <PolicyEditor data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    case 'risk_calculator': return <RiskCalculator data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    case 'communication_matrix': return <CommunicationMatrix data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    case 'flowchart_arranger': return <FlowchartArranger data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    case 'ncr_generator': return <NCRGenerator data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    case 'root_cause_tree': return <RootCauseTree data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    case 'context_sorter': return <ContextSorter data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    case 'document_builder': return <DocumentBuilder data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    case 'audit_checklist': return <AuditChecklist data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    case 'annex_a_mapper': return <AnnexAMapper data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    case 'soa_reviewer': return <SoAReviewer data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
-    default: return <div className="p-4 bg-red-100 text-red-800 rounded-xl">Unknown tool type: {question.tool_type}</div>;
+    case 'pestle_canvas':
+    case 'context_sorter':
+      instructionText = "Drag the unassigned items on the left and drop them into the correct categories.";
+      break;
+    case 'flowchart_arranger':
+      instructionText = "Drag and drop the audit steps to arrange them in the correct chronological order.";
+      break;
+    case 'policy_editor':
+    case 'document_builder':
+    case 'ncr_generator':
+      instructionText = "Read the document and click on the specific sentences to highlight your answers.";
+      break;
+    case 'risk_calculator':
+    case 'communication_matrix':
+    case 'audit_checklist':
+    case 'annex_a_mapper':
+    case 'soa_reviewer':
+    case 'root_cause_tree':
+      instructionText = "Use the interactive elements to complete the exercise.";
+      break;
+    default:
+      instructionText = "Interact with the elements below to provide your answer.";
   }
+
+  const renderTool = () => {
+    switch (question.tool_type) {
+      case 'pestle_canvas': return <PESTLECanvas data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      case 'policy_editor': return <PolicyEditor data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      case 'risk_calculator': return <RiskCalculator data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      case 'communication_matrix': return <CommunicationMatrix data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      case 'flowchart_arranger': return <FlowchartArranger data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      case 'ncr_generator': return <NCRGenerator data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      case 'root_cause_tree': return <RootCauseTree data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      case 'context_sorter': return <ContextSorter data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      case 'document_builder': return <DocumentBuilder data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      case 'audit_checklist': return <AuditChecklist data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      case 'annex_a_mapper': return <AnnexAMapper data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      case 'soa_reviewer': return <SoAReviewer data={question.tool_data} initialPayload={initialPayload} onComplete={onComplete} />;
+      default: return <div className="p-4 bg-red-100 text-red-800 rounded-xl">Unknown tool type: {question.tool_type}</div>;
+    }
+  };
+
+  return (
+    <div className="flex flex-col space-y-4">
+      <div className="bg-blue-50 border-l-4 border-brand-primary p-4 rounded-r-xl shadow-sm flex items-start animate-fade-in-up">
+        <div className="text-brand-primary mt-1 mr-3">
+          <i className="fa-solid fa-lightbulb text-xl"></i>
+        </div>
+        <div>
+          <h4 className="text-xs font-black uppercase text-brand-primary tracking-widest mb-1">How to Answer</h4>
+          <p className="text-sm font-semibold text-blue-900">{instructionText}</p>
+        </div>
+      </div>
+      {renderTool()}
+    </div>
+  );
 }
 
 // ─── Epic 1.3: Named exports so unit tests can import & verify them directly ───

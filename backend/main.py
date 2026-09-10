@@ -72,6 +72,7 @@ app.add_middleware(
 class CheatingLog(BaseModel):
     studentEmail: str
     studentName: str
+    accessCode: str
     violationType: str
     details: str
     timestamp: str
@@ -92,6 +93,7 @@ def init_db():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 student_email TEXT,
                 student_name TEXT,
+                access_code TEXT,
                 violation_type TEXT,
                 details TEXT,
                 timestamp TEXT,
@@ -150,6 +152,11 @@ def init_db():
             conn.execute("ALTER TABLE exam_results ADD COLUMN passed BOOLEAN")
         except sqlite3.OperationalError:
             pass # Columns already exist
+
+        try:
+            conn.execute("ALTER TABLE cheating_logs ADD COLUMN access_code TEXT")
+        except sqlite3.OperationalError:
+            pass # Column already exists
 
         # Insert test codes only in non-production environments
         if os.environ.get("ENV", "development") == "development":
@@ -211,9 +218,9 @@ def log_cheating(log: CheatingLog):
         with sqlite3.connect(DB_PATH, timeout=15) as conn:
             conn.execute("PRAGMA journal_mode=WAL;")
             conn.execute("""
-                INSERT INTO cheating_logs (student_email, student_name, violation_type, details, timestamp, snapshot_path)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (log.studentEmail, log.studentName, log.violationType, log.details, secure_timestamp, filepath))
+                INSERT INTO cheating_logs (student_email, student_name, access_code, violation_type, details, timestamp, snapshot_path)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (log.studentEmail, log.studentName, log.accessCode, log.violationType, log.details, secure_timestamp, filepath))
             conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database logging failed: {str(e)}")
@@ -370,22 +377,22 @@ def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
                 total_cheating_events = 0
                 cheating_events = []
                 try:
-                    # First, count exactly how many cheating logs occurred today
+                    # First, count exactly how many cheating logs occurred for this session
                     cur.execute("""
-                        SELECT COUNT(*) 
-                        FROM cheating_logs 
-                        WHERE student_email = ? COLLATE NOCASE AND timestamp > datetime('now', '-1 day')
-                    """, (req.studentEmail,))
+                        SELECT COUNT(*)
+                        FROM cheating_logs
+                        WHERE access_code = ? COLLATE NOCASE
+                    """, (req.code,))
                     total_cheating_events = cur.fetchone()[0]
                     
                     # Fetch only a MAXIMUM of 10 cheating events to avoid crashing make.com payloads
                     cur.execute("""
                         SELECT violation_type, details, timestamp, snapshot_path 
                         FROM cheating_logs 
-                        WHERE student_email = ? COLLATE NOCASE AND timestamp > datetime('now', '-1 day')
+                        WHERE access_code = ? COLLATE NOCASE
                         ORDER BY timestamp DESC
                         LIMIT 10
-                    """, (req.studentEmail,))
+                    """, (req.code,))
                     
                     api_url = os.environ.get("API_PUBLIC_URL", "https://api-exams.astutebusinessprojects.cloud")
                     

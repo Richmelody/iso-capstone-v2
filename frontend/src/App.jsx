@@ -197,6 +197,7 @@ function ExamLayout({
         <ProctorCamera
           studentName={studentName}
           studentEmail={studentEmail}
+          accessCode={accessCode}
           isProctoringActive={isProctoringActive}
           cameraId={selectedCameraId}
         />
