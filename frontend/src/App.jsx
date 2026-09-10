@@ -141,12 +141,12 @@ function ExamLayout({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          student_email: studentEmail,
-          exam_id: examId,
+          code: accessCode,
+          studentEmail: studentEmail,
           score: score,
-          total_questions: totalScore,
-          passed: passed,
-          category_breakdown: catScores
+          totalScore: totalScore,
+          percent: percent,
+          passed: passed
         })
       });
     } catch (e) {
