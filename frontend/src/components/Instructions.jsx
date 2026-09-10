@@ -26,6 +26,16 @@ export default function Instructions({ examData, onStartExam, onLogout }) {
 
       <div className="p-8 md:p-12">
 
+        <div className="bg-emerald-50 border-l-4 border-emerald-600 p-6 mb-8 rounded-r-xl shadow-sm">
+          <h4 className="font-black text-emerald-800 uppercase text-sm mb-2 tracking-widest flex items-center">
+            <i className="fa-solid fa-bullseye text-xl mr-3 text-emerald-600"></i>
+            Passing Score Requirement
+          </h4>
+          <p className="text-sm text-emerald-900 font-medium">
+            The minimum required passing score for this certification is <strong className="font-black text-emerald-700 text-base">80%</strong>.
+          </p>
+        </div>
+
 
         {examData?.blueprint && (
           <div className="bg-blue-50 border-l-4 border-blue-600 p-6 mb-8 rounded-r-xl">

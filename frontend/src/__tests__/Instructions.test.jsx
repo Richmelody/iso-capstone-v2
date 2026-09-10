@@ -28,4 +28,11 @@ describe('Instructions Component', () => {
     expect(screen.getByText('50%')).toBeInTheDocument();
   });
 
+  it('renders passing score information prominently', () => {
+    render(<Instructions onStartExam={vi.fn()} onLogout={vi.fn()} />);
+    const passingScoreElements = screen.getAllByText(/Passing Score/i);
+    expect(passingScoreElements.length).toBeGreaterThan(0);
+    expect(screen.getByText(/80%/i)).toBeInTheDocument();
+  });
+
 });

@@ -10,6 +10,9 @@ import uuid
 import json
 import httpx
 import datetime
+import smtplib
+import logging
+from email.mime.text import MIMEText
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 
@@ -445,9 +448,29 @@ def complete_exam(req: CompleteRequest, background_tasks: BackgroundTasks):
                                 "cheating_events": cheating_events
                             })
                     except Exception as e:
-                        pass
+                        logging.error(f"Make.com webhook failed for {req.studentEmail}: {e}")
+
+                def send_results_email():
+                    try:
+                        subject = f"Exam Results: {mapped_standard} {mapped_category}"
+                        if req.passed:
+                            body = f"""Dear {assigned_name or "Candidate"},\n\nThank you for completing the {mapped_standard} {mapped_category} exam. Your assessment has been successfully graded.\n\nYour Results:\n* Status: PASSED 🎉\n* Score: {req.score} / {req.totalScore}\n* Percentage: {req.percent}\n\nCongratulations on successfully passing the assessment! Your strong performance demonstrates a thorough understanding of the material. \n\nOur team has received your results and we will be processing your certification shortly. Keep an eye on your inbox for further details.\n\nBest regards,\nAstute Business Consult Academy"""
+                        else:
+                            body = f"""Dear {assigned_name or "Candidate"},\n\nThank you for completing the {mapped_standard} {mapped_category} exam. Your assessment has been successfully graded.\n\nYour Results:\n* Status: Not Passed\n* Score: {req.score} / {req.totalScore}\n* Percentage: {req.percent}\n\nWe appreciate the effort you put into completing the assessment. While you did not meet the required passing threshold this time, we are committed to helping you succeed. \n\nWe will get back to you shortly on the next steps.\n\nBest regards,\nAstute Business Consult Academy"""
+                        msg = MIMEText(body)
+                        msg["Subject"] = subject
+                        msg["From"] = "chigozie.ikuru@astutebc.com.ng"
+                        msg["To"] = req.studentEmail
+
+                        with smtplib.SMTP("smtppro.zoho.com", 587) as server:
+                            server.starttls()
+                            server.login("chigozie.ikuru@astutebc.com.ng", "9iAR6EqVsRUr")
+                            server.sendmail("chigozie.ikuru@astutebc.com.ng", [req.studentEmail], msg.as_string())
+                    except Exception as e:
+                        logging.error(f"Failed to send email to {req.studentEmail}: {e}")
 
                 background_tasks.add_task(send_webhook)
+                background_tasks.add_task(send_results_email)
 
                 return {"status": "success", "message": "Exam completed, code used and results saved"}
         except sqlite3.OperationalError as e:

@@ -223,3 +223,38 @@ def test_database_locked_retry_on_sync_progress():
         assert call_count >= 3
 
 
+
+@patch('smtplib.SMTP')
+def test_complete_exam_sends_email(mock_smtp):
+    client.post("/verify-code", json={"code": "TEST-CODE-99", "studentEmail": "tester@astute.com", "studentName": "Test User"})
+    
+    # Commit the exam
+    complete_payload = {
+        "code": "TEST-CODE-99",
+        "studentEmail": "tester@astute.com",
+        "score": 38,
+        "totalScore": 40,
+        "percent": "95.0%",
+        "passed": True,
+        "cheating_events": []
+    }
+    
+    # We also mock BackgroundTasks to execute synchronously for testing, or we just let it run.
+    # Actually, FastAPI TestClient executes BackgroundTasks synchronously by default!
+    response = client.post("/complete-exam", json=complete_payload)
+    assert response.status_code == 200
+    
+    # Assert SMTP was called
+    assert mock_smtp.called
+    instance = mock_smtp.return_value.__enter__.return_value
+    assert instance.sendmail.called
+    
+    # Check the email content
+    args, kwargs = instance.sendmail.call_args
+    assert "tester@astute.com" in args[1]
+    
+    import email
+    msg = email.message_from_string(args[2])
+    payload = msg.get_payload(decode=True).decode("utf-8")
+    assert "PASSED" in payload
+    assert "95.0%" in payload

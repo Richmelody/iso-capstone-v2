@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import paramiko; print\\('paramiko available'\\)\")",
+      "Bash(python3)",
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP status: %{http_code}\\\\n\" https://lmsregistration-api.astutebusinessprojects.cloud/api/health)",
+      "Bash(curl -s https://lmsregistration-api.astutebusinessprojects.cloud/api/health)",
+      "Bash(curl -sv https://lmsregistration-api.astutebusinessprojects.cloud/api/health)",
+      "Bash(curl -s -o /dev/null -w \"HTTP status: %{http_code}\\\\n\" https://lmsregistration.astutebusinessprojects.cloud)",
+      "Bash(curl -sv https://lmsregistration.astutebusinessprojects.cloud)",
+      "Bash(curl -s https://lmsregistration.astutebusinessprojects.cloud)",
+      "Bash(git commit -m ' *)",
+      "Bash(curl -s -i -X OPTIONS https://lmsregistration-api.astutebusinessprojects.cloud/api/auth/request-code -H 'Origin: https://lmsregistration.astutebusinessprojects.cloud' -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: content-type')",
+      "Bash(curl -s -i https://lmsregistration-api.astutebusinessprojects.cloud/api/health -H \"Origin: https://lmsregistration.astutebusinessprojects.cloud\")",
+      "Bash(curl -s -i -X POST https://lmsregistration-api.astutebusinessprojects.cloud/api/auth/request-code -H 'Origin: https://lmsregistration.astutebusinessprojects.cloud' -H 'Content-Type: application/json' -d '{\"email\":\"chigozie.ikuru@astutebc.com.ng\"}')",
+      "Bash(curl -s http://127.0.0.1:8090/api/health)"
+    ]
+  }
+}
