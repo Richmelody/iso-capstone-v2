@@ -396,11 +396,11 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
          hasTrippedRef.current = true;
          isSubmittingRef.current = true; // Mark as legitimate submission
          const { finalScore, failedCats } = calculateFinals(userAnswersRef.current);
-         onFinish(finalScore, failedCats);
+         onFinish(finalScore, failedCats, assignedLayout, userAnswersRef.current);
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [onFinish]);
+  }, [onFinish, assignedLayout]);
 
   // 2. Prevent Refreshing the Page & Prevent Right Clicking
   useEffect(() => {
@@ -427,10 +427,12 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
       if (document.hidden) {
         hasTrippedRef.current = true;
         setLockoutMessage(`Proctoring Alert: Focus lost on the assessment window.`);
-        
-        // Immediately burn their payload
+
+        // Immediately burn their payload — report their REAL score so far,
+        // not just the raw answers (see calculateFinals below).
         if (onBurnNetwork) {
-            onBurnNetwork(userAnswers); // Optionally log what they had
+            const { finalScore } = calculateFinals(userAnswers);
+            onBurnNetwork(finalScore, assignedLayout, userAnswers);
         }
       }
     };
@@ -452,9 +454,10 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
 
         hasTrippedRef.current = true;
         setLockoutMessage(`Proctoring Alert: Unauthorized screen capture detected.`);
-        
+
         if (onBurnNetwork) {
-            onBurnNetwork(userAnswers);
+            const { finalScore } = calculateFinals(userAnswers);
+            onBurnNetwork(finalScore, assignedLayout, userAnswers);
         }
       }
     };
@@ -469,9 +472,10 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
 
         hasTrippedRef.current = true;
         setLockoutMessage(`Proctoring Alert: Unauthorized screen capture detected.`);
-        
+
         if (onBurnNetwork) {
-            onBurnNetwork(userAnswers);
+            const { finalScore } = calculateFinals(userAnswers);
+            onBurnNetwork(finalScore, assignedLayout, userAnswers);
         }
       }
     };
@@ -569,7 +573,7 @@ export default function QuizEngine({ onFinish, onBurnNetwork, onSyncNetwork, exa
 
   const forceSubmission = () => {
     const { finalScore, failedCats } = calculateFinals(userAnswers);
-    onFinish(finalScore, failedCats);
+    onFinish(finalScore, failedCats, assignedLayout, userAnswers);
   };
 
   // RED PENALTY SCREEN

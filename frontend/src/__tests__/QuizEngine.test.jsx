@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import QuizEngine from '../components/QuizEngine';
 
@@ -134,6 +134,156 @@ describe('QuizEngine Component - Standard User Flows', () => {
       expect.any(Array),
       expect.any(Object)
     );
+  });
+});
+
+describe('QuizEngine Component - onFinish argument completeness (score-denominator bug)', () => {
+  // Real-world bug: two submission paths (timer expiry, forced/proctor
+  // submission) called onFinish(finalScore, failedCats) without
+  // assignedLayout/userAnswers. App.jsx's finishExam() then falls back to
+  // a hardcoded totalScore of 20 instead of the exam's real question count,
+  // producing impossible results like "19/20 = 95%" for a 35-question exam.
+  // These tests pin down that ALL submission paths must pass the full
+  // 4-argument signature, matching the one path (handleFinalSubmit) that
+  // was already correct.
+  const mockExamData = {
+    questions: [
+      {
+        section: "Clause 4",
+        text: "What is the context of the organization?",
+        category: "Context",
+        options: [
+          { text: "Option A", correct: true },
+          { text: "Option B", correct: false }
+        ]
+      },
+      {
+        section: "Clause 5",
+        text: "What represents top management?",
+        category: "Leadership",
+        options: [
+          { text: "Option C", correct: false },
+          { text: "Option D", correct: true }
+        ]
+      }
+    ]
+  };
+
+  const baseRecoveredState = {
+    currentIdx: 0,
+    timeLeft: 1200,
+    userAnswers: {},
+    layout: [
+      { qIdx: 0, optMap: [0, 1] },
+      { qIdx: 1, optMap: [0, 1] },
+    ],
+  };
+
+  it('passes assignedLayout and userAnswers to onFinish when the exam timer expires', () => {
+    vi.useFakeTimers();
+    const mockOnFinish = vi.fn();
+    try {
+      render(
+        <QuizEngine
+          examData={mockExamData}
+          onFinish={mockOnFinish}
+          onSyncNetwork={vi.fn()}
+          recoveredState={{ ...baseRecoveredState, timeLeft: 1 }}
+        />
+      );
+
+      act(() => {
+        vi.advanceTimersByTime(1100);
+      });
+
+      expect(mockOnFinish).toHaveBeenCalledWith(
+        expect.any(Number),
+        expect.any(Set),
+        expect.any(Array),
+        expect.any(Object)
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('passes assignedLayout and userAnswers to onFinish on forced/proctor submission', () => {
+    const mockOnFinish = vi.fn();
+    const { rerender } = render(
+      <QuizEngine
+        examData={mockExamData}
+        onFinish={mockOnFinish}
+        onSyncNetwork={vi.fn()}
+        recoveredState={baseRecoveredState}
+        isVaultBurned={false}
+      />
+    );
+
+    // Trigger the lockout/forced-submission screen
+    rerender(
+      <QuizEngine
+        examData={mockExamData}
+        onFinish={mockOnFinish}
+        onSyncNetwork={vi.fn()}
+        recoveredState={baseRecoveredState}
+        isVaultBurned={true}
+      />
+    );
+
+    fireEvent.click(screen.getByText(/Acknowledge & Submit Progress/i));
+
+    expect(mockOnFinish).toHaveBeenCalledWith(
+      expect.any(Number),
+      expect.any(Set),
+      expect.any(Array),
+      expect.any(Object)
+    );
+  });
+});
+
+describe('QuizEngine Component - onBurnNetwork must report the real score (not always 0)', () => {
+  // Real bug: every real call site does onBurnNetwork(userAnswers) — passing
+  // the raw answers object, never a number. executeVaultBurn in App.jsx does
+  // `typeof scoreOrAnswers === 'number' ? scoreOrAnswers : 0`, so the score
+  // was ALWAYS recorded as 0 for a screenshot/tab-switch violation, no matter
+  // how many questions the candidate had actually gotten right beforehand.
+  const mockExamData = {
+    questions: [
+      {
+        section: "Clause 4", text: "What is the context of the organization?", category: "Context",
+        options: [{ text: "Option A", correct: true }, { text: "Option B", correct: false }],
+      },
+      {
+        section: "Clause 5", text: "What represents top management?", category: "Leadership",
+        options: [{ text: "Option C", correct: false }, { text: "Option D", correct: true }],
+      },
+    ],
+  };
+  const PINNED_STATE = {
+    currentIdx: 0, timeLeft: 1200, userAnswers: {},
+    layout: [{ qIdx: 0, optMap: [0, 1] }, { qIdx: 1, optMap: [0, 1] }],
+  };
+
+  it('reports the real, already-earned score when a screenshot violation force-ends the session', () => {
+    const mockOnBurn = vi.fn();
+    render(
+      <QuizEngine examData={mockExamData} onFinish={vi.fn()} onBurnNetwork={mockOnBurn} onSyncNetwork={vi.fn()} recoveredState={PINNED_STATE} />
+    );
+
+    // Answer Q1 correctly before the violation happens.
+    fireEvent.click(screen.getByText(/Option A/i));
+    fireEvent.click(screen.getByText("Commit & Continue"));
+
+    // Trigger a screenshot-attempt violation (PrintScreen) — this force-ends the session.
+    fireEvent.keyDown(window, { key: 'PrintScreen' });
+
+    expect(mockOnBurn).toHaveBeenCalledTimes(1);
+    const args = mockOnBurn.mock.calls[0];
+    // Must NOT be the old single-argument call with the raw answers object —
+    // the real score (1 correct so far) and the real layout must be reported.
+    expect(args[0]).toBe(1);
+    expect(Array.isArray(args[1])).toBe(true);
+    expect(args[1].length).toBe(2);
   });
 });
 

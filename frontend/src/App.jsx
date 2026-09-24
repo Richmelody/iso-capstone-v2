@@ -103,19 +103,18 @@ function ExamLayout({
     }
   };
 
-  const executeVaultBurn = async (scoreOrAnswers) => {
+  const executeVaultBurn = async (score, assignedLayout) => {
     setIsVaultBurned(true); // Engages the global router trap
-    // onBurnNetwork can be called with either a score (number) or userAnswers (object)
-    const score = typeof scoreOrAnswers === 'number' ? scoreOrAnswers : 0;
-    const totalScore = 20;
-    const percent = totalScore > 0 ? ((score / totalScore) * 100).toFixed(1) + "%" : "0.0%";
+    const realScore = typeof score === 'number' ? score : 0;
+    const totalScore = (assignedLayout && assignedLayout.length > 0) ? assignedLayout.length : 20;
+    const percent = totalScore > 0 ? ((realScore / totalScore) * 100).toFixed(1) + "%" : "0.0%";
     const passed = false; // Always fail: vault burn = proctoring violation
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
       await fetch(`${apiUrl}/complete-exam`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: accessCode, studentEmail, score, totalScore, percent, passed, cheating_events: [] })
+        body: JSON.stringify({ code: accessCode, studentEmail, score: realScore, totalScore, percent, passed, cheating_events: [] })
       });
     } catch (e) {
       console.error("Failed to commit completion to vault.", e);
