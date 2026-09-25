@@ -75,4 +75,19 @@ describe('ResultsScreen Component', () => {
     expect(screen.getByText(/Integrity Validation/i)).toBeInTheDocument();
     expect(screen.getByText(/Final Decision/i)).toBeInTheDocument();
   });
+
+  // ─── Pass mark consistency: the screen must use the SAME mark the records/emails use ───
+  it('uses the exam\'s configured pass mark (75% for 45001-ia): 27/35 = 77.1% is PASSED', () => {
+    const layout = Array.from({ length: 35 }, (_, i) => ({ qIdx: i }));
+    renderWithRouter({ score: 27, failedCats: new Set(), assignedLayout: layout, studentName: 'T', studentEmail: 't@e.com' }, ['/exam/45001-ia']);
+    expect(screen.getByText(/PASSED/i)).toBeInTheDocument();
+    expect(screen.queryByText(/FAILED/i)).not.toBeInTheDocument();
+  });
+
+  it('26/35 = 74.3% is FAILED against the configured 75% pass mark', () => {
+    const layout = Array.from({ length: 35 }, (_, i) => ({ qIdx: i }));
+    renderWithRouter({ score: 26, failedCats: new Set(), assignedLayout: layout, studentName: 'T', studentEmail: 't@e.com' }, ['/exam/45001-ia']);
+    expect(screen.getByText(/FAILED/i)).toBeInTheDocument();
+    expect(screen.queryByText(/PASSED/i)).not.toBeInTheDocument();
+  });
 });

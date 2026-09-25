@@ -35,4 +35,10 @@ describe('Instructions Component', () => {
     expect(screen.getByText(/80%/i)).toBeInTheDocument();
   });
 
+  it('shows the exam\'s own configured pass mark instead of a hard-coded 80%', () => {
+    render(<Instructions examData={{ passing_score_percent: 75 }} onStartExam={vi.fn()} onLogout={vi.fn()} />);
+    expect(screen.getByText('75%')).toBeInTheDocument();
+    expect(screen.queryByText('80%')).not.toBeInTheDocument();
+  });
+
 });

@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 export default function Instructions({ examData, onStartExam, onLogout }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showConsentModal, setShowConsentModal] = useState(false);
+  // The exam's own configured pass mark (same value the results are recorded against); 80% only if none is set.
+  const passPercent = examData?.passing_score_percent || 80;
 
   const handleAgreeAndStart = () => {
     setIsLoading(true);
@@ -32,7 +34,7 @@ export default function Instructions({ examData, onStartExam, onLogout }) {
             Passing Score Requirement
           </h4>
           <p className="text-sm text-emerald-900 font-medium">
-            The minimum required passing score for this certification is <strong className="font-black text-emerald-700 text-base">80%</strong>.
+            The minimum required passing score for this certification is <strong className="font-black text-emerald-700 text-base">{passPercent}%</strong>.
           </p>
         </div>
 
